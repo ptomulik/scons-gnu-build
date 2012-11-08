@@ -6,7 +6,7 @@ Welcome to ``scons-gnu-build``.
 The ``scons-gnu-build`` extension makes ``SCons`` behaving more like GNU
 build system (autotools based). The purpose is to achieve better
 interoperability with several external tools (especially external packaging
-toolchains, e.g. debian's dh) that normally use GNU build system.  
+tools, e.g. debian's dh) that normally use GNU build system.  
 
 CURRENT STATUS
 --------------
@@ -75,7 +75,8 @@ this is easilly done by running the following bash script
 bin/download-devel-deps.sh
 ```
 
-from the top level directory
+from the top level directory. The generated documentation is located in
+``build/doc/user``.
 
 LICENSE
 -------
