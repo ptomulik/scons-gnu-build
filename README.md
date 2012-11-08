@@ -42,6 +42,8 @@ following command
   scons api-doc
 ``` 
 
+#### Requirements for api-docs
+
 To generate API documentation, you may need following packages on your system:
 
   * epydoc <http://epydoc.sourceforge.net/>
@@ -53,11 +55,14 @@ The generated documentation is located within ``build/doc/api`` directory.
 ### User documentation
 
 User documentation can be generated from the top level directory with the
-following command
+following command (see requirements below)
 
 ```
 scons user-doc
 ```
+The generated documentation is located in ``build/doc/user``.
+
+#### Requirements for user-doc
 
 To generate user's documentation, you'll need following packages on your
 system:
@@ -75,8 +80,7 @@ this is easilly done by running the following bash script
 bin/download-devel-deps.sh
 ```
 
-from the top level directory. The generated documentation is located in
-``build/doc/user``.
+from the top level directory.
 
 LICENSE
 -------
