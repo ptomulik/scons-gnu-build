@@ -24,7 +24,7 @@ Let's introduce few terms for clarity:
         The ``add_prefix_`` is optional. Whenever a uniform name
         is decomposed, the ``add_prefix``, ``main_prefix``, and ``PRIMARY``
         parts are extracted by matching appropriate pieces of uniform name to
-        known predefined primary names and prefixe.s Lists of standard
+        known predefined primary names and prefixes. Lists of standard
         primary names and prefixes defined by GNU automake documentation are
         maintained internally by this module and may be retrieved by
         ``standards_xxx()`` or ``StandardXxx()`` functions. Other primary
@@ -342,12 +342,11 @@ __std_install_exec_prefixes = [
     'pkglib'
 ]
 
-__std_man_sections = map(lambda x : str(x), range(0,10)) + ['n', 'l']
-
 #############################################################################
 def __init_module_vars():
+    from SConsGnuBuild.Common import standard_man_sections
     # generate manX directory prefixes
-    for sec in __std_man_sections:
+    for sec in standard_man_sections():
         __std_primary_main_prefixes['MANS'].append('man%s' % sec)
         __std_main_prefixes.append('man%s' % sec)
         __std_install_data_prefixes.append('man%s' % sec)
@@ -501,23 +500,6 @@ def standard_forbid_main_add_prefixes(main_prefix=None):
         return __std_forbid_main_add_prefixes[main_prefix]  
     else:
         return []
-
-#############################################################################
-def standard_man_sections():
-    """Return list of standard man sections (manpage sections)
-
-    **Note**
-    
-    You may wish to use `StandardManSections()` instead.
-    
-    **Description**
-
-    The function returns a list of man page sections as defined in the section
-    `Man pages`_ of automake documentation.
-
-    .. _Man pages: http://www.gnu.org/software/automake/manual/automake.html#Man-Pages
-    """
-    return __std_man_sections
 
 #############################################################################
 def _prepare_primary_names_list(primary_names, use_std_primary_names):
@@ -1325,11 +1307,6 @@ def StandardForbidMainAddPrefixes(main_prefix=None,**kw):
     return standard_forbid_main_add_prefixes(main_prefix)
 
 #############################################################################
-def StandardManSections(**kw):
-    """Interface to `standard_man_sections()`"""
-    return standard_man_sections()
-
-#############################################################################
 def RSplitPrimaryName(uname, **kw):
     """Interface to `rsplit_primary_name()`.
 
@@ -1342,12 +1319,9 @@ def RSplitPrimaryName(uname, **kw):
         use_std_primary_names
             same as in `rsplit_primary_name()`
     """
-    args = ()
-    try:                args += (kw['primary_names'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['use_std_primary_names'],)
-    except KeyError:    args += (True,)
-    return rsplit_primary_name(uname, *args)
+    args = [ 'primary_names', 'use_std_primary_names' ]
+    kw2 = { key : kw[key] for key in args if key in kw}
+    return rsplit_primary_name(uname, **kw2)
 
 #############################################################################
 def RSplitMainPrefix(uname, **kw):
@@ -1362,12 +1336,9 @@ def RSplitMainPrefix(uname, **kw):
         use_std_main_prefixes
             same as in `rsplit_main_prefix()`
     """
-    args = ()
-    try:                args += (kw['main_prefixes'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['use_std_main_prefixes'],)
-    except KeyError:    args += (True,)
-    return rsplit_main_prefix(uname, *args)
+    args = [ 'main_prefixes', 'use_std_main_prefixes' ]
+    kw2 = { key : kw[key] for key in args if key in kw}
+    return rsplit_main_prefix(uname, **kw2)
 
 #############################################################################
 def RSplitAddPrefix(uname, **kw):
@@ -1382,12 +1353,9 @@ def RSplitAddPrefix(uname, **kw):
         use_std_add_prefixes
             same as in `rsplit_add_prefix()`
     """
-    args = ()
-    try:                args += (kw['add_prefixes'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['use_std_add_prefixes'],)
-    except KeyError:    args += (True,)
-    return rsplit_add_prefix(uname, *args)
+    args = [ 'add_prefixes', 'use_std_add_prefixes' ]
+    kw2 = { key : kw[key] for key in args if key in kw}
+    return rsplit_add_prefix(uname, **kw2)
         
 #############################################################################
 def DecomposeName(funame,**kw):
@@ -1410,20 +1378,14 @@ def DecomposeName(funame,**kw):
         use_std_add_prefixes
             same as in `decompose_name()`
     """
-    args = ()
-    try:                args += (kw['primary_names'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['main_prefixes'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['add_prefixes'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['use_std_primary_names'],)
-    except KeyError:    args += (True,)
-    try:                args += (kw['use_std_main_prefixes'],)
-    except KeyError:    args += (True,)
-    try:                args += (kw['use_std_add_prefixes'],)
-    except KeyError:    args += (True,)
-    return decompose_name(funame, *args)
+    args = [ 'primary_names', 
+             'main_prefixes',
+             'add_prefixes',
+             'use_std_primary_names',
+             'use_std_main_prefixes',
+             'use_std_add_prefixes' ]
+    kw2 = { key : kw[key] for key in args if key in kw}
+    return decompose_name(funame, **kw2)
 
 #############################################################################
 def EnsureNameSanity(funame,**kw):
@@ -1466,40 +1428,24 @@ def EnsureNameSanity(funame,**kw):
         use_std_collide_add_prefixes
             same as in `ensure_name_sanity()`
     """
-    args = ()
-    try:             args += (kw['primary_names'],)
-    except KeyError: args +=(None,) 
-    try:             args += (kw['main_prefixes'],)
-    except KeyError: args +=(None,)
-    try:             args += (kw['add_prefixes'],)
-    except KeyError: args +=(None,) 
-    try:             args += (kw['primary_main_prefixes'],)
-    except KeyError: args +=(None,)
-    try:             args += (kw['forbid_primary_main_prefixes'],)
-    except KeyError: args +=(None,)
-    try:             args += (kw['forbid_primary_add_prefixes'],)
-    except KeyError: args +=(None,)
-    try:             args += (kw['forbid_main_add_prefixes'],)
-    except KeyError: args +=(None,)
-    try:             args += (kw['collide_add_prefixes'],)
-    except KeyError: args +=(None,)
-    try:             args += (kw['use_std_primary_names'],)
-    except KeyError: args +=(True,)
-    try:             args += (kw['use_std_main_prefixes'],)
-    except KeyError: args +=(True,)
-    try:             args += (kw['use_std_add_prefixes'],)
-    except KeyError: args +=(True,)
-    try:             args += (kw['use_std_primary_main_prefixes'],)
-    except KeyError: args +=(True,)
-    try:             args += (kw['use_std_forbid_primary_main_prefixes'],)
-    except KeyError: args +=(True,)
-    try:             args += (kw['use_std_forbid_primary_add_prefixes'],)
-    except KeyError: args +=(True,)
-    try:             args += (kw['use_std_forbid_main_add_prefixes'],)
-    except KeyError: args +=(True,)
-    try:             args += (kw['use_std_collide_add_prefixes'],)
-    except KeyError: args +=(True,)
-    return ensure_name_sanity(funame, *args)
+    args = [ 'primary_names', 
+             'main_prefixes',
+             'add_prefixes',
+             'primary_main_prefixes',
+             'forbid_primary_main_prefixes',
+             'forbid_primary_add_prefixes',
+             'forbid_main_add_prefixes',
+             'collide_add_prefixes',
+             'use_std_primary_names',
+             'use_std_main_prefixes',
+             'use_std_add_prefixes',
+             'use_std_primary_main_prefixes',
+             'use_std_forbid_primary_main_prefixes',
+             'use_std_forbid_primary_add_prefixes',
+             'use_std_forbid_main_add_prefixes',
+             'use_std_collide_add_prefixes' ]
+    kw2 = { key : kw[key] for key in args if key in kw}
+    return ensure_name_sanity(funame, **kw2)
 
 
 #############################################################################
@@ -1515,12 +1461,9 @@ def IsInstallExecPrefix(prefix, **kw):
         use_std_main_prefixes
             same as in `is_install_exec_prefix()`
     """
-    args = ()
-    try:                args += (kw['main_prefixes'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['use_std_main_prefixes'],)
-    except KeyError:    args += (True,)
-    return is_install_exec_prefix(prefix, *args)
+    args = ['main_prefixes', 'use_std_main_prefixes']
+    kw2 = { key : kw[key] for key in args if key in kw}
+    return is_install_exec_prefix(prefix, **kw2)
 
 #############################################################################
 def IsInstallDataPrefix(prefix, **kw):
@@ -1535,12 +1478,9 @@ def IsInstallDataPrefix(prefix, **kw):
         use_std_main_prefixes
             same as in `is_install_data_prefix()`
     """
-    args = ()
-    try:                args += (kw['main_prefixes'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['use_std_main_prefixes'],)
-    except KeyError:    args += (True,)
-    return is_install_data_prefix(prefix, *args)
+    args = ['main_prefixes', 'use_std_main_prefixes']
+    kw2 = { key : kw[key] for key in args if key in kw}
+    return is_install_data_prefix(prefix, **kw2)
 
 #############################################################################
 def IsInstallExecName(funame, **kw):
@@ -1559,16 +1499,10 @@ def IsInstallExecName(funame, **kw):
         use_std_main_prefixes
             same as in `is_install_exec_name()`
     """
-    args = ()
-    try:                args += (kw['primary_names'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['main_prefixes'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['use_std_primary_names'],)
-    except KeyError:    args += (True,)
-    try:                args += (kw['use_std_main_prefixes'],)
-    except KeyError:    args += (True,)
-    return is_install_exec_name(funame, *args)
+    args = ['primary_prefixes', 'main_prefixes', 'use_std_primary_prefixes',
+            'use_std_main_prefixes']
+    kw2 = { key : kw[key] for key in args if key in kw}
+    return is_install_exec_name(funame, **kw2)
 
 #############################################################################
 def IsInstallDataName(funame, **kw):
@@ -1587,16 +1521,10 @@ def IsInstallDataName(funame, **kw):
         use_std_main_prefixes
             same as in `is_install_data_name()`
     """
-    args = ()
-    try:                args += (kw['primary_names'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['main_prefixes'],)
-    except KeyError:    args += (None,)
-    try:                args += (kw['use_std_primary_names'],)
-    except KeyError:    args += (True,)
-    try:                args += (kw['use_std_main_prefixes'],)
-    except KeyError:    args += (True,)
-    return is_install_data_name(funame, *args)
+    args = ['primary_prefixes', 'main_prefixes', 'use_std_primary_prefixes',
+            'use_std_main_prefixes']
+    kw2 = { key : kw[key] for key in args if key in kw}
+    return is_install_data_name(funame, **kw2)
 
 #############################################################################
 def FilterInstallExecNames(funames,**kw):
