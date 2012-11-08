@@ -36,13 +36,15 @@ DOCUMENTATION
 ### API documentation
 
 API documentation can be generated from the top level directory with the
-following command
+following command (see also requirements below)
 
 ```
   scons api-doc
 ``` 
 
-#### Requirements for api-docs
+The generated documentation is located within ``build/doc/api`` directory.
+
+#### Requirements for api-doc
 
 To generate API documentation, you may need following packages on your system:
 
@@ -50,12 +52,11 @@ To generate API documentation, you may need following packages on your system:
   * python-docutils <http://pypi.python.org/pypi/docutils>
   * python-pygments <http://pygments.org/>
 
-The generated documentation is located within ``build/doc/api`` directory.
 
 ### User documentation
 
 User documentation can be generated from the top level directory with the
-following command (see requirements below)
+following command (see also requirements below)
 
 ```
 scons user-doc
