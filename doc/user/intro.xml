@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook V5.0//EN"
+                   "http://docbook.org/xml/5.0/dtd/docbook.dtd">
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi="http://www.w3.org/2001/XInclude" id="sec-intro">
+  <title>Introduction</title>
+  <para>The <package>scons-gnu-build</package> is an extension to
+  <productname>SCons</productname> which makes it to behave more like the GNU
+  build system.</para>
+</section>

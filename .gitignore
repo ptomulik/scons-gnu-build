@@ -1,0 +1,12 @@
+# compiled python files
+*.py[co]
+# temporary directories createdy by scripts
+build
+site_scons
+# scons generated files
+.scon*
+# vim swap files
+.*.swp
+# backups created by some editors
+*.bak
+*~
