@@ -384,11 +384,6 @@ class _GVarsEnvProxy(object):
     """Proxy used to update construction variables in `SCons environment`_
     while operating on mapped variable names.
 
-    The `_GVarsEnvProxy` object implements `__getitem__()`, `__setitem__()` and
-    `subst()` methods which map user provided variable names through
-    dictionaries before accessing real construction variables. The placeholders
-    in strings passed to `subst()` are also renamed appropriately.
-
     **Example**::
 
         user@host:$ scons -Q -f -
@@ -404,15 +399,12 @@ class _GVarsEnvProxy(object):
         proxy['foo'] is 'FOO'
         env['ENV_FOO'] is 'FOO'
         scons: `.' is up to date.
-
-
     
     .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
     """
     #========================================================================
-
-    #========================================================================
-    def __init__(self, env, rename={}, resubst={}, irename={}, iresubst={}):
+    def __init__(self, env, rename={}, resubst={}, irename={}, iresubst={},
+                 strict=False):
         # -------------------------------------------------------------------
         """Initializes `_GVarsEnvProxy` object.
 
@@ -435,6 +427,10 @@ class _GVarsEnvProxy(object):
                 dictionary used by to rename placeholders in values passed
                 back from environment to user (used by `__getitem__()` for
                 example)
+            strict
+                if ``True`` only the keys defined in rename/resubst
+                dictionaries are allowed, otherwise the original variables
+                from ``env`` are also accessible via their keys
         """
         # -------------------------------------------------------------------
         self.__env = env
@@ -442,38 +438,73 @@ class _GVarsEnvProxy(object):
         self.__irename = irename
         self.__resubst = resubst
         self.__iresubst = iresubst
+        self.__strict = strict
+
+    #========================================================================
+    def get_env(self):
+        return self.__env
+
+    #========================================================================
+    def is_strict(self):
+        return self.__strict
+
+    #========================================================================
+    def set_strict(self, strict=True):
+        self.__strict = strict
 
     #========================================================================
     def __delitem__(self, key):
-        self.__env.__delitem__(self.__rename[key])
+        if self.is_strict():
+            self.__env.__delitem__(self.__rename[key])
+        else:
+            self.__env.__delitem__(self.__rename.get(key,key))
         
     #========================================================================
     def __getitem__(self, key):
-        env_key = self.__rename[key]
-        return _resubst(self.__env[env_key], self.__iresubst)
+        if self.is_strict():
+            env_key = self.__rename[key]
+            return _resubst(self.__env[env_key], self.__iresubst)
+        else:
+            env_key = self.__rename.get(key,key)
+            return _resubst(self.__env[env_key], self.__iresubst)
 
     #========================================================================
     def __setitem__(self, key, value):
-        env_key = self.__rename[key]
+        if self.is_strict():
+            env_key = self.__rename[key]
+        else:
+            env_key = self.__rename.get(key,key)
         env_value = _resubst(value, self.__resubst)
         self.__env[env_key] = env_value
 
     #========================================================================
     def get(self, key, default=None):
-        env_key = self.__rename[key]
+        if self.is_strict():
+            env_key = self.__rename[key]
+        else:
+            env_key = self.__rename.get(key,key)
         return _resubst(self.__env.get(env_key, default), self.__iresubst)
 
     #========================================================================
     def has_key(self, key):
-        return self.__env.has_key(self.__rename[key])
+        if self.is_strict():
+            return self.__env.has_key(self.__rename[key])
+        else:
+            return self.__env.has_key(self.__rename.get(key,key))
 
     #========================================================================
     def __contains__(self, key):
-        return self.__env.__contains__(self.__rename[key])
+        if self.is_strict():
+            return self.__env.__contains__(self.__rename[key])
+        else:
+            return self.__env.__contains__(self.__rename.get(key,key))
     
     #========================================================================
     def items(self):
-        irename = lambda k : self.__irename[k]
+        if self.is_strict():
+            irename = lambda k : self.__irename[k]
+        else:
+            irename = lambda k : self.__irename.get(k,k)
         iresubst = lambda v : _resubst(v, self.__iresubst)
         return [ (irename(k), iresubst(v)) for (k,v) in self.__env.items() ]
 
@@ -542,7 +573,7 @@ class _GVars(object):
                 self.__iresubst[xxx] = gdecls.get_xxx_iresubst_dict(xxx)
 
     #========================================================================
-    def get_var_env_proxy(self, env):
+    def get_var_env_proxy(self, env, *args, **kw):
         """Return proxy to SCons environment `env` which uses keys from 
         `VAR` namespace to access corresponding environment construction
         variables"""
@@ -550,10 +581,11 @@ class _GVars(object):
         irename = _invert_dict(rename)
         resubst = _build_resubst_dict(rename)
         iresubst = _build_resubst_dict(irename)
-        return _GVarsEnvProxy(env, rename, resubst, irename, iresubst)
+        return _GVarsEnvProxy(env, rename, resubst, irename, iresubst, *args,
+                              **kw)
 
     #========================================================================
-    def get_opt_env_proxy(self, env):
+    def get_opt_env_proxy(self, env, *args, **kw):
         """Return proxy to SCons environment `env` which uses keys from 
         `OPT` namespace to access corresponding environment construction
         variables"""
@@ -561,14 +593,16 @@ class _GVars(object):
         irename = _invert_dict(rename)
         resubst = _build_resubst_dict(rename)
         iresubst = _build_resubst_dict(irename)
-        return _GVarsEnvProxy(env, rename, resubst, irename, iresubst)
+        return _GVarsEnvProxy(env, rename, resubst, irename, iresubst, *args,
+                              **kw)
 
     #========================================================================
-    def get_env_proxy(self, env):
+    def get_env_proxy(self, env, *args, **kw):
         """Return proxy to SCons environment `env` which uses original keys 
         identifying ``GVar`` variables to access construction variables"""
         return _GVarsEnvProxy(env, self.__rename[ENV], self.__resubst[ENV],
-                                   self.__irename[ENV], self.__iresubst[ENV])
+                                   self.__irename[ENV], self.__iresubst[ENV],
+                                   *args, **kw)
 
     #========================================================================
     def get_keys(self):

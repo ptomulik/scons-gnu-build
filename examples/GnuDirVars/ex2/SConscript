@@ -38,6 +38,8 @@ Help(dir_gvars.GenerateVariablesHelpText(cli_vars, env))
 #       so env['CXX'] for example will cause a KeyError exception
 proxy = dir_gvars.get_env_proxy(env)
 
+#proxy.get_env().Install(proxy.subst('${bindir}'), '#/README.md')
+
 if not GetOption('help'):
     print ""
     print "There are three `GVar` variables representing GNU directory"
