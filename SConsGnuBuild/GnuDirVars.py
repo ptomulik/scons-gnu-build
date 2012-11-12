@@ -119,7 +119,10 @@ __docformat__ = 'restructuredText'
 from os import path
 
 #############################################################################
-__std_var_templates = [
+# NOTE: variable substitutions must be in curly brackets, so use ${prefix} 
+#       and not $prefix. This is required for proper prefixing/suffixing and
+#       transforming in certain parts of library
+__std_var_triples = [
   ( 'prefix', 
     'Installation prefix', 
     '/usr/local' ),
@@ -215,220 +218,141 @@ __std_var_templates = [
     '${libexecdir}/${package}' )
 ]
 
+default_env_key_prefix = 'GNUBLD_'
+default_env_key_suffix = ''
+default_env_key_transform = lambda x : default_env_key_prefix \
+                          + x.upper() \
+                          + default_env_key_suffix
+default_var_key_prefix = ''
+default_var_key_suffix = ''
+default_var_key_transform = lambda x : default_var_key_prefix \
+                            + x.upper() \
+                            + default_var_key_suffix
+default_opt_key_prefix = 'gnubld_'
+default_opt_key_suffix = ''
+default_opt_key_transform = lambda x : default_opt_key_prefix \
+                            + x.lower() \
+                            + default_opt_key_suffix
+default_opt_prefix = '--'
+default_opt_name_prefix = ''
+default_opt_name_suffix= ''
+default_opt_name_transform = lambda x : default_opt_prefix \
+                            + (default_opt_name_prefix \
+                            + x.lower() \
+                            + default_opt_name_suffix).replace('_','-')
+
+
 #############################################################################
 def __init_module_vars():
-    for sec in map(lambda x : str(x), range(0,10)) + ['l', 'n']:
-        __std_var_templates.append( ('man%sdir' % sec, '', '${prefix}/man/man%s' %sec) )
-        __std_var_templates.append( ('man%sext' % sec, '', '.%s' %sec) )
+    from SConsGnuBuild.Common import standard_man_sections
+    for sec in standard_man_sections():
+        __std_var_triples.append( ('man%sdir' % sec, '', '${prefix}/man/man%s' %sec) )
+        __std_var_triples.append( ('man%sext' % sec, '', '.%s' %sec) )
 __init_module_vars()
 
 #############################################################################
-def __process_std_var_templates(callback, **kw):
-    """Feed all predefined GNU variables to callback.
+def __map_std_var_triples(callback, name_filter = lambda x : True):
+    """Map all predefined GNU variable triples (name, desc, default) via
+    `callback`.
 
     :Parameters:
-      callback : callable
-        function of type ``callback(name, desc, default)``, where
+        callback : callable
+            function of type ``callback(name, desc, default)``, where
 
-          - ``name:`` is the name of variable being processed,
-          - ``desc:`` is short description,
-          - ``default:`` is the default value for the variable.
-    :Keywords:
-        only : list
-            list of variable names to process, others are ignored
-        exclude : list
-            list of variable names to exclude from processing
+                - ``name:`` is the name of variable being processed,
+                - ``desc:`` is short description,
+                - ``default:`` is the default value for the variable.
+        name_filter : callable
+            callable object (e.g. lambda) of type ``name_filter(name) ->
+            boolean`` used to filter-out unwanted variables; only these
+            variables are processed, for which name_filter returns ``True``
+
+    :Returns:
+        returns result of mapping through `callback`
     """
-    from SCons.Util import is_List
-    try:
-      only = kw['only']
-      if not is_List(only): only = [ only ]
-    except KeyError:
-      only = None
-
-    try:
-      exclude = kw['exclude']
-      if not is_List(exclude): exclude = [ exclude ]
-    except KeyError:
-      exclude = None
-
-    for dvt in __std_var_templates:
-        may_process = True
-        name, desc, default = dvt
-        if (only is not None) and (name not in only):   may_process = False
-        if (exclude is not None) and (name in exclude): may_process = False
-        if may_process:
-          callback(name, desc, default)
+    triples = filter(lambda t : name_filter(t[0]), __std_var_triples)
+    return map(lambda x : callback(*x), triples)
 
 #############################################################################
-def AddDirVarsToSConsVariables(variables, **kw):
-    """Add GNU directory variables to SCons command line variables.
-       
-    :Parameters:
-        variables : ``SCons.Variables.Variables``
-            SCons variables to which GNU directory variables will be added
-
-    :Keywords:
-        path_validator : callable
-            use ``path_validator`` instead of default ``PathAccept``
-            when creating SCons command line variables.
-        only : list
-            list of variable names to process, others are ignored
-        exclude : list
-            list of variable names to exclude from processing
-
-    Returns:
-        - returns updated ``variables``
-
-    **Example:**
-
-    .. python::
-        
-        from SConsGnuBuild.GnuDirVars import AddDirVarsToSConsVariables
-        env = Environment()
-        gnuvars = AddDirVarsToSConsVariables(Variables(),only=['prefix'])
-        gnuvars.Update(env, ARGUMENTS)
-        
-    In the above example the ``prefix`` variable is added to scons command
-    line with default value. In effect, we may interpolate the variable as:
-
-    .. python::
-        
-        prefix = env.subst('${prefix}')
-
-    and set its value from command-line: ``scons prefix=/usr``
-    """
-    from SCons.Variables import PathVariable
-
-    nkw = kw.copy()
-    try:
-      path_validator = nkw['path_validator']
-      del nkw['path_validator']
-    except KeyError:
-      path_validator = PathVariable.PathAccept
-
-    def _add_variable(name, desc, default):
-        variables.Add( PathVariable(name, desc, default, path_validator) )
-
-    __process_std_var_templates(_add_variable, **nkw)
-
-    return variables
-
-#############################################################################
-def AddDirVarsToSConsOptions(**kw):
-    """Add GNU directory variables as SCons commandline options.
-
-    This function calls ``AddOption()`` for each processed GNU directory
-    variable.
-
-    :Keywords:
-        only : list
-            list of variable names to process, others are ignored
-        exclude : list
-            list of variable names to exclude from processing
-
-    **Example:**
-
-    .. python::
-
-       from SConsGnuBuild.GnuDirVars import AddDirVarsToSConsOptions
-       env = Environment()
-       AddDirVarsToSConsOptions( only = [ 'prefix', 'exec_prefix' ] )
-       env.Replace(prefix = GetOption('prefix'))
-       env.Replace(exec_prefix = GetOption('exec_prefix'))
-       print "${prefix}: ", env.subst('${prefix}')
-       print "${exec_prefix}: ", env.subst('${exec_prefix}')
-
-    The above example results with two new SCons options: ``--prefix`` and
-    ``--exec-prefix`` being added to command line options. The option values
-    provided by user at command shell are copied to construction variables
-    ``prefix`` and ``exec_prefix``.
-    """
-    from SCons.Script.Main import AddOption
-    def _add_option(name, desc, default):
-        import re
-        AddOption('--%s' % re.sub('_','-',name), dest=name, type='string', 
-                  nargs=1, action='store', metavar='DIR', help=desc,
-                  default=default) 
-    __process_std_var_templates(_add_option, **kw)
-
-#############################################################################
-def AddDirVarsToSConsEnvironment(env, **kw):
-    """Add GNU directory variables to SCons construction variables.
-     
-    This function calls ``env.SetDefault(name = default)`` for each processed
-    GNU directory variable, where ``name`` is name of the variable and 
-    ``default`` is its default value.
+def standard_dir_var_names(name_filter = lambda x : True):
+    """Return list of standard GNU directory variable names
 
     :Parameters:
-        env
-            environment (``SCons.Environment.Environment``) to update,
-    :Keywords:
-        only : list
-            list of variable names to process, others are ignored
-        exclude : list
-            list of variable names to exclude from processing
+        name_filter : callable
+            callable object (e.g. lambda) of type ``name_filter(name) ->
+            boolean`` used to filter-out unwanted variables; only these
+            variables are processed, for which name_filter returns ``True``
+    :Returns:
+        the list of standard GNU directory variable names
+    """
+    return filter(name_filter, zip(*__std_var_triples)[0])
 
-    **Example:**
+#############################################################################
+def standard_dir_gvar_decls(name_filter,
+                            env_key_transform=default_env_key_transform,
+                            var_key_transform=default_var_key_transform,
+                            opt_key_transform=default_opt_key_transform,
+                            opt_name_transform=default_opt_name_transform):
+    from SCons.Variables.PathVariable import PathVariable
+    from SConsGnuBuild.GVars import GVarDecl, GVarDecls
+    def _callback(name, desc, default):
+        env_d = (env_key_transform(name), default)
+        var_d = (var_key_transform(name), desc, default)
+        opt_d = (opt_name_transform(name), { 
+                    'dest' : opt_key_transform(name),
+                    'type' : 'string',
+                    'nargs': 1,
+                    'metavar' : 'DIR' })
+        return (name, GVarDecl(env_d, var_d, opt_d))
 
-    .. python::
+    return GVarDecls(__map_std_var_triples(_callback, name_filter))
 
-       from SConsGnuBuild.GnuDirVars import AddDirVarsToSConsEnvironment
-       env = Environment()
-       AddDirVarsToSConsEnvironment(env, only=['prefix','exec_prefix'])
-
-    The above example adds ``prefix`` and ``exec_prefix`` variables to ``env``,
-    so they may be used later in substitutions:
+###############################################################################
+def StandardDirVarNames(**kw):
+    """Return the names of supported GNU dir variables
     
-    .. python::
-
-        exec_prefix = env.subst('${exec_prefix}')
-        exec_prefix2 = env['exec_prefix']
-    """
-    def _add_variable(name, desc, default):
-        env.SetDefault(name = default)
-    __process_std_var_templates(_add_variable, **kw)
-
-
-#############################################################################
-def DirVarsAsSConsVariables(files = [], args = {}, is_global = 1, **kw):
-    """Return new set of command line variables with GNU directory variables
-    added. 
-
-    **Example**:
-
-    .. python::
-
-        from SConsGnuBuild.GnuDirVars import DirVarsAsSConsVariables
-        env = Environment()
-        gnuvars = DirVarsAsSConsVariables()
-        gnuvars.Update(env, ARGUMENTS)
-
-    The above example adds all GNU directory variables to command line
-    variables.
-
-    The first three parameters to this function are identical as for
-    ``SCons.Variables.Variables()``. 
-
     :Keywords:
-        path_validator : callable
-            use ``path_validator`` instead of default ``PathAccept``
-            when creating SCons command line variables.
-        only : list
-            list of variable names to process, others are ignored
-        exclude : list
-            list of variable names to exclude from processing
+        name_filter : callable
+            callable object (e.g. lambda) of type ``name_filter(name) ->
+            boolean`` used to filter-out unwanted variables; only these
+            variables are processed, for which name_filter returns ``True``
     """
-    from SCons.Variables import Variables
-    return AddDirVarsToSConsVariables(Variables(files, args, is_global),**kw)
+    args = ['name_filter']
+    kw2 = { key : kw[key] for key in args if key in kw }
+    return standard_dir_var_names(**kw2)
 
-#############################################################################
-def StandardDirVars():
-    """Return the names of supported GNU dir variables"""
-    variables = []
-    for v in  __std_var_templates:
-        variables.append(v[0])
-    return variables
+###############################################################################
+def StandardDirGVarDecls(**kw):
+    """Return the standard GNU directory variables as
+    ``GVar`` variable declarations (see `SConsGnuBuild.GVars`).
+    
+    :Keywords:
+        name_filter : callable
+            callable object (e.g. lambda) of type ``name_filter(name) ->
+            boolean`` used to filter-out unwanted variables; only these
+            variables are processed, for which name_filter returns ``True``
+        env_key_transform : callable
+            function or lambda used to transform canonical ``GVar`` names to 
+            keys used for corresponding construction variables in a SCons
+            environment (default: `default_env_key_transform`)
+        var_key_transform : callable
+            function of lambda used to trasform canonical ``GVar`` names to
+            keys used for corresponding SCons command-line variables
+            ``variable=value`` (default: `default_var_key_transform`)
+        opt_key_transform : callable
+            function or lambda used to transform canonical ``GVar`` names to
+            keys used for corresponding SCons command-line options
+            ``--option=value`` (default: `default_opt_key_transform`)
+        opt_name_transform : callable
+            function or lambda used to transform canonical ``GVar`` names to
+            option names (default: `default_opt_name_transform`)
+    :Returns:
+        a dictionary-like object of type `SConsGnuBuild.GVar._GVarDecls`
+    """
+    args = ['name_filter', 'env_key_transform', 'var_key_transform',
+            'opt_key_trasform', 'opt_name_transform']
+    kw2 = { key : kw[key] for key in args if key in kw }
+    return standard_dir_gvar_decls(**kw2)
 
 # Local Variables:
 # # tab-width:4

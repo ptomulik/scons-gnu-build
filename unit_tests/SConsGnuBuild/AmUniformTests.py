@@ -362,18 +362,22 @@ class Test_ensure_name_sanity(unittest.TestCase):
                         % (funame, e))
 
     def test_raises_unknown_primary(self):
+        "ensure_name_sanity() raises exception if can't determine primary name"
         with self.assertRaises(ValueError):
             ensure_name_sanity('bin_FOOBAR')
         with self.assertRaises(ValueError):
             EnsureNameSanity('bin_FOOBAR')
 
     def test_raises_unknown_main_prefix(self):
+        "ensure_name_sanity() raises exception if can't determine main prefix"
         with self.assertRaises(ValueError):
             ensure_name_sanity('foobar_PROGRAMS')
         with self.assertRaises(ValueError):
             EnsureNameSanity('foobar_PROGRAMS')
 
     def test_raises_unknown_add_prefix(self):
+        "ensure_name_sanity() raises exception if can't determine additional "\
+        "prefix"
         with self.assertRaises(ValueError):
             ensure_name_sanity('foobar_bin_PROGRAMS')
         with self.assertRaises(ValueError):
@@ -387,12 +391,16 @@ class Test_ensure_name_sanity(unittest.TestCase):
         pass
 
     def test_raises_main_add_prefix(self):
+        "ensure_name_sanity() raises exception if it finds additional prefix" \
+        "that can't go with given main prefix"
         with self.assertRaises(ValueError):
             ensure_name_sanity('nobase_man_MANS')
         with self.assertRaises(ValueError):
             EnsureNameSanity('nobase_man_MANS')
 
     def test_raises_colliding_add_prefixes(self):
+        "ensure_name_sanity() raises exception if it find colliding " \
+        "additional prefixes" 
         with self.assertRaises(ValueError):
             ensure_name_sanity('nodist_dist_include_HEADERS')
         with self.assertRaises(ValueError):

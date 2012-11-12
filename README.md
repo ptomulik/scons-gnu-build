@@ -19,6 +19,7 @@ It's the very beginning.
  
 comming soon:
 
+  * project configuration,
   * package definition format,
   * installation of defined packages,
 

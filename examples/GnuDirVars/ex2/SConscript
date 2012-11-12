@@ -22,24 +22,35 @@
 
 Import('env')
 
-from SConsGnuBuild.GnuDirVars import DirVarsAsSConsVariables
-gnuvars = DirVarsAsSConsVariables(only=['prefix','exec_prefix','bindir'])
-gnuvars.Update(env, ARGUMENTS)
-Help(gnuvars.GenerateHelpText(env))
+from SConsGnuBuild.GnuDirVars import StandardDirGVarDecls
+
+only = ('prefix','exec_prefix','bindir')
+
+dir_gdecls = StandardDirGVarDecls(name_filter = lambda x : x in only)
+
+cli_vars = Variables()
+dir_gvars = dir_gdecls.Commit(env, cli_vars, True)
+dir_gvars.UpdateEnvironment(env, cli_vars, True, ARGUMENTS)
+
+Help(dir_gvars.GenerateVariablesHelpText(cli_vars, env))
+
+# NOTE: only our `GVars` are available through this environment proxy,
+#       so env['CXX'] for example will cause a KeyError exception
+proxy = dir_gvars.get_env_proxy(env)
 
 if not GetOption('help'):
     print ""
-    print "There are three command line variables (GNU dir variables)"
-    print "currently defined as:"
+    print "There are three `GVar` variables representing GNU directory"
+    print "variables. They are currently defined as:"
     print "=========================================================="
-    print "     prefix=%s" % repr(env['prefix'])
-    print "     exec_prefix=%s" % repr(env['exec_prefix'])
-    print "     bindir=%s" % repr(env['bindir'])
+    print "     prefix=%s" % repr(proxy['prefix'])
+    print "     exec_prefix=%s" % repr(proxy['exec_prefix'])
+    print "     bindir=%s" % repr(proxy['bindir'])
     print "=========================================================="
     print ""
     print "After substitution (interpolation) they have values:"
     print "=========================================================="
-    print "     prefix=%s" % repr(env.subst('${prefix}'))
-    print "     exec_prefix=%s" % repr(env.subst('${exec_prefix}'))
-    print "     bindir=%s" % repr(env.subst('${bindir}'))
+    print "     prefix=%s" % repr(proxy.subst('${prefix}'))
+    print "     exec_prefix=%s" % repr(proxy.subst('${exec_prefix}'))
+    print "     bindir=%s" % repr(proxy.subst('${bindir}'))
     print "=========================================================="

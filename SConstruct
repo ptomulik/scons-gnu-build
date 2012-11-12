@@ -19,9 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE
 
+from SConsGnuBuild.GVars import GVarDecls
 env = Environment()
 Export(['env'])
-
 VariantDir('build/doc', 'doc', duplicate = 0)
 SConscript('build/doc/SConscript')
 

@@ -21,9 +21,9 @@
 
 Import('env')
 
-from SConsGnuBuild.GnuDirVars import StandardDirVars
+from SConsGnuBuild.GnuDirVars import StandardDirVarNames
 from pprint import PrettyPrinter
 
 pp = PrettyPrinter(indent = 4)
 print "Standard GNU directory variables: "
-pp.pprint(StandardDirVars())
+pp.pprint(StandardDirVarNames())
