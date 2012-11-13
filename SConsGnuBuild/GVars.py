@@ -16,7 +16,7 @@ identified by key ``opt_foo`` (we use ``dest`` attribute of command line option
 as its identifying key, see `option attributes`_ of python ``optparse``). At
 certain point, you may request ``GVars`` to update your SCons environment
 ``env`` by populating it with values taken from command-line variables and/or
-options.  At this point, value taken from command-line variable ``VAR_FOO`` and
+options.  At this point, value taken from command-line variable ``VAR_FOO`` or
 value from command-line option ``opt_foo`` may be passed to construction
 variable ``ENV_FOO``. If both, command-line variable and command-line option
 are set, then command-line option takes precedence.
@@ -24,13 +24,13 @@ are set, then command-line option takes precedence.
 If a command-line value is a string, it may contain substitutions (e.g.
 ``VAR_FOO`` may be a string in form ``"bleah bleah ${VAR_BAR}"``). 
 Placeholders in text are assumed to be variable/option names in "local
-namespace". It means, that if we look at command-line variable, and it contains
-placeholder ``"$xxx"``, then ``xxx`` is assumed to be the name of another
-command-line variable (and not, for example, construction/environment
-variable). When passing strings from command-line options and variables to
-environment, the placeholders are renamed to represent related names of
-construction variables in SCons environment. This is shown in the example
-below.
+namespace". It means, that if we have a command-line variable, and its value is
+a string containing placeholder ``"$VVV"``, then ``VVV`` is assumed to be the
+name of another command-line variable (and not, for example,
+construction/environment variable). When passing strings from command-line
+variables and options to an environment, the placeholders are renamed to
+represent corresponding construction variables in SCons environment. This is
+shown in the example below.
 
 **Example**
 
