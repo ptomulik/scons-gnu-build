@@ -288,24 +288,26 @@ def standard_dir_var_names(name_filter = lambda x : True):
     return filter(name_filter, zip(*__std_var_triples)[0])
 
 #############################################################################
-def standard_dir_gvar_decls(name_filter,
+def standard_dir_gvar_decls(name_filter=lambda x : True,
                             env_key_transform=default_env_key_transform,
                             var_key_transform=default_var_key_transform,
                             opt_key_transform=default_opt_key_transform,
                             opt_name_transform=default_opt_name_transform):
     from SCons.Variables.PathVariable import PathVariable
-    from SConsGnuBuild.GVars import GVarDecl, GVarDecls
+    from SConsGnuBuild.GVars import GVarDeclUni, GVarDeclsUni
     def _callback(name, desc, default):
-        env_d = (env_key_transform(name), default)
-        var_d = (var_key_transform(name), desc, default)
-        opt_d = (opt_name_transform(name), { 
-                    'dest' : opt_key_transform(name),
-                    'type' : 'string',
-                    'nargs': 1,
-                    'metavar' : 'DIR' })
-        return (name, GVarDecl(env_d, var_d, opt_d))
+        decl = { 'env_key'  : env_key_transform(name),
+                 'var_key'  : var_key_transform(name),
+                 'opt_key'  : opt_key_transform(name),
+                 'default'  : default,
+                 'help'     : desc,
+                 'option'   : opt_name_transform(name),
+                 'type'     : 'string',
+                 'nargs'    : 1,
+                 'metavar'  : 'DIR' }
+        return name, decl
 
-    return GVarDecls(__map_std_var_triples(_callback, name_filter))
+    return GVarDeclsUni(__map_std_var_triples(_callback, name_filter))
 
 ###############################################################################
 def StandardDirVarNames(**kw):

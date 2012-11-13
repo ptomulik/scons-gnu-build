@@ -1,12 +1,12 @@
 """`SConsGnuBuild.GVars`
 
-This module provides abstractions for what we call ``GVars`` (abbreviation of
-"gluing variables"). A ``GVar`` variable correlates single construction
+This module provides an implementation of what we call ``GVars`` (abbreviation
+of "gluing variables"). A ``GVar`` variable correlates single construction
 variable in SCons environment (``env['NAME'], env.subst('$NAME')``), single
 SCons command-line variable (``variable=value``) and single SCons command-line
 option (``--option=value``). Some (or all) of them may be missing in ``GVar``
-definition, so we may for example correlate only construction variable and
-some command-line option (no command-line variable in definition).
+definition, so we may for example correlate only construction variable and some
+command-line option (no command-line variable in definition).
 
 With ``GVars`` you use separate namespaces for environment variables,
 command-line variables and command-line options. So, for example, you may
@@ -24,12 +24,13 @@ are set, then command-line option takes precedence.
 If a command-line value is a string, it may contain substitutions (e.g.
 ``VAR_FOO`` may be a string in form ``"bleah bleah ${VAR_BAR}"``). 
 Placeholders in text are assumed to be variable/option names in "local
-namespace". It means, if we look at command-line variable, and it contains
+namespace". It means, that if we look at command-line variable, and it contains
 placeholder ``"$xxx"``, then ``xxx`` is assumed to be the name of another
 command-line variable (and not, for example, construction/environment
 variable). When passing strings from command-line options and variables to
 environment, the placeholders are renamed to represent related names of
-construction variables in SCons environment. This is shown in the example below.
+construction variables in SCons environment. This is shown in the example
+below.
 
 **Example**
 
@@ -48,7 +49,7 @@ and we invoked scons as follows::
     # Command line:
     scons VAR_FOO='${VAR_BAR}' VAR_BAR='${foo}' --opt-geez='${opt_foo}'
 
-then after updating some SCons environment ``env`` with command-line variables
+then after updating a SCons environment ``env`` with command-line variables
 and options corresponding to ``GVar`` variables, the environment will have
 following construction variables set::
 
@@ -59,7 +60,7 @@ following construction variables set::
 The ``-*->`` arrow means, that there was no command-line variable named
 ``foo``, so the ``"${foo}"`` placeholder was left unaltered. 
 
-Now, as we fell an overall contept, let's see some code examples.
+Now, as we know the general idea, let's see some code examples.
 
 **Example**
 
@@ -96,7 +97,7 @@ Corresponding construction variables (environment) are named ``ENV_FOO``,
 ``ENV_BAR`` and ``ENV_GEEZ`` respectively. Corresponding command-line variables
 are: ``VAR_FOO``, ``VAR_BAR`` and ``VAR_GEEZ``. Finally, the command-line
 options that correspond to our ``GVar`` variables are named ``opt_foo``,
-``opt_bar`` and ``bar_geez`` (note: these are actually keys identifying options
+``opt_bar`` and ``opt_geez`` (note: these are actually keys identifying options
 within SCons script, they may be different from the option names that user sees
 on its screen - here we have key ``opt_foo`` and command-line option ``--foo``).
 
@@ -381,8 +382,14 @@ def _invert_dict(_dict):
 #############################################################################
 class _GVarsEnvProxy(object):
     #========================================================================
-    """Proxy used to update construction variables in `SCons environment`_
+    """Proxy used to get/set construction variables in `SCons environment`_
     while operating on mapped variable names.
+
+    This object reimplements several methods of SCons
+    ``SubstitutionEnvironment`` used to access environment's construction
+    variables. The variable names (and placeholders found in their values) are
+    translated forth and backk from/to ``GVars`` namespace when accessing the
+    variables.
 
     **Example**::
 
@@ -421,8 +428,7 @@ class _GVarsEnvProxy(object):
                 `subst()`)
             irename
                 dictionary used for mapping variable names from environment
-                to user namespace (currently not used, but may be necessary in
-                future),
+                to user namespace (used by ``items()``),
             iresubst
                 dictionary used by to rename placeholders in values passed
                 back from environment to user (used by `__getitem__()` for
@@ -438,7 +444,7 @@ class _GVarsEnvProxy(object):
         self.__irename = irename
         self.__resubst = resubst
         self.__iresubst = iresubst
-        self.__strict = strict
+        self.set_strict(strict)
 
     #========================================================================
     def get_env(self):
@@ -449,63 +455,110 @@ class _GVarsEnvProxy(object):
         return self.__strict
 
     #========================================================================
-    def set_strict(self, strict=True):
+    def set_strict(self, strict):
+        self.__setup_methods(strict)
         self.__strict = strict
 
     #========================================================================
-    def __delitem__(self, key):
-        if self.is_strict():
-            self.__env.__delitem__(self.__rename[key])
+    def __setup_methods(self, strict):
+        if strict:
+            self.__delitem__impl = self.__delitem__strict
+            self.__getitem__impl = self.__getitem__strict
+            self.__setitem__impl = self.__setitem__strict
+            self.get = self._get_strict
+            self.has_key = self._has_key_strict
+            self.__contains__impl = self.__contains__strict
+            self.items = self._items_strict
         else:
-            self.__env.__delitem__(self.__rename.get(key,key))
-        
+            self.__delitem__impl = self.__delitem__nonstrict
+            self.__getitem__impl = self.__getitem__nonstrict
+            self.__setitem__impl = self.__setitem__nonstrict
+            self.get = self._get_nonstrict
+            self.has_key = self._has_key_nonstrict
+            self.__contains__impl = self.__contains__nonstrict
+            self.items = self._items_nonstrict
+
+    #========================================================================
+    def __delitem__(self, key):
+        self.__delitem__impl(key)
+
+    #========================================================================
+    def __delitem__strict(self, key):
+        self.__env.__delitem__(self.__rename[key])
+
+    #========================================================================
+    def __delitem__nonstrict(self, key):
+        self.__env.__delitem__(self.__rename.get(key,key))
+
     #========================================================================
     def __getitem__(self, key):
-        if self.is_strict():
-            env_key = self.__rename[key]
-            return _resubst(self.__env[env_key], self.__iresubst)
-        else:
-            env_key = self.__rename.get(key,key)
-            return _resubst(self.__env[env_key], self.__iresubst)
+        return self.__getitem__impl(key)
+
+    #========================================================================
+    def __getitem__strict(self, key):
+        env_key = self.__rename[key]
+        return _resubst(self.__env[env_key], self.__iresubst)
+
+    #========================================================================
+    def __getitem__nonstrict(self, key):
+        env_key = self.__rename.get(key,key)
+        return _resubst(self.__env[env_key], self.__iresubst)
 
     #========================================================================
     def __setitem__(self, key, value):
-        if self.is_strict():
-            env_key = self.__rename[key]
-        else:
-            env_key = self.__rename.get(key,key)
+        return self.__setitem__impl(key, value)
+
+    #========================================================================
+    def __setitem__strict(self, key, value):
+        env_key = self.__rename[key]
         env_value = _resubst(value, self.__resubst)
         self.__env[env_key] = env_value
 
     #========================================================================
-    def get(self, key, default=None):
-        if self.is_strict():
-            env_key = self.__rename[key]
-        else:
-            env_key = self.__rename.get(key,key)
+    def __setitem__nonstrict(self, key, value):
+        env_key = self.__rename.get(key,key)
+        env_value = _resubst(value, self.__resubst)
+        self.__env[env_key] = env_value
+
+    #========================================================================
+    def _get_strict(self, key, default=None):
+        env_key = self.__rename[key]
         return _resubst(self.__env.get(env_key, default), self.__iresubst)
 
     #========================================================================
-    def has_key(self, key):
-        if self.is_strict():
-            return self.__env.has_key(self.__rename[key])
-        else:
-            return self.__env.has_key(self.__rename.get(key,key))
+    def _get_nonstrict(self, key, default=None):
+        env_key = self.__rename.get(key,key)
+        return _resubst(self.__env.get(env_key, default), self.__iresubst)
+
+    #========================================================================
+    def _has_key_strict(self, key):
+        return key in self.__rename
+
+    #========================================================================
+    def _has_key_nonstrict(self, key):
+        return self.__env.has_key(self.__rename.get(key,key))
 
     #========================================================================
     def __contains__(self, key):
-        if self.is_strict():
-            return self.__env.__contains__(self.__rename[key])
-        else:
-            return self.__env.__contains__(self.__rename.get(key,key))
+        return self.__contains__impl(key)
+
+    #========================================================================
+    def __contains__strict(self, key):
+        return self.__env.__contains__(self.__rename[key])
     
     #========================================================================
-    def items(self):
-        if self.is_strict():
-            irename = lambda k : self.__irename[k]
-        else:
-            irename = lambda k : self.__irename.get(k,k)
+    def __contains__nonstrict(self, key):
+        return self.__env.__contains__(self.__rename.get(key,key))
+
+    #========================================================================
+    def _items_strict(self):
         iresubst = lambda v : _resubst(v, self.__iresubst)
+        return [ (k, self[k]) for k in self.__rename ]
+
+    #========================================================================
+    def _items_nonstrict(self):
+        iresubst = lambda v : _resubst(v, self.__iresubst)
+        irename = lambda k : self.__irename.get(k,k)
         return [ (irename(k), iresubst(v)) for (k,v) in self.__env.items() ]
 
     #========================================================================
@@ -573,7 +626,7 @@ class _GVars(object):
                 self.__iresubst[xxx] = gdecls.get_xxx_iresubst_dict(xxx)
 
     #========================================================================
-    def get_var_env_proxy(self, env, *args, **kw):
+    def VarEnvProxy(self, env, *args, **kw):
         """Return proxy to SCons environment `env` which uses keys from 
         `VAR` namespace to access corresponding environment construction
         variables"""
@@ -585,7 +638,7 @@ class _GVars(object):
                               **kw)
 
     #========================================================================
-    def get_opt_env_proxy(self, env, *args, **kw):
+    def OptEnvProxy(self, env, *args, **kw):
         """Return proxy to SCons environment `env` which uses keys from 
         `OPT` namespace to access corresponding environment construction
         variables"""
@@ -597,7 +650,7 @@ class _GVars(object):
                               **kw)
 
     #========================================================================
-    def get_env_proxy(self, env, *args, **kw):
+    def EnvProxy(self, env, *args, **kw):
         """Return proxy to SCons environment `env` which uses original keys 
         identifying ``GVar`` variables to access construction variables"""
         return _GVarsEnvProxy(env, self.__rename[ENV], self.__resubst[ENV],
@@ -627,6 +680,18 @@ class _GVars(object):
         return self.__rename[xxx][key]
 
     #========================================================================
+    def env_key(self, key):
+        return self.__rename[ENV][key]
+
+    #========================================================================
+    def var_key(self, key):
+        return self.__rename[VAR][key]
+
+    #========================================================================
+    def opt_key(self, key):
+        return self.__rename[OPT][key]
+
+    #========================================================================
     def update_env_from_vars(self, env, variables, args=None):
         #--------------------------------------------------------------------
         """Update construction variables in SCons environment
@@ -650,7 +715,7 @@ class _GVars(object):
         .. _variables.Update(proxy[,args]): http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html#Update
         """
         #--------------------------------------------------------------------
-        proxy = self.get_var_env_proxy(env)
+        proxy = self.VarEnvProxy(env)
         variables.Update(proxy, args)
 
     #========================================================================
@@ -669,7 +734,7 @@ class _GVars(object):
         """
         #--------------------------------------------------------------------
         from SCons.Script.Main import GetOption
-        proxy = self.get_opt_env_proxy(env)
+        proxy = self.OptEnvProxy(env)
         for opt_key in self.__irename[OPT]:
             opt_value = GetOption(opt_key)
             if opt_value is not None:
@@ -726,7 +791,7 @@ class _GVars(object):
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
         """
         #--------------------------------------------------------------------
-        proxy = self.get_var_env_proxy(env)
+        proxy = self.VarEnvProxy(env)
         variables.Save(filename, proxy)
 
     def GenerateVariablesHelpText(self, variables, env, *args):
@@ -752,7 +817,7 @@ class _GVars(object):
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
         """
         #--------------------------------------------------------------------
-        proxy = self.get_var_env_proxy(env)
+        proxy = self.VarEnvProxy(env)
         return variables.GenerateHelpText(proxy, *args)
 
 #############################################################################
@@ -1173,22 +1238,147 @@ class _GVarDecl(object):
             return False
 
 #############################################################################
-def GVarDecl(decl, *args, **kw):
+def GVarDecl(*args, **kw):
     #------------------------------------------------------------------------
     """Convert input arguments to `_GVarDecl` instance.
    
    :Returns:
-        - if `decl` is an instance of `_GVarDecl`, then returns `decl`
-          unaltered,
-        - otherwise returns result of `_GVarDecl(decl,*args,**kw)`
+        - if ``args[0]`` is an instance of `_GVarDecl`, then returns
+          ``args[0]`` unaltered,
+        - otherwise returns result of `_GVarDecl(*args,**kw)`
     """
     #------------------------------------------------------------------------
-    from SCons.Util import is_Tuple, is_Dict
-    if isinstance(decl, _GVarDecl):
-        return decl
+    if len(args) > 0 and isinstance(args[0], _GVarDecl):
+        return args[0]
     else:
-        return _GVarDecl(decl, *args, **kw)
+        return _GVarDecl(*args, **kw)
 
+#############################################################################
+def GVarDeclUni(env_key=None, var_key=None, opt_key=None, default=None,
+                help=None, validator=None, converter=None, option=None,
+                type=None, opt_default=None, metavar=None, nargs=None,
+                choices=None, action=None, const=None, callback=None,
+                callback_args=None, callback_kwargs=None):
+    #------------------------------------------------------------------------
+    """Convert unified set of arguments to `_GVarDecl` instance.
+
+    This function accepts minimal set of parameters to declare consistently a
+    ``GVar`` variable and its corresponding `ENV`, `VAR` and `OPT`
+    counterparts.  If the first argument named `env_key` is an instance of
+    `_GVarDecl`, then it is returned unaltered. Otherwise the arguments are
+    mapped onto following attributes of corresponding `ENV`, `VAR` and `OPT`
+    variables/options::
+
+        ARG                 ENV         VAR         OPT
+        ----------------+-----------------------------------------
+        env_key         |   key         -           -
+        var_key         |   -           key         -
+        opt_key         |   -           -           dest
+        default         |   default     default     -
+        help            |   -           help        help
+        validator       |   -           validator   -
+        converter       |   -           converter   -
+        option          |   -           -           option strings
+        type            |   -           -           type
+        opt_default     |   -           -           default
+        metavar         |   -           -           metavar
+        nargs           |   -           -           nargs
+        choices         |   -           -           choices
+        action          |   -           -           action
+        const           |   -           -           const
+        callback        |   -           -           callback
+        callback_args   |   -           -           callback_args
+        callback_kwargs |   -           -           callback_kwargs
+        ----------------+------------------------------------------
+    
+    :Parameters:
+        env_key : `_GVarDecl` | string | None
+            if an instance of `_GVarDecl`, then this object is returned to the
+            caller, key used to identify corresponding construction variable
+            (`ENV`); if ``None`` the ``GVar`` variable  has no corresponding
+            construction variable,
+        var_key : string | None
+            key used to identify corresponding command-line variable (`VAR`);
+            if ``None``, the ``GVar`` variable  has no corresponding
+            command-line variable, 
+        opt_key : string | None
+            key used to identify corresponding command-line option (`OPT`);
+            if ``None`` the ``GVar`` variable  has no corresponding
+            command-line option,
+        default
+            default value used to initialize corresponding construction
+            variable (`ENV`) and command-line variable (`VAR`); 
+            note that there is separate `opt_default` argument for command-line
+            option,
+        help : string | None
+            message used to initialize help in corresponding command-line
+            variable (`VAR`) and command-line option (`OPT`),
+        validator
+            same as for `SCons.Variables.Variables.Add()`_,
+        converter
+            same sd for `SCons.Variables.Variables.Add()`_,
+        option
+            option string, e.g. ``"--option"`` used for corresponding
+            command-line option,
+        type
+            same as `type` in `optparse option attributes`_,
+        opt_default
+            same as `default` in `optparse option attributes`_,
+        metavar
+            same as `metavar` in `optparse option attributes`_,
+        nargs
+            same as `nargs` in `optparse option attributes`_,
+        choices
+            same as `choices` in `optparse option attributes`_,
+        action
+            same as `action` in `optparse option attributes`_,
+        const
+            same as `const` in `optparse option attributes`_,
+        callback
+            same as `callback` in `optparse option attributes`_,
+        callback_args
+            same as `callback_args` in `optparse option attributes`_,
+        callback_kwargs
+            same as `callback_kwargs` in `optparse option attributes`_,
+            
+    :Returns:
+        - if `env_key` is present and it is an instance of `_GVarDecl`, then it
+          is returned unaltered,
+        - otherwise returns new `_GVarDecl` object initialized according to
+          rules given above.
+
+    .. _SCons.Variables.Variables.Add(): http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html#Add
+    .. _optparse option attributes: http://docs.python.org/2/library/optparse.html#option-attributes
+    """
+    #------------------------------------------------------------------------
+    if isinstance(env_key, _GVarDecl):
+        return env_key
+    else:
+        # --- ENV ---
+        if env_key is not None:
+            env_decl = { env_key : default }            
+        else: 
+            env_decl = None
+        # --- VAR ---
+        if var_key is not None:
+            items = [ (var_key, 'key'), (default, 'default'), (help, 'help'),
+                      (validator, 'validator'), (converter, 'converter') ]
+            var_decl = { k : v for (v,k) in items if v is not None }
+        else:
+            var_decl = None
+        # --- OPT ---
+        if opt_key and option is not None:
+            items = [   (opt_key, 'dest'), (opt_default, 'default'),
+                        (help, 'help'), (type, 'type'), (metavar, 'metavar'),
+                        (nargs, 'nargs'), (choices, 'choices'),
+                        (action, 'action'), (const, 'const'),
+                        (callback, 'callback'),
+                        (callback_args, 'callback_args'),
+                        (callback_kwargs, 'callback_kwargs') ]
+            opt_decl = (option, { k : v for (v,k) in items if v is not None })
+        else:
+            opt_decl = None
+        return _GVarDecl(env_decl, var_decl, opt_decl)
 
 #############################################################################
 class _GVarDecls(dict):
@@ -1700,18 +1890,19 @@ class _GVarDecls(dict):
         else:       return None
         
 #############################################################################
-def _gvar_decls(initializer=_missing, **kw):
-    mkdecl = lambda x : x if isinstance(x, _GVarDecl) else GVarDecl(*tuple(x))
+def __dict_converted(convert, initializer=_missing, **kw):
+    """Generic algorithm for dict initialization while converting the values
+    provided within initializers"""
     if initializer is _missing:
         decls = {}
     else:
         try: keys = initializer.keys()
         except AttributeError:
-            decls = { k : mkdecl(v) for (k,v) in iter(initializer) }
+            decls = { k : convert(v) for (k,v) in iter(initializer) }
         else:
-            decls = { k : mkdecl(initializer[k]) for k in keys }
-    decls.update({ k : mkdecl(kw[k]) for k in kw })
-    return _GVarDecls(decls)
+            decls = { k : convert(initializer[k]) for k in keys }
+    decls.update({ k : convert(kw[k]) for k in kw })
+    return decls
 
 #############################################################################
 def GVarDecls(*args, **kw):
@@ -1834,8 +2025,17 @@ def GVarDecls(*args, **kw):
         initializer.
 
     """
-    return _gvar_decls(*args,**kw)
+    convert = lambda x : x if isinstance(x, _GVarDecl)  \
+                           else GVarDecl(**x) if hasattr(x, 'keys') \
+                           else GVarDecl(*tuple(x))
+    return _GVarDecls(__dict_converted(convert, *args, **kw))
 
+#############################################################################
+def GVarDeclsUni(*args, **kw):
+    convert = lambda x : x if isinstance(x, _GVarDecl) \
+                           else GVarDeclUni(**x) if hasattr(x, 'keys') \
+                           else GVarDeclUni(*tuple(x))
+    return _GVarDecls(__dict_converted(convert, *args, **kw))
 
 
 # Local Variables:

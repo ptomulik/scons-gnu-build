@@ -25,34 +25,47 @@ Import('env')
 from SConsGnuBuild.GnuDirVars import StandardDirGVarDecls
 
 only = ('prefix','exec_prefix','bindir')
-
-dir_gdecls = StandardDirGVarDecls(name_filter = lambda x : x in only)
-
+gdecls = StandardDirGVarDecls(name_filter = lambda x : x in only)
 cli_vars = Variables()
-dir_gvars = dir_gdecls.Commit(env, cli_vars, True)
-dir_gvars.UpdateEnvironment(env, cli_vars, True, ARGUMENTS)
-
-Help(dir_gvars.GenerateVariablesHelpText(cli_vars, env))
-
-# NOTE: only our `GVars` are available through this environment proxy,
-#       so env['CXX'] for example will cause a KeyError exception
-proxy = dir_gvars.get_env_proxy(env)
-
-#proxy.get_env().Install(proxy.subst('${bindir}'), '#/README.md')
+gvars = gdecls.Commit(env, cli_vars, True)
+gvars.UpdateEnvironment(env, cli_vars, True, ARGUMENTS)
+proxy = gvars.EnvProxy(env, strict=True)
+var_proxy = gvars.VarEnvProxy(env, strict=True)
 
 if not GetOption('help'):
     print ""
-    print "There are three `GVar` variables representing GNU directory"
-    print "variables. They are currently defined as:"
+    print "We have imported three `GVar` variables representing GNU"
+    print "directory variables. They are currently defined as:"
     print "=========================================================="
-    print "     prefix=%s" % repr(proxy['prefix'])
-    print "     exec_prefix=%s" % repr(proxy['exec_prefix'])
-    print "     bindir=%s" % repr(proxy['bindir'])
+    for key in only:
+        print "     %s=%r" % (key, proxy[key])
     print "=========================================================="
     print ""
     print "After substitution (interpolation) they have values:"
     print "=========================================================="
-    print "     prefix=%s" % repr(proxy.subst('${prefix}'))
-    print "     exec_prefix=%s" % repr(proxy.subst('${exec_prefix}'))
-    print "     bindir=%s" % repr(proxy.subst('${bindir}'))
+    for key in only:
+        print "     %s=%r" % (key, proxy.subst("${%s}" % key))
     print "=========================================================="
+    print ""
+    print "The corresponding command-line variables are:"
+    print "=========================================================="
+    for key in only:
+        var_key = gvars.var_key(key)
+        print "     %s=%r" % (var_key, var_proxy[var_key])
+    print "=========================================================="
+    print ""
+    print "The corresponding construction variables are:"
+    print "=========================================================="
+    for key in only:
+        env_key = gvars.env_key(key)
+        print "     %s=%r" % (env_key, env[env_key])
+    print "=========================================================="
+    print ""
+    print "There are also corresponding command-line options."
+    print "To see the options type: scons -Q ex2 --help"
+    print ""
+# Local Variables:
+# # tab-width:4
+# # indent-tabs-mode:nil
+# # End:
+# vim: set syntax=python expandtab tabstop=4 shiftwidth=4:

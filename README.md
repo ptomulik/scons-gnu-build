@@ -13,6 +13,9 @@ CURRENT STATUS
 
 It's the very beginning.
 
+  * implemented ``GVar`` variables to glue construction variables, command-line
+    variables and command-line options; GNU directory variables currently use
+    them
   * implemented GNU directory variables (available as SCons command line flags
     or variable and also via SCons Environment)
   * initially implemented automake-like uniform naming,

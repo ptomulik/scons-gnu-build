@@ -22,32 +22,51 @@
 
 Import('env')
 
-from SConsGnuBuild.GnuDirVars import AddDirVarsToSConsOptions, \
-                                     DirVarsAsSConsVariables
+from SConsGnuBuild.GnuDirVars import StandardDirGVarDecls
+from SConsGnuBuild.GnuDirVars import default_var_key_transform
+from SConsGnuBuild.GnuDirVars import default_opt_key_transform
 
-AddDirVarsToSConsOptions( only = ['prefix', 'exec_prefix'] )
-gnuvars = DirVarsAsSConsVariables( exclude = ['prefix', 'exec_prefix'] )
-gnuvars.Update(env, ARGUMENTS)
-env.Append( prefix = GetOption('prefix') )
-env.Append( exec_prefix = GetOption('exec_prefix') )
-env.Append( package = 'mypkg' )
+options = [ '--prefix', '--exec-prefix' ]
+
+kw = { 'var_key_transform' : lambda x : \
+          default_var_key_transform(x) if not x in options else None,
+       'opt_key_transform' : lambda x : \
+          default_opt_key_transform(x) if x in options else None  }
+gdecls = StandardDirGVarDecls(**kw)
+
+cli_vars = Variables()
+gvars = gdecls.Commit(env, cli_vars, True)
+gvars.UpdateEnvironment(env, cli_vars, True, ARGUMENTS)
+proxy = gvars.VarEnvProxy(env)
 
 if not GetOption('help'):
-   print ''
-   print 'There are two options added to control GNU dir variables:'
-   print '============================================================'
-   print '  --prefix'
-   print '  --exec-prefix'
-   print '============================================================'
-   print "run 'scons ex3 --help' to see them under Local Options"
-   print ''
-   print 'There are also several command line variables. Some of them:'
-   print '============================================================'
-   print '  bindir=%s' % env.subst('${bindir}')
-   print '  sbindir=%s' % env.subst('${sbindir}')
-   print '  sysconfdir=%s' % env.subst('${sysconfdir}')
-   print '  pkglibdir=%s' % env.subst('${pkglibdir}')
-   print '  man2dir=%s' % env.subst('${man2dir}')
-   print '  man2ext=%s' % env.subst('${man2ext}')
-   print '============================================================'
-   print 'The options and construction variables work together here'
+    print ''
+    print 'There are two options added to control GNU dir variables:'
+    print '============================================================'
+    print '  --prefix'
+    print '  --exec-prefix'
+    print '============================================================'
+    print "run 'scons ex3 --help' to see them under Local Options"
+    print ''
+    print 'There are also several command line variables. Some of them:'
+    print '============================================================'
+    for key in ['bindir', 'sbindir', 'sysconfdir', 'pkglibdir', 'man2dir',
+               'man2ext']:
+        var_key = gvars.var_key(key)
+        print '  %s=%s' % (var_key, vproxy[var_key])
+    print '============================================================'
+    print 'The options and construction variables are supplementary'
+    print ''
+    print 'The construction variables involved:'
+    print '============================================================'
+    for key in ['prefix', 'exec_prefix', 'bindir', 'sbindir', 'sysconfdir',
+               'pkglibdir', 'man2dir', 'man2ext']:
+        env_key = gvars.env_key(key)
+        print '  env["%s"]=%r' % (env_key, env[env_key])
+    print '============================================================'
+
+# Local Variables:
+# # tab-width:4
+# # indent-tabs-mode:nil
+# # End:
+# vim: set syntax=python expandtab tabstop=4 shiftwidth=4:
