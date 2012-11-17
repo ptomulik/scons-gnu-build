@@ -42,27 +42,28 @@ test -e ${SITEDIR}/site_tools/docbook || mkdir -p ${SITEDIR}/site_tools/docbook
 wget -O ${TARBALL} ${URL} && \
   (cd ${SITEDIR}/site_tools/docbook  && tar -xzf ${TARBALL} --wildcards --strip-components=1 '*scons_docbook*/__init__.py' '*scons_docbook*/utils')
 rm -rf ${DLDIR}
-# patch downloaded files
-(cd ${SITEDIR}/site_tools/docbook && patch -p1 <<!
---- a/utils/xmldepend.xsl	2012-11-03 22:14:29.946312500 +0100
-+++ b/utils/xmldepend.xsl	2012-11-03 22:13:15.360495357 +0100
-@@ -28,8 +28,7 @@
- 
- <!-- BEGIN PARAMETERS -->
- 
--<xsl:param name="xmldepend.terminator" select="'
--'"/>
-+<xsl:param name="xmldepend.terminator" select="'&#10;'"/>
- 
- <!-- END PARAMETERS -->
- 
-@@ -154,4 +153,4 @@
-   </xsl:apply-templates>
- </xsl:template>
- 
--</xsl:stylesheet>
-\ No newline at end of file
-+</xsl:stylesheet>
-!
-)
+# XXX: Patch is not necessary anymore (it's applied to upstream sources)
+## # patch downloaded files
+## (cd ${SITEDIR}/site_tools/docbook && patch -p1 <<!
+## --- a/utils/xmldepend.xsl	2012-11-03 22:14:29.946312500 +0100
+## +++ b/utils/xmldepend.xsl	2012-11-03 22:13:15.360495357 +0100
+## @@ -28,8 +28,7 @@
+##  
+##  <!-- BEGIN PARAMETERS -->
+##  
+## -<xsl:param name="xmldepend.terminator" select="'
+## -'"/>
+## +<xsl:param name="xmldepend.terminator" select="'&#10;'"/>
+##  
+##  <!-- END PARAMETERS -->
+##  
+## @@ -154,4 +153,4 @@
+##    </xsl:apply-templates>
+##  </xsl:template>
+##  
+## -</xsl:stylesheet>
+## \ No newline at end of file
+## +</xsl:stylesheet>
+## !
+## )
 #############################################################################
