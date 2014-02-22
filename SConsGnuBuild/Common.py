@@ -5,17 +5,17 @@ Functions and objects used by more than one modules.
 
 #
 # Copyright (c) 2012 by Pawel Tomulik
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -44,7 +44,7 @@ class __null(object) : pass
 ##    `callback`.
 ##
 ##    **Example**:
-##        
+##
 ##        >>> from SConsGnuBuild.Common import map_named_tuples
 ##        >>> tuples = [ ('foo', 1), ('bar', 2), ('geez', 3) ]
 ##        >>> map_named_tuples(lambda *x : x, tuples, only = ('foo', 'geez'), prefix='PFX_')
@@ -64,7 +64,7 @@ class __null(object) : pass
 ##        exclude : sequence | None
 ##            tuple names of the tuples to exclude from mapping,
 ##    :Returns:
-##        returns result of mapping 
+##        returns result of mapping
 ##    """
 ##    if only is not None:
 ##        tuples = filter(lambda t : t[0] in only, tuples)
@@ -93,7 +93,7 @@ __std_man_sections = map(lambda x : str(x), range(0,10)) + ['n', 'l']
 #############################################################################
 def standard_man_sections():
     """Return list of standard man sections (manpage sections)
-    
+
     **Description**
 
     The function returns a list of man page sections as defined in the section
@@ -123,7 +123,7 @@ def get_envvar_prefix(env, override=__null, *args):
     key = 'GNUBLD_ENVVAR_PREFIX'
     default = 'GNUBLD_'
     return __get_var(env, key, default, override, *args)
-    
+
 #############################################################################
 def get_configure_alias(env, override=__null, *args):
     key = 'GNUBLD_CONFIGURE_ALIAS'

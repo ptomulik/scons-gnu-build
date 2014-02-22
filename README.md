@@ -6,7 +6,7 @@ Welcome to ``scons-gnu-build``.
 The ``scons-gnu-build`` extension makes ``SCons`` behaving more like GNU
 build system (autotools based). The purpose is to achieve better
 interoperability with several external tools (especially external packaging
-tools, e.g. debian's dh) that normally use GNU build system.  
+tools, e.g. debian's dh) that normally use GNU build system.
 
 CURRENT STATUS
 --------------
@@ -19,7 +19,7 @@ It's the very beginning.
   * implemented GNU directory variables (available as SCons command line flags
     or variable and also via SCons Environment)
   * initially implemented automake-like uniform naming,
- 
+
 comming soon:
 
   * project configuration,
@@ -44,7 +44,7 @@ following command (see also requirements below)
 
 ```
   scons api-doc
-``` 
+```
 
 The generated documentation is located within ``build/doc/api`` directory.
 
