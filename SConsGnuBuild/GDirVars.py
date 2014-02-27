@@ -1,4 +1,4 @@
-"""`SConsGnuBuild.GnuDirVars`
+"""`SConsGnuBuild.GDirVars`
 
 Provides GNU directory variables.
 
@@ -11,7 +11,7 @@ The variables defined here may be easilly added to:
     - SCons environment, as construction variables (``env.subst('$variable')``),
     - SCons command line variables (``scons variable=value``),
     - SCons command line options (``scons --variable=value``).
-      
+
 
 Supported variables:
 ====================
@@ -95,17 +95,17 @@ Supported variables:
 
 #
 # Copyright (c) 2012 by Pawel Tomulik
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -119,18 +119,18 @@ __docformat__ = 'restructuredText'
 from os import path
 
 #############################################################################
-# NOTE: variable substitutions must be in curly brackets, so use ${prefix} 
+# NOTE: variable substitutions must be in curly brackets, so use ${prefix}
 #       and not $prefix. This is required for proper prefixing/suffixing and
 #       transforming in certain parts of library
 __std_var_triples = [
-  ( 'prefix', 
-    'Installation prefix', 
+  ( 'prefix',
+    'Installation prefix',
     '/usr/local' ),
-  ( 'exec_prefix', 
-    'Installation prefix for executable files', 
+  ( 'exec_prefix',
+    'Installation prefix for executable files',
     '${prefix}' ),
-  ( 'bindir', 
-    'The directory for installing executable programs that users can run.', 
+  ( 'bindir',
+    'The directory for installing executable programs that users can run.',
     '${exec_prefix}/bin' ),
   ( 'sbindir',
     'The directory for installing executable programs that can be run from the'
@@ -274,7 +274,7 @@ def __map_std_var_triples(callback, name_filter = lambda x : True):
     return map(lambda x : callback(*x), triples)
 
 #############################################################################
-def standard_dir_var_names(name_filter = lambda x : True):
+def gvar_names(name_filter = lambda x : True):
     """Return list of standard GNU directory variable names
 
     :Parameters:
@@ -288,13 +288,13 @@ def standard_dir_var_names(name_filter = lambda x : True):
     return filter(name_filter, zip(*__std_var_triples)[0])
 
 #############################################################################
-def standard_dir_gvar_decls(name_filter=lambda x : True,
-                            env_key_transform=default_env_key_transform,
-                            var_key_transform=default_var_key_transform,
-                            opt_key_transform=default_opt_key_transform,
-                            opt_name_transform=default_opt_name_transform):
+def declare_gvars(name_filter=lambda x : True,
+                  env_key_transform=default_env_key_transform,
+                  var_key_transform=default_var_key_transform,
+                  opt_key_transform=default_opt_key_transform,
+                  opt_name_transform=default_opt_name_transform):
     from SCons.Variables.PathVariable import PathVariable
-    from SConsGnuBuild.GVars import GVarDeclUni, GVarDeclsUni
+    from SConsGnuBuild.GVars import GVarDeclU, GVarDeclU
     def _callback(name, desc, default):
         decl = { 'env_key'  : env_key_transform(name),
                  'var_key'  : var_key_transform(name),
@@ -307,12 +307,12 @@ def standard_dir_gvar_decls(name_filter=lambda x : True,
                  'metavar'  : 'DIR' }
         return name, decl
 
-    return GVarDeclsUni(__map_std_var_triples(_callback, name_filter))
+    return GVarDeclU(__map_std_var_triples(_callback, name_filter))
 
 ###############################################################################
-def StandardDirVarNames(**kw):
+def GVarNames(**kw):
     """Return the names of supported GNU dir variables
-    
+
     :Keywords:
         name_filter : callable
             callable object (e.g. lambda) of type ``name_filter(name) ->
@@ -321,20 +321,20 @@ def StandardDirVarNames(**kw):
     """
     args = ['name_filter']
     kw2 = { key : kw[key] for key in args if key in kw }
-    return standard_dir_var_names(**kw2)
+    return gvar_names(**kw2)
 
 ###############################################################################
-def StandardDirGVarDecls(**kw):
+def DeclareGVars(**kw):
     """Return the standard GNU directory variables as
-    ``GVar`` variable declarations (see `SConsGnuBuild.GVars`).
-    
+    ``GVar`` variable declarations `_GVarDecls` (see `SConsGnuBuild.GVars`).
+
     :Keywords:
         name_filter : callable
             callable object (e.g. lambda) of type ``name_filter(name) ->
             boolean`` used to filter-out unwanted variables; only these
             variables are processed, for which name_filter returns ``True``
         env_key_transform : callable
-            function or lambda used to transform canonical ``GVar`` names to 
+            function or lambda used to transform canonical ``GVar`` names to
             keys used for corresponding construction variables in a SCons
             environment (default: `default_env_key_transform`)
         var_key_transform : callable
@@ -354,7 +354,7 @@ def StandardDirGVarDecls(**kw):
     args = ['name_filter', 'env_key_transform', 'var_key_transform',
             'opt_key_trasform', 'opt_name_transform']
     kw2 = { key : kw[key] for key in args if key in kw }
-    return standard_dir_gvar_decls(**kw2)
+    return declare_gvars(**kw2)
 
 # Local Variables:
 # # tab-width:4

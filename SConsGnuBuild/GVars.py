@@ -22,7 +22,7 @@ variable ``ENV_FOO``. If both, command-line variable and command-line option
 are set, then command-line option takes precedence.
 
 If a command-line value is a string, it may contain substitutions (e.g.
-``VAR_FOO`` may be a string in form ``"bleah bleah ${VAR_BAR}"``). 
+``VAR_FOO`` may be a string in form ``"bleah bleah ${VAR_BAR}"``).
 Placeholders in text are assumed to be variable/option names in "local
 namespace". It means, that if we have a command-line variable, and its value is
 a string containing placeholder ``"$VVV"``, then ``VVV`` is assumed to be the
@@ -58,7 +58,7 @@ following construction variables set::
     env['ENV_GEEZ'] = '${ENV_FOO}'  # opt_geez-> ENV_GEEZ, opt_foo -> ENV_FOO
 
 The ``-*->`` arrow means, that there was no command-line variable named
-``foo``, so the ``"${foo}"`` placeholder was left unaltered. 
+``foo``, so the ``"${foo}"`` placeholder was left unaltered.
 
 Now, as we know the general idea, let's see some code examples.
 
@@ -102,7 +102,7 @@ within SCons script, they may be different from the option names that user sees
 on its screen - here we have key ``opt_foo`` and command-line option ``--foo``).
 
 To learn details about ``GVar`` variables and possible ways to declare them
-start with `GVarDecls()` and `GVarDecl()` documentation. 
+start with `GVarDecls()` and `GVarDecl()` documentation.
 
 Running scons several times, you may obtain different output depending on
 command-line variables and options provided. Let's do some experiments, first
@@ -117,9 +117,9 @@ show the help message to see available command-line options::
     SCons Options:
        <.... lot of output here ...>
     Local Options:
-      --geez=OPT_GEEZ             
-      --foo=OPT_FOO               
-      --bar=OPT_BAR               
+      --geez=OPT_GEEZ
+      --foo=OPT_FOO
+      --bar=OPT_BAR
 
 then play with them a little bit (as well as with command-line variables)::
 
@@ -227,17 +227,17 @@ For more details we refer you to the documentation of `GVarDecls()`,
 
 #
 # Copyright (c) 2012 by Pawel Tomulik
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -268,36 +268,36 @@ ALL = 3
 
 
 #############################################################################
-class _missing: 
+class _missing(object):
     "Represents missing argument to function."
     pass
 
 #############################################################################
-class _dont_create:
+class _dont_create(object):
     "Represents the fact, that a variable shouldn't be created."
     pass
 
 #############################################################################
-class _notfound:
+class _notfound(object):
     "Something that has not been found."
     pass # represents a key that is never present in dict
 
 #############################################################################
 def _resubst(value, resubst_dict = {}):
     """Rename placeholders (substrings like ``$name``) in a string value.
-    
+
     :Parameters:
         value
             the value to process; if it is string it is passed through
             placeholder renaming procedure, otherwise it is returned unaltered,
         resubst_dict
-            a dictionary of the form ``{ "xxx" : "${yyy}", "vvv" : "${www}", 
+            a dictionary of the form ``{ "xxx" : "${yyy}", "vvv" : "${www}",
             ...}`` used to rename placeholders within ``value`` string; with
             above dictionary, all occurrences of ``$xxx`` or ``${xxx}`` within
             `value` string will be replaced with ``${yyy}``, all occurrences of
             ``$vvv`` or ``${vvv}`` with ``${www}`` and so on; see also
             `_build_resubst_dict()`,
-    :Returns:        
+    :Returns:
         returns the ``value`` with placeholders renamed.
     """
     from string import Template
@@ -363,7 +363,7 @@ def _build_iresubst_dict(rename_dict):
 #############################################################################
 def _compose_dicts(dict1, dict2):
     """Compose two mappings expressed by dicts ``dict1`` and ``dict2``.
-   
+
     :Parameters:
         dict1, dict2
             dictionaries to compose
@@ -397,7 +397,7 @@ class _GVarsEnvProxy(object):
 
         from SConsGnuBuild.GVars import _GVarsEnvProxy
         env = Environment()
-        proxy = _GVarsEnvProxy(env, {'foo':'ENV_FOO'}, {'foo':'${ENV_FOO}'}, 
+        proxy = _GVarsEnvProxy(env, {'foo':'ENV_FOO'}, {'foo':'${ENV_FOO}'},
                                     {'ENV_FOO':'foo'}, {'ENV_FOO':'${foo}'})
         proxy['foo'] = "FOO"
         print "proxy['foo'] is %r" % proxy['foo']
@@ -406,7 +406,7 @@ class _GVarsEnvProxy(object):
         proxy['foo'] is 'FOO'
         env['ENV_FOO'] is 'FOO'
         scons: `.' is up to date.
-    
+
     .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
     """
     #========================================================================
@@ -416,7 +416,7 @@ class _GVarsEnvProxy(object):
         """Initializes `_GVarsEnvProxy` object.
 
         :Parameters:
-            env 
+            env
                 a SCons environment object to be proxied,
             rename
                 dictionary used for mapping variable names from user namespace
@@ -439,16 +439,12 @@ class _GVarsEnvProxy(object):
                 from ``env`` are also accessible via their keys
         """
         # -------------------------------------------------------------------
-        self.__env = env
+        self.env = env
         self.__rename = rename
         self.__irename = irename
         self.__resubst = resubst
         self.__iresubst = iresubst
         self.set_strict(strict)
-
-    #========================================================================
-    def get_env(self):
-        return self.__env
 
     #========================================================================
     def is_strict(self):
@@ -484,11 +480,11 @@ class _GVarsEnvProxy(object):
 
     #========================================================================
     def __delitem__strict(self, key):
-        self.__env.__delitem__(self.__rename[key])
+        self.env.__delitem__(self.__rename[key])
 
     #========================================================================
     def __delitem__nonstrict(self, key):
-        self.__env.__delitem__(self.__rename.get(key,key))
+        self.env.__delitem__(self.__rename.get(key,key))
 
     #========================================================================
     def __getitem__(self, key):
@@ -497,12 +493,12 @@ class _GVarsEnvProxy(object):
     #========================================================================
     def __getitem__strict(self, key):
         env_key = self.__rename[key]
-        return _resubst(self.__env[env_key], self.__iresubst)
+        return _resubst(self.env[env_key], self.__iresubst)
 
     #========================================================================
     def __getitem__nonstrict(self, key):
         env_key = self.__rename.get(key,key)
-        return _resubst(self.__env[env_key], self.__iresubst)
+        return _resubst(self.env[env_key], self.__iresubst)
 
     #========================================================================
     def __setitem__(self, key, value):
@@ -512,23 +508,23 @@ class _GVarsEnvProxy(object):
     def __setitem__strict(self, key, value):
         env_key = self.__rename[key]
         env_value = _resubst(value, self.__resubst)
-        self.__env[env_key] = env_value
+        self.env[env_key] = env_value
 
     #========================================================================
     def __setitem__nonstrict(self, key, value):
         env_key = self.__rename.get(key,key)
         env_value = _resubst(value, self.__resubst)
-        self.__env[env_key] = env_value
+        self.env[env_key] = env_value
 
     #========================================================================
     def _get_strict(self, key, default=None):
         env_key = self.__rename[key]
-        return _resubst(self.__env.get(env_key, default), self.__iresubst)
+        return _resubst(self.env.get(env_key, default), self.__iresubst)
 
     #========================================================================
     def _get_nonstrict(self, key, default=None):
         env_key = self.__rename.get(key,key)
-        return _resubst(self.__env.get(env_key, default), self.__iresubst)
+        return _resubst(self.env.get(env_key, default), self.__iresubst)
 
     #========================================================================
     def _has_key_strict(self, key):
@@ -536,7 +532,7 @@ class _GVarsEnvProxy(object):
 
     #========================================================================
     def _has_key_nonstrict(self, key):
-        return self.__env.has_key(self.__rename.get(key,key))
+        return self.env.has_key(self.__rename.get(key,key))
 
     #========================================================================
     def __contains__(self, key):
@@ -544,11 +540,11 @@ class _GVarsEnvProxy(object):
 
     #========================================================================
     def __contains__strict(self, key):
-        return self.__env.__contains__(self.__rename[key])
-    
+        return self.env.__contains__(self.__rename[key])
+
     #========================================================================
     def __contains__nonstrict(self, key):
-        return self.__env.__contains__(self.__rename.get(key,key))
+        return self.env.__contains__(self.__rename.get(key,key))
 
     #========================================================================
     def _items_strict(self):
@@ -559,13 +555,13 @@ class _GVarsEnvProxy(object):
     def _items_nonstrict(self):
         iresubst = lambda v : _resubst(v, self.__iresubst)
         irename = lambda k : self.__irename.get(k,k)
-        return [ (irename(k), iresubst(v)) for (k,v) in self.__env.items() ]
+        return [ (irename(k), iresubst(v)) for (k,v) in self.env.items() ]
 
     #========================================================================
     def subst(self, string, *args):
         env_string = _resubst(string, self.__resubst)
-        return self.__env.subst(env_string, *args)
-        
+        return self.env.subst(env_string, *args)
+
 
 #############################################################################
 class _GVars(object):
@@ -575,7 +571,7 @@ class _GVars(object):
     (``--option=value``).
 
     **Note**:
-        
+
         In several places we use ``xxx`` as placeholder for one of the ``ENV``,
         ``VAR`` or ``OPT`` constants which represent selection of
         "corresponding Environment construction variable", "corresponding SCons
@@ -627,7 +623,7 @@ class _GVars(object):
 
     #========================================================================
     def VarEnvProxy(self, env, *args, **kw):
-        """Return proxy to SCons environment `env` which uses keys from 
+        """Return proxy to SCons environment `env` which uses keys from
         `VAR` namespace to access corresponding environment construction
         variables"""
         rename = _compose_dicts(self.__irename[VAR], self.__rename[ENV])
@@ -639,7 +635,7 @@ class _GVars(object):
 
     #========================================================================
     def OptEnvProxy(self, env, *args, **kw):
-        """Return proxy to SCons environment `env` which uses keys from 
+        """Return proxy to SCons environment `env` which uses keys from
         `OPT` namespace to access corresponding environment construction
         variables"""
         rename = _compose_dicts(self.__irename[OPT], self.__rename[ENV])
@@ -651,7 +647,7 @@ class _GVars(object):
 
     #========================================================================
     def EnvProxy(self, env, *args, **kw):
-        """Return proxy to SCons environment `env` which uses original keys 
+        """Return proxy to SCons environment `env` which uses original keys
         identifying ``GVar`` variables to access construction variables"""
         return _GVarsEnvProxy(env, self.__rename[ENV], self.__resubst[ENV],
                                    self.__irename[ENV], self.__iresubst[ENV],
@@ -669,7 +665,7 @@ class _GVars(object):
         #--------------------------------------------------------------------
         """Get the key identifying a variable related to ``GVar`` identified by
         ``key``
-        
+
         :Parameters:
             xxx : int
                 one of `ENV`, `VAR` or `OPT`,
@@ -699,13 +695,13 @@ class _GVars(object):
         corresponding command-line variables (``variable=value``).
 
         **Note**:
-            
+
             This function calls the `variables.Update(proxy[,args])`_ method
             passing proxy to `env` (see `_GVarsEnvProxy`) to introduce mappings
             between ``ENV`` and ``VAR`` namespaces.
 
         :Parameters:
-            env 
+            env
                 `SCons environment`_ object to update
             variables
                 `SCons variables`_ object to take values from
@@ -728,7 +724,7 @@ class _GVars(object):
         :Parameters:
             env
                 `SCons environment`_ object to update
-                
+
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
         .. _command-line options: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-options
         """
@@ -759,7 +755,7 @@ class _GVars(object):
                 when updating `env`.
             args
                 if not ``None``, passed verbatim to `update_env_from_vars()`.
-                
+
         .. _SCons.Variables.Variables: http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
         .. _command-line variables: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-variables
@@ -778,9 +774,9 @@ class _GVars(object):
         """Save the `variables` to file mapping appropriately their names.
 
         :Parameters:
-            variables : ``SCons.Variables.Variables`` 
+            variables : ``SCons.Variables.Variables``
                 if not ``None``, it should be an instance of
-                `SCons.Variables.Variables`_; this object is used to save 
+                `SCons.Variables.Variables`_; this object is used to save
                 SCons variables,
             filename : string
                 name of the file to save into
@@ -804,9 +800,9 @@ class _GVars(object):
             where SCons command line variables and construction variables live.
 
         :Parameters:
-            variables : ``SCons.Variables.Variables`` 
+            variables : ``SCons.Variables.Variables``
                 if not ``None``, it should be an instance of
-                `SCons.Variables.Variables`_; this object is used to save 
+                `SCons.Variables.Variables`_; this object is used to save
                 SCons variables,
             env
                 `SCons environment`_ object to update,
@@ -824,7 +820,7 @@ class _GVars(object):
 class _GVarDecl(object):
     #========================================================================
     """Declaration of single ``GVar`` variable.
-    
+
     This object holds information necessary to create construction variable in
     SCons Environment, SCons command-line variable (``variable=value``) and
     SCons command-line option (``--option=value``) corresponding to a given
@@ -832,7 +828,7 @@ class _GVarDecl(object):
     these variables/options before they get created).
 
     **Note**:
-        
+
         In several places we use ``xxx`` as placeholder for one of the ``ENV``,
         ``VAR`` or ``OPT`` constants which represent selection of
         "corresponding Environment construction variable", "corresponding SCons
@@ -842,7 +838,7 @@ class _GVarDecl(object):
         SCons environment (``ENV``).
     """
     #========================================================================
-    
+
 
     #========================================================================
     def __init__(self, *args):
@@ -865,7 +861,7 @@ class _GVarDecl(object):
 
                 all arguments are optional, missing argument is represented by
                 ``None``.
-        
+
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
         .. _SCons command-line option: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-options
         .. _SCons command-line variable: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-variables
@@ -880,7 +876,7 @@ class _GVarDecl(object):
         #--------------------------------------------------------------------
         """Set declaration of related `xxx` variable, where `xxx` is one of
         `ENV`, `VAR` or `OPT`.
-        
+
         This functions just dispatches the job between `_set_env_decl()`,
         `_set_var_decl()` and `_set_opt_decl()` according to `xxx` argument.
 
@@ -906,7 +902,7 @@ class _GVarDecl(object):
             decl : tuple | dict
                 may be a tuple in form ``(name, default)``, or one-entry
                 dictionary ``{name: default}``; later, when requested,
-                this data is used to create construction variable for 
+                this data is used to create construction variable for
                 user provided `SCons environment`_ ``env`` with
                 ``env.SetDefault(name = default)``
 
@@ -924,7 +920,7 @@ class _GVarDecl(object):
             if not len(decl) == 1:
                 raise ValueError("dictionary 'decl' must have 1 item but " \
                                  "has %d" % len(decl))
-        elif is_String(decl): 
+        elif is_String(decl):
             decl = { decl : _dont_create }
         else:
             raise TypeError("'decl' must be tuple, dictionary or string, %r " \
@@ -942,7 +938,7 @@ class _GVarDecl(object):
                 declaration parameters used later to add the related `SCons
                 command-line variable`_; if `decl` is a tuple, it must have
                 the form::
-                
+
                     ( key [, help, default, validator, converter, kw] ),
 
                 where entries in square brackets are optional; the consecutive
@@ -950,8 +946,8 @@ class _GVarDecl(object):
                 ``help``, ``default``, ``validator``, ``converter``, ``kw``;
                 the meaning of these arguments is same as for
                 `SCons.Variables.Variables.Add()`_; the ``kw``, if present,
-                must be a dictionary; 
-                
+                must be a dictionary;
+
                 if `decl` is a dictionary, it should have the form::
 
                     { 'key'         : "file_name",
@@ -971,7 +967,7 @@ class _GVarDecl(object):
             if len(decl) > len(keys):
                 raise ValueError('len(decl) should be less or greater than ' \
                                  '%d, but is %d' % (len(keys),len(decl) ))
-            args = { keys[i] : decl[i] for i in range(0,len(decl)) } 
+            args = { keys[i] : decl[i] for i in range(0,len(decl)) }
         elif is_Dict(decl):
             args = decl.copy()
         else:
@@ -981,7 +977,7 @@ class _GVarDecl(object):
             kw = args['kw']
             del args['kw']
         except KeyError:
-            kw = {} 
+            kw = {}
         if not is_Dict(kw):
             raise TypeError("decl['kw'] must be a dictionary, %r is not " \
                             "allowed" % type(kw).__name__)
@@ -999,28 +995,28 @@ class _GVarDecl(object):
                 declaration parameters used later when creating the related
                 `SCons command-line option`_; if it is a tuple or list, it
                 should have the form::
-                        
+
                         (names, args) or [names, args]
 
                 where ``names`` is a string or tuple of option names (e.g.
                 ``"-f --file"`` or ``('-f', '--file')``) and ``args`` is a
                 dictionary defining the remaining `option attributes`_; the
                 entire `decl` may be for example::
-                
+
                     ( ('-f','--file-name'),
                       { 'action'         : "store",
                         'dest'           : "file_name" } )
 
                 if `decl` is a dictionary, it should have following form
                 (keys are important, values are just examples)::
-                
+
                     { 'names'          : ("-f", "--file-name")
-                      'action'         : "store",      
-                      'type'           : "string",     
+                      'action'         : "store",
+                      'type'           : "string",
                       'dest'           : "file_name", ... }
-                
+
                 the parameters enclosed in ``decl`` dictionary are later
-                passed verbatim to `SCons.Script.Main.AddOption()`_. 
+                passed verbatim to `SCons.Script.Main.AddOption()`_.
                 Note, that we require the ``dest`` parameter.
 
         .. _SCons.Script.Main.AddOption(): http://www.scons.org/doc/latest/HTML/scons-api/SCons.Script.Main-module.html#AddOption
@@ -1062,7 +1058,7 @@ class _GVarDecl(object):
         #--------------------------------------------------------------------
         """Test if declaration of corresponding `xxx` variable was provided,
         where `xxx` is one of `ENV`, `VAR` or `OPT`.
-        
+
         :Parameters:
             xxx : int
                 one of `ENV`, `VAR` or `OPT`
@@ -1077,7 +1073,7 @@ class _GVarDecl(object):
         #--------------------------------------------------------------------
         """Get the declaration parameters for the related `xxx` variable, where
         `xxx` is one of `ENV`, `VAR` or `OPT`.
-        
+
         :Parameters:
             xxx : int
                 one of `ENV`, `VAR` or `OPT`
@@ -1183,11 +1179,11 @@ class _GVarDecl(object):
                 one of `ENV`, `VAR` or `OPT`
             args, kw
                 additional arguments and keywords, depend on `xxx`:
-                
-                - if ``xxx == ENV``, then ``env=args[0]`` is assumed to be 
+
+                - if ``xxx == ENV``, then ``env=args[0]`` is assumed to be
                   a `SCons environment`_ to create construction variable for,
                 - if ``xxx == VAR`, then ``vars=args[0]`` is assumed to be
-                  a SCons `Variables`_ object, ``*args[1:]`` are used as 
+                  a SCons `Variables`_ object, ``*args[1:]`` are used as
                   positional arguments to `vars.Add()`_ and ``**kw`` are
                   passed to `vars.Add()`_ as additional keywords,
                 - if ``xxx == OPT``, the arguments and keywords are not used.
@@ -1210,7 +1206,7 @@ class _GVarDecl(object):
             kw2.update(kw)
             return variables.Add(*args[1:],**kw2)
         elif xxx == OPT:
-            AddOption(*self.__xxx_args[OPT][0], **self.__xxx_args[OPT][1]) 
+            AddOption(*self.__xxx_args[OPT][0], **self.__xxx_args[OPT][1])
         else:
             raise IndexError("index out of range")
 
@@ -1224,7 +1220,7 @@ class _GVarDecl(object):
         :Parameters:
             xxx : int
                 one of `ENV`, `VAR` or `OPT`
-        
+
         :Returns:
             returns ``True`` is new variable has been created or ``False`` if
             there is no declaration for corresponding `xxx` variable in this
@@ -1241,7 +1237,7 @@ class _GVarDecl(object):
 def GVarDecl(*args, **kw):
     #------------------------------------------------------------------------
     """Convert input arguments to `_GVarDecl` instance.
-   
+
    :Returns:
         - if ``args[0]`` is an instance of `_GVarDecl`, then returns
           ``args[0]`` unaltered,
@@ -1254,11 +1250,11 @@ def GVarDecl(*args, **kw):
         return _GVarDecl(*args, **kw)
 
 #############################################################################
-def GVarDeclUni(env_key=None, var_key=None, opt_key=None, default=None,
-                help=None, validator=None, converter=None, option=None,
-                type=None, opt_default=None, metavar=None, nargs=None,
-                choices=None, action=None, const=None, callback=None,
-                callback_args=None, callback_kwargs=None):
+def GVarDeclU(env_key=None, var_key=None, opt_key=None, default=None,
+              help=None, validator=None, converter=None, option=None,
+              type=None, opt_default=None, metavar=None, nargs=None,
+              choices=None, action=None, const=None, callback=None,
+              callback_args=None, callback_kwargs=None):
     #------------------------------------------------------------------------
     """Convert unified set of arguments to `_GVarDecl` instance.
 
@@ -1290,7 +1286,7 @@ def GVarDeclUni(env_key=None, var_key=None, opt_key=None, default=None,
         callback_args   |   -           -           callback_args
         callback_kwargs |   -           -           callback_kwargs
         ----------------+------------------------------------------
-    
+
     :Parameters:
         env_key : `_GVarDecl` | string | None
             if an instance of `_GVarDecl`, then this object is returned to the
@@ -1300,14 +1296,14 @@ def GVarDeclUni(env_key=None, var_key=None, opt_key=None, default=None,
         var_key : string | None
             key used to identify corresponding command-line variable (`VAR`);
             if ``None``, the ``GVar`` variable  has no corresponding
-            command-line variable, 
+            command-line variable,
         opt_key : string | None
             key used to identify corresponding command-line option (`OPT`);
             if ``None`` the ``GVar`` variable  has no corresponding
             command-line option,
         default
             default value used to initialize corresponding construction
-            variable (`ENV`) and command-line variable (`VAR`); 
+            variable (`ENV`) and command-line variable (`VAR`);
             note that there is separate `opt_default` argument for command-line
             option,
         help : string | None
@@ -1340,7 +1336,7 @@ def GVarDeclUni(env_key=None, var_key=None, opt_key=None, default=None,
             same as `callback_args` in `optparse option attributes`_,
         callback_kwargs
             same as `callback_kwargs` in `optparse option attributes`_,
-            
+
     :Returns:
         - if `env_key` is present and it is an instance of `_GVarDecl`, then it
           is returned unaltered,
@@ -1356,8 +1352,8 @@ def GVarDeclUni(env_key=None, var_key=None, opt_key=None, default=None,
     else:
         # --- ENV ---
         if env_key is not None:
-            env_decl = { env_key : default }            
-        else: 
+            env_decl = { env_key : default }
+        else:
             env_decl = None
         # --- VAR ---
         if var_key is not None:
@@ -1400,7 +1396,7 @@ class _GVarDecls(dict):
           creation, see `__init__()`; further declarations may be added or
           existing ones may be modified via dictionary interface, see
           `__setitem__()`, `update()` and others,
-        - committing declared variables, see `commit()`; after commit, the 
+        - committing declared variables, see `commit()`; after commit, the
           contents of `_GVarDecls` is frozen and any attempts to modifications
           end-up with a `RuntimeError` exception being raised,
         - creating related construction variables (``env["VARIABLE"]=VALUE``),
@@ -1408,14 +1404,14 @@ class _GVarDecls(dict):
           (``--option=value``) according to committed `_GVarDecls`
           declarations, see `add_to()`; this may be performed by `commit()` as
           well.
-    
+
     After that, an instance of `_GVars` should be created from `_GVarDecls` to
     keep track of created ``GVar`` variables (and corresponding construction
     variables, command-line variables and command-line options). The dictionary
     `_GVarDecls` may be then disposed.
 
     **Note**:
-        
+
         In several places we use ``xxx`` as placeholder for one of the ``ENV``,
         ``VAR`` or ``OPT`` constants which represent selection of
         "corresponding Environment construction variable", "corresponding SCons
@@ -1427,17 +1423,17 @@ class _GVarDecls(dict):
     """
     #========================================================================
 
-   
+
 
     #========================================================================
     def __init__(self, *args, **kw):
         #--------------------------------------------------------------------
         """Constructor for `_GVarDecls`.
-        
+
         ``__init__()`` initializes an empty `_GVarDecls` dictionary,
 
         ``__init__(mapping)`` initializes `_GVarDecls` dictionary from a
-        mapping object's ``(key,value)`` pairs, each ``value`` must be 
+        mapping object's ``(key,value)`` pairs, each ``value`` must be
         instance of `_GVarDecl`,
 
         ``__init__(iterable)`` initializes the `_GVarDecls` dictionary as if
@@ -1452,7 +1448,7 @@ class _GVarDecls(dict):
         self.__committed = False
         self.__validate_values(*args,**kw)
         super(_GVarDecls, self).__init__(*args,**kw)
-        self.__update_supp_dicts() 
+        self.__update_supp_dicts()
 
     #========================================================================
     def __reset_supp_dicts(self):
@@ -1478,14 +1474,14 @@ class _GVarDecls(dict):
         If the corresponding `xxx` variable identified by ``xxx_key`` already
         exists in the supplementary dictionaries, the supplementary
         dictionaries are left unaltered.
-        
+
         :Parameters:
             xxx : int
                 selector of the corresponding variable being renamed; one of
                 `ENV`, `VAR` or `OPT`,
             key : string
                 the key identifying ``GVar`` variable declared within this
-                `_GVarDecls` dictionary, which subject to modification, 
+                `_GVarDecls` dictionary, which subject to modification,
             xxx_key : string
                 new name for the corresponding `xxx` variable.
         """
@@ -1502,7 +1498,7 @@ class _GVarDecls(dict):
         #--------------------------------------------------------------------
         """Add to supplementary dictionaries the new `xxx` variable
         corresponding to ``GVar`` identified by `key`.
-        
+
         If the corresponding `xxx` variable identified by ``xxx_key`` already
         exists in the supplementary dictionaries, a ``RuntimeError`` is raised.
 
@@ -1512,7 +1508,7 @@ class _GVarDecls(dict):
                 `ENV`, `VAR` or `OPT`,
             key : string
                 the key identifying ``GVar`` variable within this `_GVarDecls`
-                dictionary, which subject to modification, 
+                dictionary, which subject to modification,
             xxx_key : string
                 new name for the corresponding `xxx` variable.
         """
@@ -1521,7 +1517,7 @@ class _GVarDecls(dict):
             raise RuntimeError("variable %r is already declared" % xxx_key)
         self.__rename[xxx][key] = xxx_key
         self.__irename[xxx][xxx_key] = key
-        
+
     #========================================================================
     def __append_decl_to_supp_dicts(self, key, decl):
         for xxx in range(0,ALL):
@@ -1543,7 +1539,7 @@ class _GVarDecls(dict):
     def __validate_values(initializer=_missing,**kw):
         if initializer is not _missing:
             try: keys = initializer.keys()
-            except AttributeError: 
+            except AttributeError:
                 for (k,v) in iter(initializer): _GVarDecls.__validate_value(v)
             else:
                 for k in keys: _GVarDecls.__validate_value(initializer[k])
@@ -1569,7 +1565,7 @@ class _GVarDecls(dict):
         self.__ensure_not_committed()
         _GVarDecls.__validate_values(*args,**kw)
         super(_GVarDecls,self).update(*args,**kw)
-        self.__update_supp_dicts() 
+        self.__update_supp_dicts()
 
     #========================================================================
     def clear(self, *args, **kw):
@@ -1582,13 +1578,18 @@ class _GVarDecls(dict):
         self.__ensure_not_committed()
         self.__del_from_supp_dicts(key)
         return super(_GVarDecls,self).pop(key,*args,**kw)
-        
+
     #========================================================================
     def popitem(self, *args, **kw):
         self.__ensure_not_committed()
         (k,v) = super(_GVarDecls,self).popitem(*args,**kw)
         self.__del_from_supp_dicts(k)
         return (k,v)
+
+    #========================================================================
+    def copy(self):
+        print "Kalabanka!"
+        return _GVarDecls(self)
 
     #========================================================================
     def __setitem__(self, key, value):
@@ -1608,7 +1609,7 @@ class _GVarDecls(dict):
         #--------------------------------------------------------------------
         """Get the dictionary mapping variable names from ``GVar`` namespace to
         `xxx` (where `xxx` is one of `ENV`, `VAR` or `OPT`).
-        
+
         :Parameters:
             xxx : int
                 selector of the corresponding namespace; one of `ENV`, `VAR` or
@@ -1626,7 +1627,7 @@ class _GVarDecls(dict):
         #--------------------------------------------------------------------
         """Get the dictionary mapping variable names from `xxx` namespace to
         ``GVar`` namespace (where `xxx` is one of `ENV`, `VAR` or `OPT`).
-        
+
         :Parameters:
             xxx : int
                 selector of the corresponding namespace; one of `ENV`, `VAR` or
@@ -1635,7 +1636,7 @@ class _GVarDecls(dict):
             dictionary with items ``(xxx_key, key)``, where ``key`` is the key
             from ``GVar`` namespace and ``xxx_key`` is variable name in the
             `xxx` (`ENV`, `VAR` or `OPT`) namespace
-        
+
         """
         #--------------------------------------------------------------------
         return self.__irename[xxx].copy()
@@ -1660,7 +1661,7 @@ class _GVarDecls(dict):
             dictionary with items ``(key, "${" + xxx_key + "}")``, where
             ``key`` is the key from ``GVar`` namespace and ``xxx_key`` is
             variable name in the `xxx` (`ENV`, `VAR` or `OPT`) namespace
-        
+
         """
         #--------------------------------------------------------------------
         self.__ensure_committed()
@@ -1677,7 +1678,7 @@ class _GVarDecls(dict):
 
             The declarations must be committed before this function may be
             called.
-        
+
         :Parameters:
             xxx : int
                 selector of the corresponding namespace; one of `ENV`, `VAR` or
@@ -1686,7 +1687,7 @@ class _GVarDecls(dict):
             dictionary with items ``(xxx_key, "${" + key + "}")``, where
             ``key`` is the key from ``GVar`` namespace and ``xxx_key`` is
             variable name in the `xxx` (`ENV`, `VAR` or `OPT`) namespace
-        
+
         """
         #--------------------------------------------------------------------
         self.__ensure_committed()
@@ -1712,7 +1713,7 @@ class _GVarDecls(dict):
         :Returns:
             the key (name) identifying `xxx` variable corresponding to our
             ``GVar`` variable identified by `key`
-        
+
         """
         #--------------------------------------------------------------------
         return self[key].get_xxx_key(xxx)
@@ -1737,7 +1738,7 @@ class _GVarDecls(dict):
         :Returns:
             the key (name) identifying `xxx` variable corresponding to our
             ``GVar`` variable identified by `key`
-        
+
         """
         #--------------------------------------------------------------------
         self.__ensure_not_committed()
@@ -1755,7 +1756,7 @@ class _GVarDecls(dict):
         """Invoke `_GVarDecl._safe_add_to_xxx()` for each ``GVar`` variable
         declared in this dictionary."""
         for (k,v) in self.iteritems(): v._safe_add_to_xxx(xxx, *args)
-    
+
     #========================================================================
     def _build_resubst_dicts(self):
         """Build supplementary dictionaries used to rename placeholders in
@@ -1772,7 +1773,7 @@ class _GVarDecls(dict):
 
     #========================================================================
     def _resubst_decl_defaults(self, decl):
-        """Rename placeholders found in the declarations of default values of 
+        """Rename placeholders found in the declarations of default values of
         ``xxx`` corresponding variables for the given declaration ``decl``.
 
         :Parameters:
@@ -1786,7 +1787,7 @@ class _GVarDecls(dict):
 
     #========================================================================
     def __resubst_defaults(self):
-        """Rename placeholders found in the declarations of default values of 
+        """Rename placeholders found in the declarations of default values of
         ``xxx`` corresponding variables for all declared ``GVar`` variables.
         """
         for (k,v) in self.iteritems():
@@ -1804,7 +1805,7 @@ class _GVarDecls(dict):
         if not self.__committed:
             raise RuntimeError("declarations must be committed before " \
                                "performing this operation")
- 
+
     #========================================================================
     def commit(self, *args):
         #--------------------------------------------------------------------
@@ -1826,13 +1827,13 @@ class _GVarDecls(dict):
             self.__resubst_defaults()
             self.__committed = True
             self.add_to(*args)
-            
+
     #========================================================================
     def add_to(self, *args):
         #--------------------------------------------------------------------
         """Create and initialize the corresponding ``xxx`` variables (where
         ``xxx`` is one of `ENV`, `VAR` or `OPT`).
-         
+
         This function calls `_safe_add_to_xxx()` for each ``xxx`` from ``(ENV,
         VAR, OPT)``.
 
@@ -1840,7 +1841,7 @@ class _GVarDecls(dict):
             args
                 positional arguments interpreted in order as ``env``,
                 ``variables``, ``options`` where:
-                
+
                     - ``env`` is a SCons environment object to be updated with
                       ``GVar`` variables defined here and their defaults,
                     - ``variables`` is a SCons Variables object for which new
@@ -1850,7 +1851,7 @@ class _GVarDecls(dict):
                       not (default ``False`` means 'do not create').
 
                 All the arguments are optional. ``None`` may be used to
-                represent missing argument and skip the creation of certain 
+                represent missing argument and skip the creation of certain
                 variables/options.
         """
         #--------------------------------------------------------------------
@@ -1861,9 +1862,9 @@ class _GVarDecls(dict):
     #========================================================================
     def Commit(self, env=None, variables=None, options=False, gvars=True,
               *args):
-        """User interface to `commit()`, optionally returns newly created 
+        """User interface to `commit()`, optionally returns newly created
         `_GVars` object.
-        
+
         :Parameters:
             env
                 a SCons environment object to populate with default values of
@@ -1872,7 +1873,7 @@ class _GVarDecls(dict):
             variables
                 a `SCons.Variables.Variables`_ object to be populated with new
                 variables defined by ``GVar`` variables declared here,
-            options : Boolean 
+            options : Boolean
                 if ``True``, the command-line options declared by ``GVar``
                 variables are created,
             gvars
@@ -1888,7 +1889,7 @@ class _GVarDecls(dict):
         self.commit(env, variables, options, *args)
         if gvars:   return _GVars(self)
         else:       return None
-        
+
 #############################################################################
 def __dict_converted(convert, initializer=_missing, **kw):
     """Generic algorithm for dict initialization while converting the values
@@ -1959,7 +1960,7 @@ def GVarDecls(*args, **kw):
         gdecls = GVarDecls(gdecls)
 
     You may also define variables via keyword arguments to `GVarDecls()`.
-    
+
     **Example**
 
     .. python::
@@ -2014,9 +2015,9 @@ def GVarDecls(*args, **kw):
     This function
 
     :Returns:
-    
+
         - `GVarDecls()` returns an empty `_GVarDecls` dictionary ``{}``,
-        - `GVarDecls(mapping)` returns `_GVarDecls` dictionary initialized 
+        - `GVarDecls(mapping)` returns `_GVarDecls` dictionary initialized
           with ``{k : GVarDecl(mapping[k]) for k in mapping.keys()}``
         - `GVarDecls(iterable)` returns `_GVarDecls` dictionary initialized
           with ``{k : GVarDecl(v) for (k,v) in iter(initializer)}``
@@ -2031,10 +2032,10 @@ def GVarDecls(*args, **kw):
     return _GVarDecls(__dict_converted(convert, *args, **kw))
 
 #############################################################################
-def GVarDeclsUni(*args, **kw):
+def GVarDeclsU(*args, **kw):
     convert = lambda x : x if isinstance(x, _GVarDecl) \
-                           else GVarDeclUni(**x) if hasattr(x, 'keys') \
-                           else GVarDeclUni(*tuple(x))
+                           else GVarDeclU(**x) if hasattr(x, 'keys') \
+                           else GVarDeclU(*tuple(x))
     return _GVarDecls(__dict_converted(convert, *args, **kw))
 
 
