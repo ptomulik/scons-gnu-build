@@ -29,10 +29,30 @@ comming soon:
 INSTALLATION
 ------------
 
+There are two method for installation:
+
+### Installation by simple copy
+
 Copy recursively the entire directory ``SConsGnuBuild`` to your
 ``site_scons/`` directory
 
     cp -r scons-gnu-build/SConsGnuBuild your/projects/site_scons/
+
+### Installation as a submodule in git-based projects
+
+Add the repository as a submodule to your project
+
+```shell
+git submodule add git://github.com/ptomulik/scons-gnu-build.git 3rd/scons-gnu-build
+```
+
+In your `site_scons/site_init.py` add the following lines:
+
+```python
+# site_scons/site_init.py
+import sys
+sys.path.append(Dir('#3rd/scons-gnu-build').abspath)
+```
 
 DOCUMENTATION
 -------------
@@ -74,6 +94,7 @@ system:
 
   * docbook-xml <http://www.oasis-open.org/docbook/xml/>
   * xsltproc <ftp://xmlsoft.org/libxslt/>
+  * imagemagick <http://www.imagemagick.org/>
 
 You also must install locally the SCons docbook tool by Dirk Baechle:
 
@@ -86,6 +107,28 @@ bin/download-devel-deps.sh
 ```
 
 from the top level directory.
+
+
+TESTING
+-------
+
+We provide unit tests and end-to-end tests.
+
+### Running unit tests
+
+To run unit tests type
+
+```shell
+scons unit-test
+```
+
+### Running end-to-end tests
+
+To run end-to-end tests, type
+
+```shell
+SCONS_EXTERNAL_TEST=1 python runtest.py -a
+```
 
 LICENSE
 -------
