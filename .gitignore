@@ -11,4 +11,5 @@ site_scons
 *.bak
 *~
 # Test framework
-QMTest/
+/QMTest
+/runtest.py

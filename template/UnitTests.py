@@ -6,7 +6,7 @@ Unit tests for Xxx.Yyy
 __docformat__ = "restructuredText"
 
 #
-# Copyright (c) 2012 by Pawel Tomulik
+# Copyright (c) 2014 by Pawel Tomulik
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
