@@ -10,3 +10,5 @@ site_scons
 # backups created by some editors
 *.bak
 *~
+# Test framework
+QMTest/
