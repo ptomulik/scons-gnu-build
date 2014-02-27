@@ -1,0 +1,13 @@
+language: python
+python:
+  - "2.4"
+  - "2.6"
+  - "2.7"
+  - "3.2"
+  - "3.3"
+install:
+  - "./bin/download-deps.sh"
+  - "apt get install scons"
+script:
+  - "scons unit-test"
+  - "SCONS_EXTERNAL_TEST=1 python runtest.py -a"
