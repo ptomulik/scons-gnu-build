@@ -967,7 +967,7 @@ class _GVarDecl(object):
             if len(decl) > len(keys):
                 raise ValueError('len(decl) should be less or greater than ' \
                                  '%d, but is %d' % (len(keys),len(decl) ))
-            args = { keys[i] : decl[i] for i in range(0,len(decl)) }
+            args = dict(zip(keys, decl))
         elif is_Dict(decl):
             args = decl.copy()
         else:
