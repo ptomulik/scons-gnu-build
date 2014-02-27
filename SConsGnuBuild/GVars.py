@@ -1359,7 +1359,7 @@ def GVarDeclU(env_key=None, var_key=None, opt_key=None, default=None,
         if var_key is not None:
             items = [ (var_key, 'key'), (default, 'default'), (help, 'help'),
                       (validator, 'validator'), (converter, 'converter') ]
-            var_decl = { k : v for (v,k) in items if v is not None }
+            var_decl = dict([ (k, v) for (v,k) in items if v is not None ])
         else:
             var_decl = None
         # --- OPT ---
@@ -1371,7 +1371,7 @@ def GVarDeclU(env_key=None, var_key=None, opt_key=None, default=None,
                         (callback, 'callback'),
                         (callback_args, 'callback_args'),
                         (callback_kwargs, 'callback_kwargs') ]
-            opt_decl = (option, { k : v for (v,k) in items if v is not None })
+            opt_decl = (option, dict( [(k, v) for (v,k) in items if v is not None] ))
         else:
             opt_decl = None
         return _GVarDecl(env_decl, var_decl, opt_decl)
@@ -1899,10 +1899,10 @@ def __dict_converted(convert, initializer=_missing, **kw):
     else:
         try: keys = initializer.keys()
         except AttributeError:
-            decls = { k : convert(v) for (k,v) in iter(initializer) }
+            decls = dict([ (k, convert(v)) for (k,v) in iter(initializer) ])
         else:
-            decls = { k : convert(initializer[k]) for k in keys }
-    decls.update({ k : convert(kw[k]) for k in kw })
+            decls = dict([ (k, convert(initializer[k])) for k in keys ])
+    decls.update(dict([ (k, convert(kw[k])) for k in kw ]))
     return decls
 
 #############################################################################
