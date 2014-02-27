@@ -1,6 +1,8 @@
 scons-gnu-build
 ===============
 
+[![Build Status](https://travis-ci.org/ptomulik/scons-gnu-build.png?branch=master)](https://travis-ci.org/ptomulik/scons-gnu-build)
+
 Welcome to ``scons-gnu-build``.
 
 The ``scons-gnu-build`` extension makes ``SCons`` behaving more like GNU
