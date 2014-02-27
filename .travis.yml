@@ -7,6 +7,10 @@ python:
 install:
   - "./bin/download-deps.sh"
   - "sudo apt-get install scons"
+  - "sudo apt-get install epydoc python-docutils python-pygments"
+  - "sudo apt-get install docbook-xml xsltproc imagemagick"
 script:
   - "scons unit-test"
   - "SCONS_EXTERNAL_TEST=1 python runtest.py -a"
+  - "scons user-doc"
+  - "scons api-doc"
