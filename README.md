@@ -92,7 +92,7 @@ The generated documentation is located in ``build/doc/user``.
 To generate user's documentation, you'll need following packages on your
 system:
 
-  * docbook-xml <http://www.oasis-open.org/docbook/xml/>
+  * docbook5-xml <http://www.oasis-open.org/docbook/xml/>
   * xsltproc <ftp://xmlsoft.org/libxslt/>
   * imagemagick <http://www.imagemagick.org/>
 
