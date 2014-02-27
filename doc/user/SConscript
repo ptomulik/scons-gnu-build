@@ -20,17 +20,31 @@
 # SOFTWARE
 
 import SCons.Util
+import os.path
 
 Import('env')
 
-dbenv = env.Clone(['docbook'], DOCBOOK_PREFER_XSLTPROC = True)
-dbenv.Append(DOCBOOK_XSLTPROCFLAGS = [SCons.Util.CLVar('--xinclude')])
+env = env.Clone(['docbook'], DOCBOOK_PREFER_XSLTPROC = True)
+env.Append(DOCBOOK_XSLTPROCFLAGS = [SCons.Util.CLVar('--xinclude')])
 
 manual_html_src = ['manual.xml']
 manual_html_tgt = ['manual.html']
 
-html_xsl = dbenv.arg2nodes('html.xsl')
-manual_html = dbenv.DocbookHtml(manual_html_tgt, manual_html_src, xsl = html_xsl)
+html_xsl = env.arg2nodes('html.xsl')
+manual_html = env.DocbookHtml(manual_html_tgt, manual_html_src, xsl = html_xsl)
+css = env.Command('scons-gnu-build.css', 
+                  env.File('scons-gnu-build.css').srcnode(),
+                  Copy("$TARGET","$SOURCE"))
+env.Depends(manual_html,css)
 
-dbenv.Ignore('.', manual_html)
-dbenv.AlwaysBuild(dbenv.Alias('user-doc', manual_html))
+figs = []
+for f in [ '0000' ]:
+  tgt = 'img/img%s.png' % f
+  src = 'img/img%s.svg' % f
+  figs.extend(Command(tgt, src, "convert -density 90 $SOURCE $TARGET"))
+env.Depends(manual_html, figs)
+
+env.Ignore('.', manual_html)
+env.Ignore('.', css)
+env.Ignore('.', figs)
+env.AlwaysBuild(env.Alias('user-doc', manual_html))

@@ -25,11 +25,11 @@
 -->
 
 <xsl:stylesheet
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-	xmlns:fo="http://www.w3.org/1999/XSL/Format" 
-	version="1.0"> 
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:fo="http://www.w3.org/1999/XSL/Format"
+	version="1.0">
 
-	<xsl:import href="file:///usr/share/xml/docbook/stylesheet/docbook-xsl-ns/fo/docbook.xsl"/> 
+	<xsl:import href="file:///usr/share/xml/docbook/stylesheet/docbook-xsl-ns/fo/docbook.xsl"/>
 
 <xsl:param name="l10n.gentext.default.language" select="'en'"/>
 <xsl:param name="section.autolabel" select="1"></xsl:param>
@@ -58,5 +58,5 @@ set       toc,title
 	<xsl:call-template name="inline.boldseq"/>
 </xsl:template>
 
-</xsl:stylesheet> 
+</xsl:stylesheet>
 

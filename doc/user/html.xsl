@@ -24,19 +24,20 @@
 
 -->
 <xsl:stylesheet
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-	xmlns:fo="http://www.w3.org/1999/XSL/Format" 
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:fo="http://www.w3.org/1999/XSL/Format"
     xmlns:xi="http://www.w3.org/2001/XInclude"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xmlns:d="http://docbook.org/ns/docbook"
     exclude-result-prefixes="d"
-	version="1.0"> 
+	version="1.0">
 
-<xsl:import href="file:///usr/share/xml/docbook/stylesheet/docbook-xsl-ns/html/docbook.xsl"/> 
-
+<xsl:import href="http://docbook.sourceforge.net/release/xsl-ns/current/xhtml5/docbook.xsl"/>
 <xsl:param name="l10n.gentext.default.language" select="'en'"/>
 <xsl:param name="section.autolabel" select="1"/>
-<xsl:param name="html.stylesheet" select="'scons-deb-package.css'"/>
+<xsl:param name="make.clean.html" select="1"/>
+<!-- <xsl:param name="html.stylesheet" select="'docbook.css'"/> -->
+<xsl:param name="html.stylesheet" select="'scons-gnu-build.css'"/>
 <xsl:param name="generate.toc">
 /appendix toc,title
 article/appendix  nop
@@ -55,5 +56,5 @@ reference toc,title
 set       toc,title
 </xsl:param>
 
-</xsl:stylesheet> 
+</xsl:stylesheet>
 
