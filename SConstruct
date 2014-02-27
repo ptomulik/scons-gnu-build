@@ -40,7 +40,7 @@ for tgt in examples.keys():
         env.SConscript(examples[tgt])
 
 env.AlwaysBuild(env.Alias('unittest'))
-if 'unittest' in COMMAND_LINE_TARGETS:
+if 'unit-test' in COMMAND_LINE_TARGETS:
     import sys
     python = env.Detect('python')
     if python:
