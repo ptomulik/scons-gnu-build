@@ -7,7 +7,7 @@ python:
   - "3.3"
 install:
   - "./bin/download-deps.sh"
-  - "apt get install scons"
+  - "apt-get install scons"
 script:
   - "scons unit-test"
   - "SCONS_EXTERNAL_TEST=1 python runtest.py -a"
