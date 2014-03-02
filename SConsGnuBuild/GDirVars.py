@@ -117,6 +117,7 @@ Supported variables:
 __docformat__ = 'restructuredText'
 
 from os import path
+from SConsGnuBuild import Defaults
 
 #############################################################################
 # NOTE: variable substitutions must be in curly brackets, so use ${prefix}
@@ -218,28 +219,22 @@ __std_var_triples = [
     '${libexecdir}/${package}' )
 ]
 
-default_env_key_prefix = 'GNUBLD_'
-default_env_key_suffix = ''
-default_env_key_transform = lambda x : default_env_key_prefix \
-                          + x \
-                          + default_env_key_suffix
-default_var_key_prefix = ''
-default_var_key_suffix = ''
-default_var_key_transform = lambda x : default_var_key_prefix \
-                            + x \
-                            + default_var_key_suffix
-default_opt_key_prefix = 'gnubld_'
-default_opt_key_suffix = ''
-default_opt_key_transform = lambda x : default_opt_key_prefix \
-                            + x.lower() \
-                            + default_opt_key_suffix
-default_opt_prefix = '--'
-default_opt_name_prefix = ''
-default_opt_name_suffix= ''
-default_opt_name_transform = lambda x : default_opt_prefix \
-                            + (default_opt_name_prefix \
-                            + x.lower() \
-                            + default_opt_name_suffix).replace('_','-')
+default_env_key_prefix      = Defaults.gvar_env_key_prefix
+default_env_key_suffix      = Defaults.gvar_env_key_suffix
+default_env_key_transform   = Defaults.gvar_env_key_transform
+
+default_var_key_prefix      = Defaults.gvar_var_key_prefix
+default_var_key_suffix      = Defaults.gvar_var_key_suffix
+default_var_key_transform   = Defaults.gvar_var_key_transform
+
+default_opt_key_prefix      = Defaults.gvar_opt_key_prefix
+default_opt_key_suffix      = Defaults.gvar_opt_key_suffix
+default_opt_key_transform   = Defaults.gvar_opt_key_transform
+
+default_opt_prefix          = Defaults.gvar_opt_prefix
+default_opt_name_prefix     = Defaults.gvar_opt_name_prefix
+default_opt_name_suffix     = Defaults.gvar_opt_name_suffix
+default_opt_name_transform  = Defaults.gvar_opt_name_transform
 
 
 #############################################################################
