@@ -294,7 +294,7 @@ def declare_gvars(name_filter=lambda x : True,
                   opt_key_transform=default_opt_key_transform,
                   opt_name_transform=default_opt_name_transform):
     from SCons.Variables.PathVariable import PathVariable
-    from SConsGnuBuild.GVars import GVarDeclU, GVarDeclU
+    from SConsGnuBuild.GVars import GVarDeclsU
     def _callback(name, desc, default):
         decl = { 'env_key'  : env_key_transform(name),
                  'var_key'  : var_key_transform(name),
@@ -307,7 +307,7 @@ def declare_gvars(name_filter=lambda x : True,
                  'metavar'  : 'DIR' }
         return name, decl
 
-    return GVarDeclU(__map_std_var_triples(_callback, name_filter))
+    return GVarDeclsU(__map_std_var_triples(_callback, name_filter))
 
 ###############################################################################
 def GVarNames(**kw):
