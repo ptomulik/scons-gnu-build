@@ -64,8 +64,8 @@ DOCUMENTATION
 API documentation can be generated from the top level directory with the
 following command (see also requirements below)
 
-```
-  scons api-doc
+```shell
+scons api-doc
 ```
 
 The generated documentation is located within ``build/doc/api`` directory.
@@ -84,7 +84,7 @@ To generate API documentation, you may need following packages on your system:
 User documentation can be generated from the top level directory with the
 following command (see also requirements below)
 
-```
+```shell
 scons user-doc
 ```
 The generated documentation is located in ``build/doc/user``.
@@ -124,12 +124,39 @@ To run unit tests type
 scons unit-test
 ```
 
+### Requirements for unit tests
+
+  * python-unittest2 <https://pypi.python.org/pypi/unittest2>
+  * python-mock <https://pypi.python.org/pypi/mock>
+
+On Debian install them with:
+
+```shell
+apt-get install python-unittest2 python-mock
+```
+
 ### Running end-to-end tests
 
 To run end-to-end tests, type
 
 ```shell
 SCONS_EXTERNAL_TEST=1 python runtest.py -a
+```
+
+### Requirements for end-to-end tests
+
+  * SCons testing framework
+
+Download the SCons testing framework with:
+
+```shell
+./bin/download-test-framework.sh
+```
+
+or
+
+```shell
+./bin/download-deps.sh
 ```
 
 LICENSE
