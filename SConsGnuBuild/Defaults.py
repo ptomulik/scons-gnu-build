@@ -29,26 +29,26 @@ __docformat__ = "restructuredText"
 
 gvar_env_key_prefix     = 'GNUBLD_'
 gvar_env_key_suffix     = ''
-gvar_env_key_transform  = lambda x : default_env_key_prefix \
+gvar_env_key_transform  = lambda x : gvar_env_key_prefix \
                         + x \
                         + gvar_env_key_suffix
 
 gvar_var_key_prefix     = ''
 gvar_var_key_suffix     = ''
-gvar_var_key_transform  = lambda x : default_var_key_prefix \
+gvar_var_key_transform  = lambda x : gvar_var_key_prefix \
                         + x \
                         + gvar_var_key_suffix
 
 gvar_opt_key_prefix     = 'gnubld_'
 gvar_opt_key_suffix     = ''
-gvar_opt_key_transform  = lambda x : default_opt_key_prefix \
+gvar_opt_key_transform  = lambda x : gvar_opt_key_prefix \
                         + x.lower() \
                         + gvar_opt_key_suffix
 
 gvar_opt_prefix         = '--'
 gvar_opt_name_prefix    = ''
 gvar_opt_name_suffix    = ''
-gvar_opt_name_transform = lambda x : default_opt_prefix \
+gvar_opt_name_transform = lambda x : gvar_opt_prefix \
                         + (gvar_opt_name_prefix \
                         + x.lower() \
                         + gvar_opt_name_suffix).replace('_','-')
