@@ -158,7 +158,7 @@ __std_var_triples = [
     '${prefix}/com' ),
   ( 'localstatedir',
     'The directory for installing data files which the programs modify while'
-  + 'they run, and that pertain to one specific machine.',
+  + ' they run, and that pertain to one specific machine.',
     '${prefix}/var' ),
   ( 'includedir',
     'The directory for installing header files to be included by user programs'
