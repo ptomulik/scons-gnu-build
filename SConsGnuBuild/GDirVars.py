@@ -221,12 +221,12 @@ __std_var_triples = [
 default_env_key_prefix = 'GNUBLD_'
 default_env_key_suffix = ''
 default_env_key_transform = lambda x : default_env_key_prefix \
-                          + x.upper() \
+                          + x \
                           + default_env_key_suffix
 default_var_key_prefix = ''
 default_var_key_suffix = ''
 default_var_key_transform = lambda x : default_var_key_prefix \
-                            + x.upper() \
+                            + x \
                             + default_var_key_suffix
 default_opt_key_prefix = 'gnubld_'
 default_opt_key_suffix = ''
