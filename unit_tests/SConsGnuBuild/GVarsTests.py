@@ -30,7 +30,7 @@ import unittest
 
 from SConsGnuBuild import GVars
 from SConsGnuBuild.GVars import GVarDecl, GVarDeclU, GVarDecls, GVarDeclsU
-from mock import Mock
+from mock import Mock, patch
 
 #############################################################################
 class Test_module_constants(unittest.TestCase):
@@ -382,7 +382,7 @@ class Test__GVarsEnvProxy(unittest.TestCase):
     def test_items_5(self):
         """_GVarsEnvProxy({'a' : 'a'}, irename = {'a' : 'b'}, iresubst = {'a' : '${b}'}).items() should be [('b', 'a')]"""
         self.assertEqual(GVars._GVarsEnvProxy({'a' : 'a'}, irename = {'a' : 'b'}, iresubst = {'a' : '${b}'}).items(), [('b', 'a')])
-    
+
     def test_subst_1(self):
         """_GVarsEnvProxy(env).subst('${a} ${b}') should call env.subst('${a} ${b}')"""
         env = Mock(name = 'env')
@@ -403,6 +403,355 @@ class Test__GVarsEnvProxy(unittest.TestCase):
         except AssertionError as e:
             self.fail(str(e))
 
+#############################################################################
+class Test__GVars(unittest.TestCase):
+
+    @classmethod
+    def _gdecls_mock_1(cls):
+        # decls0 is a substitute of _GVarDecls instance, with only keys()
+        # method defined
+        gdecls = Mock(name = 'gdecls0')
+        gdecls.keys = Mock(name = 'keys', return_value = ['k','e','y','s'])
+        return gdecls
+
+    @classmethod
+    def _gdecls_mock_2(cls):
+        gdecls = cls._gdecls_mock_1()
+        return cls._mock_gdecls_supp_dicts_2(gdecls)
+
+    @classmethod
+    def _gdecls_mock_3(cls):
+        gdecls = cls._gdecls_mock_1()
+        return cls._mock_gdecls_supp_dicts_3(gdecls)
+
+    @classmethod
+    def _gdecls_mock_4(cls):
+        gdecls = cls._gdecls_mock_1()
+        return cls._mock_gdecls_supp_dicts_4(gdecls)
+
+    @classmethod
+    def _gvars_mock_4_UpdateEnvironment(cls):
+        gv = GVars._GVars(cls._gdecls_mock_1())
+        gv.update_env_from_vars = Mock(name = 'update_env_from_vars')
+        gv.update_env_from_opts = Mock(name = 'update_env_from_opts')
+        return gv
+
+    @classmethod
+    def _mock_gdecls_supp_dicts_2(cls, gdecls):
+        def get_xxx_rename_dict(xxx):   return "rename_dict[%d]" % xxx
+        def get_xxx_resubst_dict(xxx):  return "resubst_dict[%d]" % xxx
+        def get_xxx_irename_dict(xxx):  return "irename_dict[%d]" % xxx
+        def get_xxx_iresubst_dict(xxx): return "iresubst_dict[%d]" % xxx
+        gdecls.get_xxx_rename_dict = Mock(name = 'get_xxx_rename_dict', side_effect = get_xxx_rename_dict)
+        gdecls.get_xxx_irename_dict = Mock(name = 'get_xxx_rename_dict', side_effect = get_xxx_irename_dict)
+        gdecls.get_xxx_resubst_dict = Mock(name = 'get_xxx_rename_dict', side_effect = get_xxx_resubst_dict)
+        gdecls.get_xxx_iresubst_dict = Mock(name = 'get_xxx_iresubst_dict',  side_effect = get_xxx_iresubst_dict)
+        return gdecls
+
+    @classmethod
+    def _mock_gdecls_supp_dicts_3(cls, gdecls):
+        def get_xxx_rename_dict(xxx):   return None
+        def get_xxx_resubst_dict(xxx):  return None
+        def get_xxx_irename_dict(xxx):  return None
+        def get_xxx_iresubst_dict(xxx): return None
+        gdecls.get_xxx_rename_dict = Mock(name = 'get_xxx_rename_dict', side_effect = get_xxx_rename_dict)
+        gdecls.get_xxx_irename_dict = Mock(name = 'get_xxx_rename_dict', side_effect = get_xxx_irename_dict)
+        gdecls.get_xxx_resubst_dict = Mock(name = 'get_xxx_rename_dict', side_effect = get_xxx_resubst_dict)
+        gdecls.get_xxx_iresubst_dict = Mock(name = 'get_xxx_iresubst_dict',  side_effect = get_xxx_iresubst_dict)
+        return gdecls
+
+    @classmethod
+    def _mock_gdecls_supp_dicts_4(cls, gdecls):
+        def get_xxx_rename_dict(xxx):
+            return  [ {'a' : 'env_a'},    {'a' : 'var_a'},    {'a' : 'opt_a'}    ][xxx]
+        def get_xxx_resubst_dict(xxx):
+            return  [ {'a' : '${env_a}'}, {'a' : '${var_a}'}, {'a' : '${opt_a}'} ][xxx]
+        def get_xxx_irename_dict(xxx):
+            return  [ {'env_a' : 'a'},    {'var_a' : 'a'},    {'opt_a' : 'a'}    ][xxx]
+        def get_xxx_iresubst_dict(xxx):
+            return  [ {'env_a' : '${a}'}, {'var_a' : '${a}'}, {'opt_a' : '${a}'} ][xxx]
+        gdecls.get_xxx_rename_dict = Mock(name = 'get_xxx_rename_dict', side_effect = get_xxx_rename_dict)
+        gdecls.get_xxx_irename_dict = Mock(name = 'get_xxx_rename_dict', side_effect = get_xxx_irename_dict)
+        gdecls.get_xxx_resubst_dict = Mock(name = 'get_xxx_rename_dict', side_effect = get_xxx_resubst_dict)
+        gdecls.get_xxx_iresubst_dict = Mock(name = 'get_xxx_iresubst_dict',  side_effect = get_xxx_iresubst_dict)
+        return gdecls
+
+    def test___init___1(self):
+        """_GVars.__init__(gdecls) should call gdecls.keys() and self.__init_supp_dicts(gdecls)"""
+        gdecls = self._gdecls_mock_1()
+        with patch.object(GVars._GVars, '_GVars__init_supp_dicts', autospec=True) as mock:
+            gv = GVars._GVars(gdecls)
+            try:
+                mock.assert_called_once_with(gv, gdecls)
+                gdecls.keys.assert_called_once_with()
+            except AssertionError as e:
+                self.fail(str(e))
+        self.assertIsInstance(gv, GVars._GVars)
+        self.assertEqual(gv._GVars__keys, ['k', 'e', 'y', 's'])
+
+    def test___init___2(self):
+        """_GVars.__init__(gdecls) should initialize its iternal dicts"""
+        gv = GVars._GVars(self._gdecls_mock_2())
+        self.assertEqual(gv._GVars__rename, ['rename_dict[0]', 'rename_dict[1]', 'rename_dict[2]'])
+        self.assertEqual(gv._GVars__resubst, ['resubst_dict[0]', 'resubst_dict[1]', 'resubst_dict[2]'])
+        self.assertEqual(gv._GVars__irename, ['irename_dict[0]', 'irename_dict[1]', 'irename_dict[2]'])
+        self.assertEqual(gv._GVars__iresubst, ['iresubst_dict[0]', 'iresubst_dict[1]', 'iresubst_dict[2]'])
+
+
+    def test___reset_supp_dicts(self):
+        """_GVars.__reset_supp_dicts() should reset internal dicts to {}"""
+        gv = GVars._GVars(self._gdecls_mock_2())
+        gv._GVars__reset_supp_dicts()
+        self.assertEqual(gv._GVars__rename, [{},{},{}])
+        self.assertEqual(gv._GVars__resubst, [{},{},{}])
+        self.assertEqual(gv._GVars__irename, [{},{},{}])
+        self.assertEqual(gv._GVars__iresubst, [{},{},{}])
+
+    def test___init_supp_dicts(self):
+        """_GVars.__init_supp_dicts(gdecls) should initialize internal dicts appropriately"""
+        gdecls = self._gdecls_mock_3()
+        gv = GVars._GVars(gdecls)
+        self.assertEqual(gv._GVars__rename, [None, None, None])
+        self.assertEqual(gv._GVars__resubst, [None, None, None])
+        self.assertEqual(gv._GVars__irename, [None, None, None])
+        self.assertEqual(gv._GVars__iresubst, [None, None, None])
+        self._mock_gdecls_supp_dicts_2(gdecls)
+        gv._GVars__init_supp_dicts(gdecls)
+        self.assertEqual(gv._GVars__rename, ['rename_dict[0]', 'rename_dict[1]', 'rename_dict[2]'])
+        self.assertEqual(gv._GVars__resubst, ['resubst_dict[0]', 'resubst_dict[1]', 'resubst_dict[2]'])
+        self.assertEqual(gv._GVars__irename, ['irename_dict[0]', 'irename_dict[1]', 'irename_dict[2]'])
+        self.assertEqual(gv._GVars__iresubst, ['iresubst_dict[0]', 'iresubst_dict[1]', 'iresubst_dict[2]'])
+
+    def XxxEnvProxy_test(self, x):
+        gv = GVars._GVars(self._gdecls_mock_4())
+        env = { 'env_a' : 'A', 'env_b' : 'B'}
+        with patch('SConsGnuBuild.GVars._GVarsEnvProxy', return_value = 'ok') as ProxyClass:
+            if x == 'var_':
+                proxy = gv.VarEnvProxy(env)
+            elif x == 'opt_':
+                proxy = gv.OptEnvProxy(env)
+            else:
+                proxy = gv.EnvProxy(env)
+
+            try:
+                ProxyClass.assert_called_once_with(env, { '%sa' % x : 'env_a' }, {'%sa' % x : '${env_a}'}, {'env_a' : '%sa' % x}, {'env_a' : '${%sa}' % x})
+            except AssertionError as e:
+                self.fail(str(e))
+            self.assertEqual(proxy, 'ok')
+
+    def test_VarEnvProxy(self):
+        """_GVars(gdecls).VarEnvProxy(env) should _GVarsEnvProxy() with appropriate arguments"""
+        self.XxxEnvProxy_test('var_')
+
+    def test_OptEnvProxy(self):
+        """_GVars(gdecls).OptEnvProxy(env) should _GVarsEnvProxy() with appropriate arguments"""
+        self.XxxEnvProxy_test('opt_')
+
+    def test_EnvProxy(self):
+        """_GVars(gdecls).EnvProxy(env) should _GVarsEnvProxy() with appropriate arguments"""
+        self.XxxEnvProxy_test('')
+
+    def test_get_keys(self):
+        """_GVars(gdecls).get_keys() should return attribute __keys"""
+        gv = GVars._GVars(self._gdecls_mock_1())
+        self.assertEqual(gv.get_keys(), ['k','e','y','s'])
+        # expect a copy of __keys, not __keys
+        self.assertIsNot(gv.get_keys(), gv._GVars__keys)
+
+    def test_get_xxx_key_ENV_x(self):
+        """_GVars(gdecls).get_xxx_key(ENV, 'x') should be raise KeyError"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        with self.assertRaises(KeyError):
+            gv.get_xxx_key(GVars.ENV, 'x')
+
+    def test_get_xxx_key_VAR_x(self):
+        """_GVars(gdecls).get_xxx_key(VAR, 'x') should be raise KeyError"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        with self.assertRaises(KeyError):
+            gv.get_xxx_key(GVars.VAR, 'x')
+
+    def test_get_xxx_key_OPT_x(self):
+        """_GVars(gdecls).get_xxx_key(OPT, 'x') should be raise KeyError"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        with self.assertRaises(KeyError):
+            gv.get_xxx_key(GVars.OPT, 'x')
+
+    def test_get_xxx_key_123_a(self):
+        """_GVars(gdecls).get_xxx_key(123, 'a') should be raise KeyError"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        with self.assertRaises(IndexError):
+            gv.get_xxx_key(123, 'a')
+
+    def test_get_xxx_key_ENV_a(self):
+        """_GVars(gdecls).get_xxx_key(ENV, 'a') should == 'env_a'"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        self.assertEqual(gv.get_xxx_key(GVars.ENV, 'a'), 'env_a')
+
+    def test_get_xxx_key_VAR_a(self):
+        """_GVars(gdecls).get_xxx_key(VAR, 'a') should == 'var_a'"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        self.assertEqual(gv.get_xxx_key(GVars.VAR, 'a'), 'var_a')
+
+    def test_get_xxx_key_OPT_a(self):
+        """_GVars(gdecls).get_xxx_key(OPT, 'a') should == 'opt_a'"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        self.assertEqual(gv.get_xxx_key(GVars.OPT, 'a'), 'opt_a')
+
+    def test_env_key_x(self):
+        """_GVars(gdecls).env_key('x') should raise KeyError"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        with self.assertRaises(KeyError):
+            gv.env_key('x')
+
+    def test_env_key_a(self):
+        """_GVars(gdecls).env_key('a') should == 'env_a'"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        self.assertEqual(gv.env_key('a'), 'env_a')
+
+    def test_var_key_x(self):
+        """_GVars(gdecls).var_key('x') should raise KeyError"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        with self.assertRaises(KeyError):
+            gv.var_key('x')
+
+    def test_var_key_a(self):
+        """_GVars(gdecls).var_key('a') should == 'var_a'"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        self.assertEqual(gv.var_key('a'), 'var_a')
+
+    def test_opt_key_x(self):
+        """_GVars(gdecls).opt_key('x') should raise KeyError"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        with self.assertRaises(KeyError):
+            gv.opt_key('x')
+
+    def test_opt_key_a(self):
+        """_GVars(gdecls).opt_key('a') should == 'opt_a'"""
+        gv = GVars._GVars(self._gdecls_mock_4())
+        self.assertEqual(gv.opt_key('a'), 'opt_a')
+
+    def test_update_env_from_vars_1(self):
+        """_GVars(gdecls).update_env_from_vars('env', variables)"""
+        def VarEnvProxy(arg): return 'var_%s_proxy' % arg
+        gv = GVars._GVars(self._gdecls_mock_1())
+        gv.VarEnvProxy = Mock(name = 'VarEnvProxy', side_effect = VarEnvProxy)
+        variables = Mock(name = 'variables')
+        variables.Update = Mock(name = 'Update')
+        gv.update_env_from_vars('env', variables)
+        try:
+            variables.Update.assert_called_once_with('var_env_proxy', None)
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_update_env_from_vars_2(self):
+        """_GVars(gdecls).update_env_from_vars('env', variables, 'arg')"""
+        def VarEnvProxy(arg): return 'var_%s_proxy' % arg
+        gv = GVars._GVars(self._gdecls_mock_1())
+        gv.VarEnvProxy = Mock(name = 'VarEnvProxy', side_effect = VarEnvProxy)
+        variables = Mock('variables')
+        variables.Update = Mock(name = 'Update')
+        gv.update_env_from_vars('env', variables, 'arg')
+        try:
+            variables.Update.assert_called_once_with('var_env_proxy', 'arg')
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_update_env_from_opts_1(self):
+        """_GVars(gdecls).update_env_from_opts('env')"""
+        proxy = { 'env1' : {} }
+        def OptEnvProxy(arg): return proxy[arg]
+        gv = GVars._GVars(self._gdecls_mock_4())
+        gv.OptEnvProxy = Mock(name = 'OptEnvProxy', side_effect = OptEnvProxy)
+        with patch('SCons.Script.Main.GetOption', side_effect = lambda key : 'val_%s' % key) as GetOption:
+            gv.update_env_from_opts('env1')
+            try:
+                GetOption.assert_called_once_with('opt_a')
+            except AssertionError as e:
+                self.fail(str(e))
+            self.assertEqual(proxy['env1']['opt_a'], 'val_opt_a')
+
+    def test_UpdateEnvironment_1(self):
+        """_GVars(gdecls).UpdateEnvironment('env') never calls update_env_from_{vars,opts}"""
+        gv = self._gvars_mock_4_UpdateEnvironment()
+        gv.UpdateEnvironment('env')
+        try:
+            gv.update_env_from_vars.assert_never_called()
+            gv.update_env_from_opts.assert_never_called()
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_UpdateEnvironment_2(self):
+        """_GVars(gdecls).UpdateEnvironment('env','variables1') calls update_env_from_vars('env', 'variables1') once"""
+        gv = self._gvars_mock_4_UpdateEnvironment()
+        gv.UpdateEnvironment('env', 'variables1')
+        try:
+            gv.update_env_from_vars.assert_called_once_with('env', 'variables1', None)
+            gv.update_env_from_opts.assert_never_called()
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_UpdateEnvironment_3(self):
+        """_GVars(gdecls).UpdateEnvironment('env',None,True) calls update_env_from_opts('env') once"""
+        gv = self._gvars_mock_4_UpdateEnvironment()
+        gv.UpdateEnvironment('env', None, True)
+        try:
+            gv.update_env_from_vars.assert_never_called()
+            gv.update_env_from_opts.assert_called_once_with('env')
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_UpdateEnvironment_4(self):
+        """_GVars(gdecls).UpdateEnvironment('env','variables1',True) calls update_env_from_{opts,vars} once"""
+        gv = self._gvars_mock_4_UpdateEnvironment()
+        gv.UpdateEnvironment('env', 'variables1', True)
+        try:
+            gv.update_env_from_vars.assert_called_once_with('env', 'variables1', None)
+            gv.update_env_from_opts.assert_called_once_with('env')
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_SaveVariables(self):
+        """_GVars(gdecls).SaveVariables(variables, 'filename1', 'env1')"""
+        def VarEnvProxy(arg): return 'var_%s_proxy' % arg
+        gv = GVars._GVars(self._gdecls_mock_1())
+        gv.VarEnvProxy = Mock(name = 'VarEnvProxy', side_effect = VarEnvProxy)
+        variables = Mock(name = 'variables')
+        variables.Save = Mock(name = 'Save')
+        gv.SaveVariables(variables, 'filename1', 'env1')
+        try:
+            variables.Save.assert_called_once_with('filename1','var_env1_proxy')
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_GenerateVariablesHelpText_1(self):
+        """_GVars(gdecls).GenerateVariablesHelpText(variables, 'env1')"""
+        def VarEnvProxy(arg): return 'var_%s_proxy' % arg
+        gv = GVars._GVars(self._gdecls_mock_1())
+        gv.VarEnvProxy = Mock(name = 'VarEnvProxy', side_effect = VarEnvProxy)
+        variables = Mock(name = 'variables')
+        variables.GenerateHelpText = Mock(name = 'GenerateHelpText')
+        gv.GenerateVariablesHelpText(variables, 'env1')
+        try:
+            variables.GenerateHelpText.assert_called_once_with('var_env1_proxy')
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_GenerateVariablesHelpText_2(self):
+        """_GVars(gdecls).GenerateVariablesHelpText(variables, 'env1', 'arg1', 'arg2')"""
+        def VarEnvProxy(arg): return 'var_%s_proxy' % arg
+        gv = GVars._GVars(self._gdecls_mock_1())
+        gv.VarEnvProxy = Mock(name = 'VarEnvProxy', side_effect = VarEnvProxy)
+        variables = Mock(name = 'variables')
+        variables.GenerateHelpText = Mock(name = 'GenerateHelpText')
+        gv.GenerateVariablesHelpText(variables, 'env1', 'arg1', 'arg2')
+        try:
+            variables.GenerateHelpText.assert_called_once_with('var_env1_proxy', 'arg1', 'arg2')
+        except AssertionError as e:
+            self.fail(str(e))
+
+#############################################################################
+class Test__GVarDecl(unittest.TestCase):
+    pass
 
 
 #############################################################################
@@ -521,7 +870,7 @@ class Test_GVarDecls(unittest.TestCase):
     def test_user_doc_example_9(self):
         """example 9 from user documentation should work"""
         decls = GVarDecls(
-            foo = ( { 'ENV_FOO' : None }, ('VAR_FOO', 'Help for VAR_FOO', '$VAR_BAR'), None), 
+           foo = ( { 'ENV_FOO' : None }, ('VAR_FOO', 'Help for VAR_FOO', '$VAR_BAR'), None),
            bar = ( { 'ENV_BAR' : None }, ('VAR_BAR', 'Help for VAR_BAR', 'BAR'), None),
         )
         self.assertIsInstance(decls, dict)
@@ -558,6 +907,8 @@ if __name__ == "__main__":
                , Test__compose_dicts
                , Test__invert_dict
                , Test__GVarsEnvProxy
+               , Test__GVars
+               , Test__GVarDecl
                , Test_GVarDecl
                , Test_GVarDeclU
                , Test_GVarDecls ]

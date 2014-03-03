@@ -661,8 +661,7 @@ class _GVars(object):
     def get_keys(self):
         """Return the list of keys identifying ``GVar`` variables defined in
         this object (list of ``GVar`` variable names)."""
-        from copy import copy
-        return copy(self.__keys)
+        return self.__keys[:]
 
     #========================================================================
     def get_xxx_key(self, xxx, key):
