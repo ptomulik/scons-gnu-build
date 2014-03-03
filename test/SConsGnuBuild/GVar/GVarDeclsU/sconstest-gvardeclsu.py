@@ -37,7 +37,6 @@ test.write(['t1', 'SConstruct'],
 """
 # SConstruct
 from SConsGnuBuild.GVar import GVarDecl
-gdecl = GVarDecl()
 """)
 test.run(chdir = 't1')
 

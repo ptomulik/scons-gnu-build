@@ -30,6 +30,7 @@ import unittest
 
 from SConsGnuBuild import GVars
 from SConsGnuBuild.GVars import GVarDecl, GVarDeclU, GVarDecls, GVarDeclsU
+from mock import Mock
 
 #############################################################################
 class Test_module_constants(unittest.TestCase):
@@ -113,6 +114,153 @@ class Test__compose_dicts(unittest.TestCase):
     def test__compose_dicts_2(self):
         """GVars._compose_dicts({'uuu' : 'vvv', 'xxx' : 'yyy'} ,{ 'vvv' : 'VVV', 'yyy' : 'YYY'}) should == {'uuu' : 'VVV'}"""
         self.assertEqual(GVars._compose_dicts({'uuu' : 'vvv', 'xxx' : 'yyy'}, { 'vvv' : 'VVV', 'yyy' : 'YYY'}), {'uuu' : 'VVV', 'xxx' : 'YYY'})
+
+#############################################################################
+class Test__invert_dict(unittest.TestCase):
+    def test__invert_dict_1(self):
+        """_invert_dict({}) should == {}"""
+        self.assertEqual(GVars._invert_dict({}), {})
+    def test__invert_dict_2(self):
+        """_invert_dict({ 'x' : 'y' }) should == { 'y' : 'x'}"""
+        self.assertEqual(GVars._invert_dict({'x' : 'y'}), { 'y' : 'x'})
+    def test__invert_dict_3(self):
+        """_invert_dict({ 'v' : 'w', 'x' : 'y' }) should == { 'w' : 'v', 'y' : 'x'}"""
+        self.assertEqual(GVars._invert_dict({'v' : 'w', 'x' : 'y'}), { 'w' : 'v', 'y' : 'x'})
+
+#############################################################################
+class Test__GVarsEnvProxy(unittest.TestCase):
+    def test___init__1(self):
+        """_GVarsEnvProxy.__init__(env) should set default attributes"""
+        env = 'env'
+        proxy = GVars._GVarsEnvProxy(env)
+        self.assertIs(proxy.env, env)
+        self.assertEqual(proxy._GVarsEnvProxy__rename, {})
+        self.assertEqual(proxy._GVarsEnvProxy__irename, {})
+        self.assertEqual(proxy._GVarsEnvProxy__resubst, {})
+        self.assertEqual(proxy._GVarsEnvProxy__iresubst, {})
+        self.assertEqual(proxy.is_strict(), False)
+
+    def test___init__2(self):
+        """_GVarsEnvProxy.__init__(env, arg1, arg2, arg3, arg4, True) should set attributes"""
+        env = 'env'
+        arg1, arg2, arg3, arg4 = 'arg1', 'arg2', 'arg3', 'arg4'
+        proxy = GVars._GVarsEnvProxy(env, arg1, arg2, arg3, arg4, True)
+        self.assertIs(proxy.env, env)
+        self.assertIs(proxy._GVarsEnvProxy__rename,   arg1)
+        self.assertIs(proxy._GVarsEnvProxy__resubst,  arg2)
+        self.assertIs(proxy._GVarsEnvProxy__irename,  arg3)
+        self.assertIs(proxy._GVarsEnvProxy__iresubst, arg4)
+        self.assertIs(proxy.is_strict(), True)
+
+    def test_is_strict(self):
+        """Test _GVarsEnvProxy.is_strict()"""
+        self.assertIs(GVars._GVarsEnvProxy('env', strict = False).is_strict(), False)
+        self.assertIs(GVars._GVarsEnvProxy('env', strict = True).is_strict(), True)
+
+    def test_set_strict_False_calls__setup_methods_False(self):
+        """_GVarsEnvProxy.set_strict(False) should call _GVarsEnvProxy.__setup_methods(False)"""
+        proxy = GVars._GVarsEnvProxy('env')
+        proxy._GVarsEnvProxy__setup_methods = Mock(name = '__setup_methods')
+        proxy.set_strict(False)
+        try:
+            proxy._GVarsEnvProxy__setup_methods.assert_called_with(False)
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_set_strict_True_calls__setup_methods_True(self):
+        """_GVarsEnvProxy.set_strict(True) should call _GVarsEnvProxy.__setup_methods(True)"""
+        proxy = GVars._GVarsEnvProxy('env')
+        proxy._GVarsEnvProxy__setup_methods = Mock(name = '__setup_methods')
+        proxy.set_strict(True)
+        try:
+            proxy._GVarsEnvProxy__setup_methods.assert_called_with(True)
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_set_strict_False(self):
+        """_GVarsEnvProxy.is_strict() should be False after _GVarsEnvProxy.set_strict(False)"""
+        proxy = GVars._GVarsEnvProxy('env')
+        proxy.set_strict(False)
+        self.assertIs(proxy.is_strict(), False)
+
+    def test_set_strict_True(self):
+        """_GVarsEnvProxy.is_strict() should be True after _GVarsEnvProxy.set_strict(True)"""
+        proxy = GVars._GVarsEnvProxy('env')
+        proxy.set_strict(True)
+        self.assertIs(proxy.is_strict(), True)
+
+    def test__setup_methods_True(self):
+        """_GVarsEnvProxy.__setup_methods(True) should setup appropriate methods"""
+        proxy = GVars._GVarsEnvProxy('env', strict = False)
+        proxy._GVarsEnvProxy__setup_methods(True)
+        self.assertEqual(proxy._GVarsEnvProxy__delitem__impl, proxy._GVarsEnvProxy__delitem__strict)
+        self.assertEqual(proxy._GVarsEnvProxy__getitem__impl, proxy._GVarsEnvProxy__getitem__strict)
+        self.assertEqual(proxy._GVarsEnvProxy__setitem__impl, proxy._GVarsEnvProxy__setitem__strict)
+        self.assertEqual(proxy.get, proxy._get_strict)
+        self.assertEqual(proxy.has_key, proxy._has_key_strict)
+        self.assertEqual(proxy._GVarsEnvProxy__contains__impl, proxy._GVarsEnvProxy__contains__strict)
+        self.assertEqual(proxy.items, proxy._items_strict)
+
+    def test__setup_methods_False(self):
+        """_GVarsEnvProxy.__setup_methods(False) should setup appropriate methods"""
+        proxy = GVars._GVarsEnvProxy('env', strict = True)
+        proxy._GVarsEnvProxy__setup_methods(False)
+        self.assertEqual(proxy._GVarsEnvProxy__delitem__impl, proxy._GVarsEnvProxy__delitem__nonstrict)
+        self.assertEqual(proxy._GVarsEnvProxy__getitem__impl, proxy._GVarsEnvProxy__getitem__nonstrict)
+        self.assertEqual(proxy._GVarsEnvProxy__setitem__impl, proxy._GVarsEnvProxy__setitem__nonstrict)
+        self.assertEqual(proxy.get, proxy._get_nonstrict)
+        self.assertEqual(proxy.has_key, proxy._has_key_nonstrict)
+        self.assertEqual(proxy._GVarsEnvProxy__contains__impl, proxy._GVarsEnvProxy__contains__nonstrict)
+        self.assertEqual(proxy.items, proxy._items_nonstrict)
+
+    def test__delitem__1(self):
+        """_GVarsEnvProxy({'a' : 'A'}).__delitem__('a') should delete item 'a'"""
+        env = { 'a' : 'A' }
+        GVars._GVarsEnvProxy(env).__delitem__('a')
+        self.assertEqual(env, {})
+
+    def test__delitem__2(self):
+        """_GVarsEnvProxy({'a' : 'A'}, strict = True).__delitem__('a') should raise KeyError"""
+        with self.assertRaises(KeyError):
+            GVars._GVarsEnvProxy({'a' : 'A'}, strict = True).__delitem__('a')
+
+    def test__delitem__3(self):
+        """_GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}).__delitem__('a') should delete item 'b'"""
+        env = { 'b' : 'B' }
+        GVars._GVarsEnvProxy(env, rename = { 'a' : 'b'}).__delitem__('a')
+        self.assertEqual(env, {})
+
+    def test__delitem__4(self):
+        """_GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}, strict = True).__delitem__('a') should delete item 'b'"""
+        env = { 'b' : 'B' }
+        GVars._GVarsEnvProxy(env, rename = { 'a' : 'b'}, strict = True).__delitem__('a')
+        self.assertEqual(env, {})
+
+    def test__getitem__1(self):
+        """_GVarsEnvProxy({'a' : 'A'}).__getitem__('a') should return 'A'"""
+        env = { 'a' : 'A' }
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : 'A'}).__getitem__('a'), 'A')
+
+    def test__getitem__2(self):
+        """_GVarsEnvProxy({'a' : 'A'}, strict = True).__getitem__('a') should raise KeyError"""
+        with self.assertRaises(KeyError):
+            GVars._GVarsEnvProxy({'a' : 'A'}, strict = True).__getitem__('a')
+
+    def test__getitem__3(self):
+        """_GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}).__getitem__('a') should return 'B'"""
+        self.assertEqual(GVars._GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}).__getitem__('a'), 'B')
+
+    def test__getitem__4(self):
+        """_GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}, strict = True).__getitem__('a') should return 'B'"""
+        self.assertEqual(GVars._GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}, strict = True).__getitem__('a'), 'B')
+    
+    #
+    #
+    #  TODO: TODO:  CONTINUE
+    #  TODO: TODO:    FROM
+    #  TODO: TODO:    HERE
+    #
+    #
 
 #############################################################################
 class Test_GVarDecl(unittest.TestCase):
@@ -260,14 +408,16 @@ if __name__ == "__main__":
     ldr = unittest.TestLoader()
     suite = unittest.TestSuite()
     # Load tests to test suite
-    tclasses = [ 
-        Test_module_constants,
-        Test__resubst,
-        Test_GVarDecl,
-        Test_GVarDeclU,
-        Test_GVarDecls,
-        Test_GVarDeclsU,
-    ]
+    tclasses = [ Test_module_constants
+               , Test__resubst
+               , Test__build_resubst_dict
+               , Test__build_iresubst_dict
+               , Test__compose_dicts
+               , Test__invert_dict
+               , Test__GVarsEnvProxy
+               , Test_GVarDecl
+               , Test_GVarDeclU
+               , Test_GVarDecls ]
 
     for tclass in tclasses:
         suite.addTests(ldr.loadTestsFromTestCase(tclass))

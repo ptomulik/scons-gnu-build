@@ -441,8 +441,8 @@ class _GVarsEnvProxy(object):
         # -------------------------------------------------------------------
         self.env = env
         self.__rename = rename
-        self.__irename = irename
         self.__resubst = resubst
+        self.__irename = irename
         self.__iresubst = iresubst
         self.set_strict(strict)
 
