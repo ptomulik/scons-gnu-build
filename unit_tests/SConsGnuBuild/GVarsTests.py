@@ -129,7 +129,7 @@ class Test__invert_dict(unittest.TestCase):
 
 #############################################################################
 class Test__GVarsEnvProxy(unittest.TestCase):
-    def test___init__1(self):
+    def test___init___1(self):
         """_GVarsEnvProxy.__init__(env) should set default attributes"""
         env = 'env'
         proxy = GVars._GVarsEnvProxy(env)
@@ -140,7 +140,7 @@ class Test__GVarsEnvProxy(unittest.TestCase):
         self.assertEqual(proxy._GVarsEnvProxy__iresubst, {})
         self.assertEqual(proxy.is_strict(), False)
 
-    def test___init__2(self):
+    def test___init___2(self):
         """_GVarsEnvProxy.__init__(env, arg1, arg2, arg3, arg4, True) should set attributes"""
         env = 'env'
         arg1, arg2, arg3, arg4 = 'arg1', 'arg2', 'arg3', 'arg4'
@@ -189,7 +189,7 @@ class Test__GVarsEnvProxy(unittest.TestCase):
         proxy.set_strict(True)
         self.assertIs(proxy.is_strict(), True)
 
-    def test__setup_methods_True(self):
+    def test___setup_methods_True(self):
         """_GVarsEnvProxy.__setup_methods(True) should setup appropriate methods"""
         proxy = GVars._GVarsEnvProxy('env', strict = False)
         proxy._GVarsEnvProxy__setup_methods(True)
@@ -201,7 +201,7 @@ class Test__GVarsEnvProxy(unittest.TestCase):
         self.assertEqual(proxy._GVarsEnvProxy__contains__impl, proxy._GVarsEnvProxy__contains__strict)
         self.assertEqual(proxy.items, proxy._items_strict)
 
-    def test__setup_methods_False(self):
+    def test___setup_methods_False(self):
         """_GVarsEnvProxy.__setup_methods(False) should setup appropriate methods"""
         proxy = GVars._GVarsEnvProxy('env', strict = True)
         proxy._GVarsEnvProxy__setup_methods(False)
@@ -213,54 +213,197 @@ class Test__GVarsEnvProxy(unittest.TestCase):
         self.assertEqual(proxy._GVarsEnvProxy__contains__impl, proxy._GVarsEnvProxy__contains__nonstrict)
         self.assertEqual(proxy.items, proxy._items_nonstrict)
 
-    def test__delitem__1(self):
+    def test___delitem___1(self):
         """_GVarsEnvProxy({'a' : 'A'}).__delitem__('a') should delete item 'a'"""
         env = { 'a' : 'A' }
         GVars._GVarsEnvProxy(env).__delitem__('a')
         self.assertEqual(env, {})
 
-    def test__delitem__2(self):
+    def test___delitem___2(self):
         """_GVarsEnvProxy({'a' : 'A'}, strict = True).__delitem__('a') should raise KeyError"""
         with self.assertRaises(KeyError):
             GVars._GVarsEnvProxy({'a' : 'A'}, strict = True).__delitem__('a')
 
-    def test__delitem__3(self):
+    def test___delitem___3(self):
         """_GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}).__delitem__('a') should delete item 'b'"""
         env = { 'b' : 'B' }
         GVars._GVarsEnvProxy(env, rename = { 'a' : 'b'}).__delitem__('a')
         self.assertEqual(env, {})
 
-    def test__delitem__4(self):
+    def test___delitem___4(self):
         """_GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}, strict = True).__delitem__('a') should delete item 'b'"""
         env = { 'b' : 'B' }
         GVars._GVarsEnvProxy(env, rename = { 'a' : 'b'}, strict = True).__delitem__('a')
         self.assertEqual(env, {})
 
-    def test__getitem__1(self):
+    def test___getitem___1(self):
         """_GVarsEnvProxy({'a' : 'A'}).__getitem__('a') should return 'A'"""
         env = { 'a' : 'A' }
         self.assertEqual(GVars._GVarsEnvProxy({'a' : 'A'}).__getitem__('a'), 'A')
 
-    def test__getitem__2(self):
+    def test___getitem___2(self):
         """_GVarsEnvProxy({'a' : 'A'}, strict = True).__getitem__('a') should raise KeyError"""
         with self.assertRaises(KeyError):
             GVars._GVarsEnvProxy({'a' : 'A'}, strict = True).__getitem__('a')
 
-    def test__getitem__3(self):
+    def test__getitem___3(self):
         """_GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}).__getitem__('a') should return 'B'"""
         self.assertEqual(GVars._GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}).__getitem__('a'), 'B')
 
-    def test__getitem__4(self):
+    def test___getitem___4(self):
         """_GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}, strict = True).__getitem__('a') should return 'B'"""
         self.assertEqual(GVars._GVarsEnvProxy({'b' : 'B'}, rename = {'a' : 'b'}, strict = True).__getitem__('a'), 'B')
+
+    def test__setitem___1(self):
+        """_GVarsEnvProxy({}).__setitem__('a', 'A') should set item 'a' to 'A'"""
+        proxy = GVars._GVarsEnvProxy({})
+        proxy.__setitem__('a', 'A')
+        self.assertEqual(proxy['a'], 'A')
+
+    def test___setitem___2(self):
+        """_GVarsEnvProxy({'a' : 'B'}).__setitem__('a', 'A') should set item 'a' to 'A'"""
+        env = {'a' : 'B'}
+        proxy = GVars._GVarsEnvProxy(env)
+        proxy.__setitem__('a', 'A')
+        self.assertEqual(env['a'], 'A')
+
+    def test__setitem___3(self):
+        """_GVarsEnvProxy({'a' : 'B'}, rename = { 'a' : 'a' }, strict = True).__setitem__('a', 'A') should set item 'a' to 'A'"""
+        env = {'a' : 'B'}
+        proxy = GVars._GVarsEnvProxy(env, rename = { 'a' : 'a' }, strict = True)
+        proxy.__setitem__('a', 'A')
+        self.assertEqual(env['a'], 'A')
+
+    def test___setitem___4(self):
+        """_GVarsEnvProxy({'a' : 'B'}, strict = True).__setitem__('a', 'A') should raise KeyError"""
+        env = {'a' : 'B'}
+        proxy = GVars._GVarsEnvProxy(env, strict = True)
+        with self.assertRaises(KeyError):
+            proxy.__setitem__('a', 'A')
+        self.assertEqual(env['a'], 'B')
+
+    def test_get_1(self):
+        """_GVarsEnvProxy({'a' : 'A'}).get('a') should return 'A'"""
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : 'A'}).get('a'), 'A')
+
+    def test_get_2(self):
+        """_GVarsEnvProxy({'a' : 'A'}).get('b') should return None"""
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : 'A'}).get('b'), None)
+
+    def test_get_3(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = { 'b' : 'a' }).get('b') should return 'A'"""
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : 'A'}, rename = { 'b' : 'a'}).get('b'), 'A')
+
+    def test_get_4(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = { 'b' : 'a' }).get('a') should return 'A'"""
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : 'A'}, rename = { 'b' : 'a'}).get('a'), 'A')
+
+    def test_get_5(self):
+        """_GVarsEnvProxy({'a' : 'A'}, strict = True).get('a') should raise KeyError"""
+        with self.assertRaises(KeyError):
+            GVars._GVarsEnvProxy({'a' : 'A'}, strict = True).get('a')
+
+    def test_get_6(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = { 'b' : 'a' }, strict = True).get('b') should return 'A'"""
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : 'A'}, rename = { 'b' : 'a' }, strict = True).get('b'), 'A')
+
+    def test_has_key_1(self):
+        """_GVarsEnvProxy({'a' : 'A'}).has_key('a') should return True"""
+        self.assertTrue(GVars._GVarsEnvProxy({'a' : 'A'}).has_key('a'))
+
+    def test_has_key_2(self):
+        """_GVarsEnvProxy({'a' : 'A'}).has_key('b') should return False"""
+        self.assertFalse(GVars._GVarsEnvProxy({'a' : 'A'}).has_key('b'))
+
+    def test_has_key_3(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}).has_key('a') should return True"""
+        self.assertTrue(GVars._GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}).has_key('a'))
+
+    def test_has_key_4(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}).has_key('b') should return True"""
+        self.assertTrue(GVars._GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}).has_key('b'))
+
+    def test_has_key_5(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}, strict = True).has_key('a') should return False"""
+        self.assertFalse(GVars._GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}, strict = True).has_key('a'))
+
+    def test_has_key_6(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}, strict = True).has_key('b') should return True"""
+        self.assertTrue(GVars._GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}, strict = True).has_key('b'))
+
+    def test_has_key_7(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'c'}, strict = True).has_key('b') should return False"""
+        self.assertFalse(GVars._GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'c'}, strict = True).has_key('b'))
+
+    def test___contains___1(self):
+        """_GVarsEnvProxy({'a' : 'A'}).__contains__('a') should return True"""
+        self.assertTrue(GVars._GVarsEnvProxy({'a' : 'A'}).__contains__('a'))
+
+    def test___contains___2(self):
+        """_GVarsEnvProxy({'a' : 'A'}).__contains__('b') should return False"""
+        self.assertFalse(GVars._GVarsEnvProxy({'a' : 'A'}).__contains__('b'))
+
+    def test___contains___3(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}).__contains__('a') should return True"""
+        self.assertTrue(GVars._GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}).__contains__('a'))
+
+    def test___contains___4(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}).__contains__('b') should return True"""
+        self.assertTrue(GVars._GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}).__contains__('b'))
+
+    def test___contains___5(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}, strict = True).__contains__('a') should return False"""
+        self.assertFalse(GVars._GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}, strict = True).__contains__('a'))
+
+    def test___contains___6(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}, strict = True).__contains__('b') should return True"""
+        self.assertTrue(GVars._GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'a'}, strict = True).__contains__('b'))
+
+    def test___contains___7(self):
+        """_GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'c'}, strict = True).__contains__('b') should return False"""
+        self.assertFalse(GVars._GVarsEnvProxy({'a' : 'A'}, rename = {'b' : 'c'}, strict = True).__contains__('b'))
+
+    def test_items_1(self):
+        """_GVarsEnvProxy({'a' : 'A', 'b' : 'B'}).items() should be [('a', 'A'), ('b', 'B')]"""
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : 'A', 'b' : 'B'}).items(), ([('a', 'A'), ('b', 'B')]))
+
+    def test_items_2(self):
+        """_GVarsEnvProxy({'a' : 'A', 'b' : 'B'}, irename = {'a' : 'c'}).items() should be [('c', 'A'), ('b', 'B')]"""
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : 'A', 'b' : 'B'}, irename = { 'a' : 'c'}).items(), ([('c', 'A'), ('b', 'B')]))
+
+    def test_items_3(self):
+        """_GVarsEnvProxy({'a' : 'A', 'b' : 'B'}, rename = {'c' : 'a'}, strict = True).items() should be [('c', 'A')]"""
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : 'A', 'b' : 'B'}, rename = { 'c' : 'a'}, strict = True).items(), ([('c', 'A')]))
+
+    def test_items_4(self):
+        """_GVarsEnvProxy({'a' : '${a}'}, irename = {'a' : 'b'}, iresubst = {'a' : '${b}'}).items() should be [('b', '${b}')]"""
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : '${a}'}, irename = {'a' : 'b'}, iresubst = {'a' : '${b}'}).items(), [('b', '${b}')])
+
+    def test_items_5(self):
+        """_GVarsEnvProxy({'a' : 'a'}, irename = {'a' : 'b'}, iresubst = {'a' : '${b}'}).items() should be [('b', 'a')]"""
+        self.assertEqual(GVars._GVarsEnvProxy({'a' : 'a'}, irename = {'a' : 'b'}, iresubst = {'a' : '${b}'}).items(), [('b', 'a')])
     
-    #
-    #
-    #  TODO: TODO:  CONTINUE
-    #  TODO: TODO:    FROM
-    #  TODO: TODO:    HERE
-    #
-    #
+    def test_subst_1(self):
+        """_GVarsEnvProxy(env).subst('${a} ${b}') should call env.subst('${a} ${b}')"""
+        env = Mock(name = 'env')
+        env.subst = Mock(name = 'env.subst')
+        GVars._GVarsEnvProxy(env).subst('${a} ${b}')
+        try:
+            env.subst.assert_called_with('${a} ${b}')
+        except AssertionError as e:
+            self.fail(str(e))
+
+    def test_subst_2(self):
+        """_GVarsEnvProxy(env, resubst = {'b' : '${c}}).subst('${a} ${b}') should call env.subst('${a} ${c}')"""
+        env = Mock(name = 'env')
+        env.subst = Mock(name = 'env.subst')
+        GVars._GVarsEnvProxy(env, resubst = {'b' : '${c}'}).subst('${a} ${b}')
+        try:
+            env.subst.assert_called_with('${a} ${c}')
+        except AssertionError as e:
+            self.fail(str(e))
+
+
 
 #############################################################################
 class Test_GVarDecl(unittest.TestCase):

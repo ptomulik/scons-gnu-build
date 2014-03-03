@@ -506,6 +506,10 @@ class _GVarsEnvProxy(object):
 
     #========================================================================
     def __setitem__strict(self, key, value):
+        # FIXME: What may seem to be irrational is that we actually can't
+        # insert to env items that are not already covered by __rename hash.
+        # Maybe we sohuld provide some default way of extending __rename when
+        # setting new items in strict mode?
         env_key = self.__rename[key]
         env_value = _resubst(value, self.__resubst)
         self.env[env_key] = env_value
@@ -528,7 +532,7 @@ class _GVarsEnvProxy(object):
 
     #========================================================================
     def _has_key_strict(self, key):
-        return key in self.__rename
+        return self.__rename.has_key(key) and self.env.has_key(self.__rename[key])
 
     #========================================================================
     def _has_key_nonstrict(self, key):
@@ -540,7 +544,7 @@ class _GVarsEnvProxy(object):
 
     #========================================================================
     def __contains__strict(self, key):
-        return self.env.__contains__(self.__rename[key])
+        return self.__rename.has_key(key) and self.env.__contains__(self.__rename[key])
 
     #========================================================================
     def __contains__nonstrict(self, key):
