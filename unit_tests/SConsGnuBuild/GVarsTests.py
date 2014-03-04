@@ -751,8 +751,13 @@ class Test__GVars(unittest.TestCase):
 
 #############################################################################
 class Test__GVarDecl(unittest.TestCase):
+    # TODO: Write unit tests for _GVarDecl class (see GH issue #1)
     pass
 
+#############################################################################
+class Test__GVarDecls(unittest.TestCase):
+    # TODO: Write unit tests for _GVarDecls class (see GH issue #1)
+    pass
 
 #############################################################################
 class Test_GVarDecl(unittest.TestCase):
@@ -909,6 +914,7 @@ if __name__ == "__main__":
                , Test__GVarsEnvProxy
                , Test__GVars
                , Test__GVarDecl
+               , Test__GVarDecls
                , Test_GVarDecl
                , Test_GVarDeclU
                , Test_GVarDecls ]
