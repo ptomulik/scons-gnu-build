@@ -35,8 +35,16 @@ class TestCase(unittest.TestCase):
         pass
 
 if __name__ == "__main__":
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestCase)
-    unittest.TextTestRunner(verbosity = 2).run(suite)
+    ldr = unittest.TestLoader()
+    suite = unittest.TestSuite()
+    # Load tests to test suite
+    tclasses = [ TestCase ]
+
+    for tclass in tclasses:
+        suite.addTests(ldr.loadTestsFromTestCase(tclass))
+
+    if not unittest.TextTestRunner(verbosity = 2).run(suite).wasSuccessful():
+        sys.exit(1)
 
 # Local Variables:
 # # tab-width:4
