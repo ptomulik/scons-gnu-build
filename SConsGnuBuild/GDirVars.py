@@ -333,7 +333,7 @@ def DeclareGVars(**kw):
             keys used for corresponding construction variables in a SCons
             environment (default: `default_env_key_transform`)
         var_key_transform : callable
-            function of lambda used to trasform canonical ``GVar`` names to
+            function of lambda used to transform canonical ``GVar`` names to
             keys used for corresponding SCons command-line variables
             ``variable=value`` (default: `default_var_key_transform`)
         opt_key_transform : callable
@@ -347,7 +347,7 @@ def DeclareGVars(**kw):
         a dictionary-like object of type `SConsGnuBuild.GVar._GVarDecls`
     """
     args = ['name_filter', 'env_key_transform', 'var_key_transform',
-            'opt_key_trasform', 'opt_name_transform']
+            'opt_key_transform', 'opt_name_transform']
     kw2 = { key : kw[key] for key in args if key in kw }
     return declare_gvars(**kw2)
 
