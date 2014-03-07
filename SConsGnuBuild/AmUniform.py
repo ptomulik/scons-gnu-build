@@ -20,14 +20,14 @@ their sanity.
 Let's introduce few terms for clarity:
 
     - full uniform name
-        A string in form ``[add_prefix_]main_prefix_PRIMARY``.
+        A string in form ``[addprefix_]mainprefix_PRIMARY``.
         The ``add_prefix_`` is optional. Whenever a uniform name
         is decomposed, the ``add_prefix``, ``main_prefix``, and ``PRIMARY``
         parts are extracted by matching appropriate pieces of uniform name to
         known predefined primary names and prefixes. Lists of standard
         primary names and prefixes defined by GNU automake documentation are
         maintained internally by this module and may be retrieved by
-        ``standards_xxx()`` or ``StandardXxx()`` functions. Other primary
+        ``standard_xxx()`` or ``StandardXxx()`` functions. Other primary
         names and prefixes may also be provided by user as function arguments.
         The uniform name gets decomposed from right to left - primary name is
         extracted first, then the main prefix is determined from the remaining
