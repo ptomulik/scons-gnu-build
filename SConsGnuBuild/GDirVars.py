@@ -241,8 +241,10 @@ default_opt_name_transform  = Defaults.gvar_opt_name_transform
 def __init_module_vars():
     from SConsGnuBuild.Common import standard_man_sections
     for sec in standard_man_sections():
-        __std_var_triples.append( ('man%sdir' % sec, '', '${prefix}/man/man%s' %sec) )
-        __std_var_triples.append( ('man%sext' % sec, '', '.%s' %sec) )
+        dir_help = 'The directory for installing section %s man pages.' % sec
+        ext_help = 'The file name extension for installed section %s man pages.' % sec
+        __std_var_triples.append( ('man%sdir' % sec, dir_help, '${prefix}/man/man%s' %sec) )
+        __std_var_triples.append( ('man%sext' % sec, ext_help, '.%s' %sec) )
 __init_module_vars()
 
 #############################################################################
@@ -333,7 +335,7 @@ def DeclareGVars(**kw):
             keys used for corresponding construction variables in a SCons
             environment (default: `default_env_key_transform`)
         var_key_transform : callable
-            function of lambda used to transform canonical ``GVar`` names to
+            function or lambda used to transform canonical ``GVar`` names to
             keys used for corresponding SCons command-line variables
             ``variable=value`` (default: `default_var_key_transform`)
         opt_key_transform : callable
