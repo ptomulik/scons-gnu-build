@@ -1694,11 +1694,9 @@ PREFIX = &apos;/opt&apos;
 			 section of the official documentation. The
 			<package xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			scons-gnu-build</package>
-			has similar concept, that is there is a predefined set of variables 
-			that serve similar purpose. They&apos;re implemented as GVar 
-			variables (see 
+			has a predefined set of GVar variables (see 
 			<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars"/>
-			 ).
+			 ) that serve similar purpose.
 		</para>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Standard Installation Directory Variables are implemented in
@@ -1708,10 +1706,9 @@ PREFIX = &apos;/opt&apos;
 		</para>
 		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild import GDirVars</programlisting>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-		In most projects, the only thing to do in order to have Installation 
-		Directory Variables activated is to append standard set of directory 
-		variable declarations to your current set of GVars 
-		declarations:</para>
+		In order to have Installation Directory Variables activated you need 
+		to append predefined directory variable declarations to your current 
+		set of GVars declarations:</para>
 		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild import GDirVars
 # ...
 # Assume, decls is an instance of _GVarDecls
