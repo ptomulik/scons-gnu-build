@@ -36,7 +36,7 @@ test.dir_fixture('../../../../SConsGnuBuild', 't1/site_scons/SConsGnuBuild')
 test.write(['t1', 'SConstruct'],
 """
 # SConstruct
-from SConsGnuBuild.GVar import GVarDecl
+from SConsGnuBuild.GVars import GVarDecl
 gdecl = GVarDecl()
 """)
 test.run(chdir = 't1')
