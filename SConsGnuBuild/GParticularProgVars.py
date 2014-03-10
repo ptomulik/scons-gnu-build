@@ -46,8 +46,8 @@ Supported variables:
     YACC
         TODO: write short description
 
-.. autoconf output variables: http://www.gnu.org/software/autoconf/manual/autoconf.html#Output-Variable-Index
-.. Particular Programs: http://www.gnu.org/software/autoconf/manual/autoconf.html#Particular-Programs
+.. _autoconf output variables: http://www.gnu.org/software/autoconf/manual/autoconf.html#Output-Variable-Index
+.. _Particular Programs: http://www.gnu.org/software/autoconf/manual/autoconf.html#Particular-Programs
 """
 
 
@@ -148,6 +148,7 @@ default_opt_key_transform   = Defaults.gvar_opt_key_transform
 #############################################################################
 def __init_module_vars():
     # TODO: anything to be done here?
+    pass
 __init_module_vars()
 
 #############################################################################
@@ -194,7 +195,7 @@ def gvar_names(name_filter = lambda x : True):
 #############################################################################
 def declare_gvars(name_filter=lambda x : False,
                   env_key_transform=default_env_key_transform,
-                  var_key_transform=default_var_key_transform)
+                  var_key_transform=default_var_key_transform):
     from SCons.Variables.PathVariable import PathVariable
     from SConsGnuBuild.GVars import GVarDeclsU
     def _callback(name, desc, default):
