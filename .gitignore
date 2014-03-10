@@ -10,6 +10,8 @@ site_scons
 # backups created by some editors
 *.bak
 *~
+# log files
+*.log
 # Test framework
 /QMTest
 /runtest.py
