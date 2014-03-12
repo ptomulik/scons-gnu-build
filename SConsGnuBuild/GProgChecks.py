@@ -32,9 +32,6 @@ they support certain features.
 __docformat__ = 'restructuredText'
 
 ###############################################################################
-def _path_progs_feature_check(context, prog, feature_test, action_if_not_found=None, path=None):
-
-###############################################################################
 def _check_prog(context, prog, value_if_found=None, value_if_not_found=None,
                path=None, pathext=None, reject=[], prog_str = None):
     """Corresponds to AC_CHECK_PROG_ autoconf macro.
@@ -251,7 +248,7 @@ def _check_prog_grep(context,*args,**kw):
 
     .. _AC_PROG_GREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fGREP-258
     """
-    context.Display("Checking for grep that handles long lines and -e... " % prog_str)
+    context.Display("Checking for grep that handles long lines and -e... ")
     raise NotImplementedError("not implemented")
 
 ###############################################################################
@@ -260,6 +257,7 @@ def _check_prog_egrep(context,*args,**kw):
 
     .. _AC_PROG_EGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fEGREP-262
     """
+    context.Display("Checking for egrep... ")
     raise NotImplementedError("not implemented")
 
 ###############################################################################
@@ -268,6 +266,7 @@ def _check_prog_fgrep(context,*args,**kw):
 
     .. _AC_PROG_FGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fFGREP-266
     """
+    context.Display("Checking for fgrep... ")
     raise NotImplementedError("not implemented")
 
 ###############################################################################
@@ -276,6 +275,7 @@ def _check_prog_install(context,*args,**kw):
 
     .. _AC_PROG_INSTALL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fINSTALL-270
     """
+    context.Display("Checking for a BSD-compatible install... ")
     raise NotImplementedError("not implemented")
 
 ###############################################################################
@@ -284,6 +284,7 @@ def _check_prog_mkdir_p(context,*args,**kw):
 
     .. _AC_PROG_MKDIR_P: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fMKDIR_005fP-277
     """
+    context.Display("Checking for a thread-safe mkdir -p... ")
     raise NotImplementedError("not implemented")
 
 ###############################################################################
@@ -292,7 +293,9 @@ def _check_prog_lex(context,*args,**kw):
 
     .. _AC_PROG_LEX: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLEX-281
     """
+    kw['prog_str'] = 'lex'
     raise NotImplementedError("not implemented")
+    return _check_progs(['flex', 'lex'], *args, **kw)
 
 ###############################################################################
 def _check_prog_ln_s(context,*args,**kw):
@@ -300,6 +303,7 @@ def _check_prog_ln_s(context,*args,**kw):
 
     .. _AC_PROG_LN_S: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288
     """
+    context.Display("Checking whether ln -s works... ")
     raise NotImplementedError("not implemented")
 
 ###############################################################################
@@ -309,6 +313,7 @@ def _checkProg_ranlib(context,*args,**kw):
     .. _AC_PROG_RANLIB: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fRANLIB-291
     """
     raise NotImplementedError("not implemented")
+    return _check_tool('ranlib',*args,**kw)
 
 ###############################################################################
 def _check_prog_sed(context,*args,**kw):
@@ -316,7 +321,23 @@ def _check_prog_sed(context,*args,**kw):
 
     .. _AC_PROG_SED: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fSED-294
     """
-    raise NotImplementedError("not implemented")
+    context.Display("Checking for a sed that does not truncate output... ")
+    #context.sconf.cached = 1
+    # Script should not contain more than 9 commands (for HP-UX sed),
+    # but more than about 7000 bytes, to cacth a limit in Solaris 8
+    # /usr/ucb/sed.
+    script = "\n".join(8 * [ "s/" + (35 * "a") + "/" + (33 * "b") + "/" ])
+    for prog in ['sed', 'gsed']:
+        #path = context.env.WhereIs(prog)
+        action = "echo 0123456789 | %s -f $SOURCE > $TARGET" % prog
+        #action = "sed -f $SOURCE > $TARGET"
+        #action = "echo " % script
+        status, output = context.TryAction(action, text = script, extension = '.sed')
+        if status and output:
+            context.Result(prog)
+            return prog
+    context.Result('not found')
+    return None
 
 ###############################################################################
 def _check_prog_yacc(context,*args,**kw):
@@ -325,6 +346,8 @@ def _check_prog_yacc(context,*args,**kw):
     .. _AC_PROG_YACC: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fYACC-298
     """
     raise NotImplementedError("not implemented")
+    kw['prog_str'] = 'yacc'
+    return _check_progs(['bison', 'byacc', 'yacc'], *args, **kw)
 
 # Local Variables:
 # # tab-width:4
