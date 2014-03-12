@@ -32,7 +32,10 @@ they support certain features.
 __docformat__ = 'restructuredText'
 
 ###############################################################################
-def _CheckProg(context, prog, value_if_found=None, value_if_not_found=None,
+def _path_progs_feature_check(context, prog, feature_test, action_if_not_found=None, path=None):
+
+###############################################################################
+def _check_prog(context, prog, value_if_found=None, value_if_not_found=None,
                path=None, pathext=None, reject=[], prog_str = None):
     """Corresponds to AC_CHECK_PROG_ autoconf macro.
 
@@ -79,7 +82,7 @@ def _CheckProg(context, prog, value_if_found=None, value_if_not_found=None,
     return value_if_not_found
 
 ###############################################################################
-def _CheckProgs(context, progs, value_if_not_found=None, path=None, pathext=None,
+def _check_progs(context, progs, value_if_not_found=None, path=None, pathext=None,
                 reject=[], prog_str = None):
     """Corresponds to AC_CHECK_PROGS_ autoconf macro.
 
@@ -126,7 +129,7 @@ def _CheckProgs(context, progs, value_if_not_found=None, path=None, pathext=None
     return value_if_not_found
 
 ###############################################################################
-def _CheckTargetTool(context, prog, value_if_not_found=None,
+def _check_target_tool(context, prog, value_if_not_found=None,
                      path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TARGET_TOOL_ autoconf macro.
     
@@ -136,7 +139,7 @@ def _CheckTargetTool(context, prog, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckTool(context, prog, value_if_not_found=None,
+def _check_tool(context, prog, value_if_not_found=None,
                path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TOOL_ autoconf macro.
 
@@ -146,7 +149,7 @@ def _CheckTool(context, prog, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckTargetTools(context, progs, value_if_not_found=None,
+def _check_target_tools(context, progs, value_if_not_found=None,
                       path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TARGET_TOOLS_ autoconf macro.
 
@@ -156,7 +159,7 @@ def _CheckTargetTools(context, progs, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckTools(context, progs, value_if_not_found=None,
+def _check_tools(context, progs, value_if_not_found=None,
                 path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TOOLS_ autoconf macro.
 
@@ -166,7 +169,7 @@ def _CheckTools(context, progs, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckPathProg(context, prog, value_if_not_found=None, path=None,
+def _check_path_prog(context, prog, value_if_not_found=None, path=None,
                    pathext=None, reject=[], prog_str=None):
     """Corresponds to AC_PATH_PROG_ autoconf macro.
 
@@ -187,7 +190,7 @@ def _CheckPathProg(context, prog, value_if_not_found=None, path=None,
     return value_if_not_found
 
 ###############################################################################
-def _CheckPathProgs(context, progs, value_if_not_found=None, path=None,
+def _check_path_progs(context, progs, value_if_not_found=None, path=None,
                     pathext=None, reject=[], prog_str=None):
     """Corresponds to AC_PATH_PROGS_ autoconf macro.
 
@@ -213,7 +216,7 @@ def _CheckPathProgs(context, progs, value_if_not_found=None, path=None,
     return value_if_not_found
 
 ###############################################################################
-def _CheckPathTargetTool(context, prog, value_if_not_found=None,
+def _check_path_target_tool(context, prog, value_if_not_found=None,
                          path=None, pathext=None, reject=[]):
     """Corresponds to AC_PATH_TARGET_TOOL_ autoconf macro.
 
@@ -223,7 +226,7 @@ def _CheckPathTargetTool(context, prog, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckPathTool(context, prog, value_if_not_found=None,
+def _check_path_tool(context, prog, value_if_not_found=None,
                    path=None, pathext=None, reject=[]):
     """Corresponds to AC_PATH_TOOL_ autoconf macro.
 
@@ -234,16 +237,16 @@ def _CheckPathTool(context, prog, value_if_not_found=None,
 
 
 ###############################################################################
-def _CheckProgAwk(context,*args,**kw):
+def _check_prog_awk(context,*args,**kw):
     """Corresponds to AC_PROG_AWK_ autoconf macro
 
     .. _AC_PROG_AWK: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fAWK-254
     """
     kw['prog_str'] = 'awk'
-    return _CheckProgs(context,['gawk', 'mawk', 'nawk', 'awk'], *args, **kw)
+    return _check_progs(context,['gawk', 'mawk', 'nawk', 'awk'], *args, **kw)
 
 ###############################################################################
-def _CheckProgGrep(context,*args,**kw):
+def _check_prog_grep(context,*args,**kw):
     """Corresponds to AC_PROG_GREP_ autoconf macro
 
     .. _AC_PROG_GREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fGREP-258
@@ -252,7 +255,7 @@ def _CheckProgGrep(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckProgEgrep(context,*args,**kw):
+def _check_prog_egrep(context,*args,**kw):
     """Corresponds to AC_PROG_EGREP_ autoconf macro
 
     .. _AC_PROG_EGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fEGREP-262
@@ -260,7 +263,7 @@ def _CheckProgEgrep(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckProgFgrep(context,*args,**kw):
+def _check_prog_fgrep(context,*args,**kw):
     """Corresponds to AC_PROG_FGREP_ autoconf macro
 
     .. _AC_PROG_FGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fFGREP-266
@@ -268,7 +271,7 @@ def _CheckProgFgrep(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckProgInstall(context,*args,**kw):
+def _check_prog_install(context,*args,**kw):
     """Corresponds to AC_PROG_INSTALL_ autoconf macro
 
     .. _AC_PROG_INSTALL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fINSTALL-270
@@ -276,7 +279,7 @@ def _CheckProgInstall(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckProgMkdirP(context,*args,**kw):
+def _check_prog_mkdir_p(context,*args,**kw):
     """Corresponds to AC_PROG_MKDIR_P_ autoconf macro
 
     .. _AC_PROG_MKDIR_P: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fMKDIR_005fP-277
@@ -284,7 +287,7 @@ def _CheckProgMkdirP(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckProgLex(context,*args,**kw):
+def _check_prog_lex(context,*args,**kw):
     """Corresponds to AC_PROG_LEX_ autoconf macro
 
     .. _AC_PROG_LEX: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLEX-281
@@ -292,7 +295,7 @@ def _CheckProgLex(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckProgLnS(context,*args,**kw):
+def _check_prog_ln_s(context,*args,**kw):
     """Corresponds to AC_PROG_LN_S_ autoconf macro
 
     .. _AC_PROG_LN_S: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288
@@ -300,7 +303,7 @@ def _CheckProgLnS(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckProgRanlib(context,*args,**kw):
+def _checkProg_ranlib(context,*args,**kw):
     """Corresponds to AC_PROG_RANLIB_ autoconf macro
 
     .. _AC_PROG_RANLIB: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fRANLIB-291
@@ -308,7 +311,7 @@ def _CheckProgRanlib(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckProgSed(context,*args,**kw):
+def _check_prog_sed(context,*args,**kw):
     """Corresponds to AC_PROG_SED_ autoconf macro
 
     .. _AC_PROG_SED: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fSED-294
@@ -316,7 +319,7 @@ def _CheckProgSed(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _CheckProgYacc(context,*args,**kw):
+def _check_prog_yacc(context,*args,**kw):
     """Corresponds to AC_PROG_YACC_ autoconf macro
 
     .. _AC_PROG_YACC: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fYACC-298
