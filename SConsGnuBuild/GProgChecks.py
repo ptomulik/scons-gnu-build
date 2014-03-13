@@ -3,7 +3,6 @@
 `Alternative Programs`_. Check whether they exist, and in some cases whether
 they support certain features.
 
-.. _autoconf output variables: http://www.gnu.org/software/autoconf/manual/autoconf.html#Output-Variable-Index
 .. _Alternative Programs: http://www.gnu.org/software/autoconf/manual/autoconf.html#Alternative-Programs
 """
 
@@ -30,6 +29,126 @@ they support certain features.
 # SOFTWARE
 
 __docformat__ = 'restructuredText'
+
+
+###############################################################################
+class _PathProgsFeatureCheck(object):
+    """Corresponds to `_AC_PATH_PROGS_FEATURE_CHECK`_
+
+    Use this as an action for ``context.TryAction()``. This action calls
+    repeatedly the provided **feature_check**  method (see `__init__`) to check
+    which of the **programs** provides best support for a feature. The
+    **feature_check** function checks single program at once and assigns it 
+    score points. The higher score means the better support for a feature.
+
+    **Example**
+
+    Thi following code looks for best available ``sed`` program::
+
+        def _check_prog_sed(context, *args, **kw):
+            context.Display("Checking for a sed that does not truncate output... ")
+            context.sconf.cached = 1
+            # Script should not contain more than 9 commands (for HP-UX sed),
+            # but more than about 7000 bytes, to cacth a limit in Solaris 8
+            # /usr/ucb/sed.
+            line = 's/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/'
+            script = "\\n".join(128 * [ line ]) + "\\n"
+            programs = ['sed', 'gsed']
+            progargs = ['-f', '$SOURCE']
+            action = _PathProgsFeatureCheck(_feature_check_length, programs, progargs)
+            stat, out = context.TryAction(action, text = script, extension = '.sed')
+            if stat and out:
+                context.Result(out)
+                return out
+            else:
+                context.Result('not found')
+                return None
+
+
+    .. _`_AC_PATH_PROGS_FEATURE_CHECK`: http://git.savannah.gnu.org/cgit/autoconf.git/tree/lib/autoconf/programs.m4
+    """
+    def __init__(self, feature_check, programs, program_args, *args, **kw):
+        """Initializes `_PathProgsFeatureCheck`.
+
+        :Parameters:
+            feature_check
+                function or callable object, with the following interface::
+
+                    feature_check(env, cmd)
+
+                where the ``env`` is a `SCons environment`_ and ``cmd`` is
+                command to be tested (program name + arguments). The
+                ``feature_check`` method should check whether (and how well)
+                the ``cmd`` support feature and return score representing
+                feature support (0 - no support, the higher score the better
+                support for feature).
+            programs
+                list of programs to be checked
+            program_args
+                list of arguments passed to each programs when checking it
+
+        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
+        """
+        self.feature_check = feature_check
+        self.programs = programs
+        self.program_args = program_args
+        self.args = args
+        self.kw = kw
+
+    def __call__(self, target, source, env):
+        from SCons.Util import CLVar
+        import os
+        max_score = 0
+        max_score_program = None
+        for program in self.programs:
+            path = env.WhereIs(program)
+            if not path or not os.access(path, os.X_OK):
+                continue
+            cmd = CLVar(program) + CLVar(self.program_args)
+            cmd = env.subst(cmd, target = target, source = source)
+            score = self.feature_check(env, cmd, *self.args, **self.kw)
+            if score > max_score:
+                max_score = score
+                max_score_program = program
+        if max_score_program:
+            # Cache the result to the target file.
+            with open(env.subst('$TARGET', target = target), 'wt') as f:
+                f.write(max_score_program)
+            return 0
+        else:
+            return 1
+
+###############################################################################
+def _feature_check_length(env, cmd, match_string = ''):
+    """Corresponds to `_AC_FEATURE_CHECK_LENGTH`_.
+
+    For use as the **feature_test** argument to `_PathProgsFeatureCheck`. On
+    each iteration run **cmd** providing an auto-generated input text to its
+    **stdin** and looking at its **stdout**. The input string is always one
+    line, starting with only 10 characters, and doubling in length at each
+    iteration until approx 10000 characters.
+
+    .. _`_AC_FEATURE_CHECK_LENGTH`: http://git.savannah.gnu.org/cgit/autoconf.git/tree/lib/autoconf/programs.m4
+    """
+    from SCons.Action import _subproc
+    from subprocess import PIPE
+    count = 0
+    # 10*(2^10) chars as input seems more than enough
+    while count < 10:
+        content = (2**(1+count) * '0123456789') + "\n"
+        try:
+            proc = _subproc(env, cmd, 'raise', stdin = PIPE, stdout = PIPE)
+        except EnvironmentError:
+            break
+        else:
+            # we ignore stderr; same way as it was in _AC_FEATURE_CHECK_LENGTH
+            output = proc.communicate(content)
+            if proc.wait() != 0:
+                break
+            #if not (output == content):
+            #    break
+            count += 1
+    return count
 
 ###############################################################################
 def _check_prog(context, prog, value_if_found=None, value_if_not_found=None,
@@ -114,7 +233,7 @@ def _check_progs(context, progs, value_if_not_found=None, path=None, pathext=Non
             prog_str = progs[0]
     context.Display("Checking for %s... " % prog_str)
 
-    for prog in progs: 
+    for prog in progs:
         path = context.env.WhereIs(prog, path, pathext, reject)
         if path:
             context.Result(prog)
@@ -129,7 +248,7 @@ def _check_progs(context, progs, value_if_not_found=None, path=None, pathext=Non
 def _check_target_tool(context, prog, value_if_not_found=None,
                      path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TARGET_TOOL_ autoconf macro.
-    
+
     .. _AC_CHECK_TARGET_TOOL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fTARGET_005fTOOL-310
     """
     # TODO: first I need to know how to determine AC_CANONICAL_TARGET
@@ -201,7 +320,7 @@ def _check_path_progs(context, progs, value_if_not_found=None, path=None,
             prog_str = progs[0]
     context.Display("Checking for %s... " % prog_str)
 
-    for prog in progs: 
+    for prog in progs:
         path = context.env.WhereIs(prog, path, pathext, reject)
         if path:
             context.Result(path)
@@ -322,22 +441,22 @@ def _check_prog_sed(context,*args,**kw):
     .. _AC_PROG_SED: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fSED-294
     """
     context.Display("Checking for a sed that does not truncate output... ")
-    #context.sconf.cached = 1
+    context.sconf.cached = 1
     # Script should not contain more than 9 commands (for HP-UX sed),
     # but more than about 7000 bytes, to cacth a limit in Solaris 8
     # /usr/ucb/sed.
-    script = "\n".join(8 * [ "s/" + (35 * "a") + "/" + (33 * "b") + "/" ])
-    for prog in ['sed', 'gsed']:
-        #path = context.env.WhereIs(prog)
-        action = "echo 0123456789 | %s -f $SOURCE > $TARGET" % prog
-        #action = "sed -f $SOURCE > $TARGET"
-        #action = "echo " % script
-        status, output = context.TryAction(action, text = script, extension = '.sed')
-        if status and output:
-            context.Result(prog)
-            return prog
-    context.Result('not found')
-    return None
+    line = 's/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/'
+    script = "\n".join(128 * [ line ]) + "\n"
+    programs = ['sed',  'gsed']
+    progargs = ['-f', '$SOURCE']
+    action = _PathProgsFeatureCheck(_feature_check_length, programs, progargs)
+    stat, out = context.TryAction(action, text = script, extension = '.sed')
+    if stat and out:
+        context.Result(out)
+        return out
+    else:
+        context.Result('not found')
+        return None
 
 ###############################################################################
 def _check_prog_yacc(context,*args,**kw):
