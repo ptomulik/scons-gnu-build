@@ -36,10 +36,11 @@ class _PathProgsFeatureCheck(object):
     """Corresponds to `_AC_PATH_PROGS_FEATURE_CHECK`_
 
     Use this as an action for ``context.TryAction()``. This action calls
-    repeatedly the provided **feature_check**  method (see `__init__`) to check
-    which of the **programs** provides best support for a feature. The
-    **feature_check** function checks single program at once and assigns it 
-    score points. The higher score means the better support for a feature.
+    the provided **feature_check**  method (see `__init__`) once for each
+    program from **programs** to check which of the **programs** provides best
+    support for a feature. The **feature_check** function checks single program
+    at once and assigns it score points. The higher score means the better
+    support for a feature.
 
     **Example**
 
@@ -51,8 +52,7 @@ class _PathProgsFeatureCheck(object):
             # Script should not contain more than 9 commands (for HP-UX sed),
             # but more than about 7000 bytes, to cacth a limit in Solaris 8
             # /usr/ucb/sed.
-            line = 's/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/'
-            script = "\\n".join(128 * [ line ]) + "\\n"
+            script = 128 * 's/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/\\n'
             programs = ['sed', 'gsed']
             progargs = ['-f', '$SOURCE']
             action = _PathProgsFeatureCheck(_feature_check_length, programs, progargs)
@@ -101,15 +101,15 @@ class _PathProgsFeatureCheck(object):
         max_score = 0
         max_score_program = None
         for program in self.programs:
-            path = env.WhereIs(program)
-            if not path or not os.access(path, os.X_OK):
+            program_path = env.WhereIs(program)
+            if not program_path or not os.access(program_path, os.X_OK):
                 continue
-            cmd = CLVar(program) + CLVar(self.program_args)
+            cmd = CLVar(program_path) + CLVar(self.program_args)
             cmd = env.subst(cmd, target = target, source = source)
             score = self.feature_check(env, cmd, *self.args, **self.kw)
             if score > max_score:
                 max_score = score
-                max_score_program = program
+                max_score_program = program_path
         if max_score_program:
             # Cache the result to the target file.
             with open(env.subst('$TARGET', target = target), 'wt') as f:
@@ -118,8 +118,79 @@ class _PathProgsFeatureCheck(object):
         else:
             return 1
 
+    def strfunction(self, target, source, env):
+        objstr = "%s(%s, %r, %r" % (self.__class__.__name__, 
+                self.feature_check.__name__, self.programs, self.program_args)
+        if self.args:
+            objstr = ', '.join([objstr] + map(repr, self.args))
+        if self.kw:
+            objstr = ', '.join([objstr] + ["%s=%r" % (k,v) for (k,v) in self.kw.iteritems()])
+        objstr = objstr + ")"
+        tgt = env.subst(target, target = target, source = source)
+        src = env.subst(source, target = target, source = source)
+        return "%s(%r, %r)" % (objstr, tgt, src)
+
 ###############################################################################
-def _feature_check_length(env, cmd, match_string = ''):
+class _CheckProgXGrep(object):
+    def __init__(self, grep = None, grep_args = None, grep_input = '\n',
+                 programs = None, program_args = None, *args, **kw):
+        self.grep = grep
+        self.grep_args = grep_args
+        self.grep_input = grep_input
+        self.programs = programs
+        self.program_args = program_args
+        self.args = args
+        self.kw = kw
+
+    def __call__(self, target, source, env):
+        from SCons.Util import CLVar
+        from SCons.Action import _subproc
+        from subprocess import PIPE
+        if self.grep:
+            grep = env.subst(self.grep, target = target, source = source)
+            grep_path = env.WhereIs(grep)
+            if grep_path:
+                cmd = CLVar(grep_path)
+                if self.grep_args is not None:
+                    cmd.extend(CLVar(self.grep_args))
+                try:
+                    proc = _subproc(env, cmd, 'raise', stdin = PIPE, stdout = PIPE)
+                except EnvironmentError:
+                    pass
+                else:
+                    # we ignore stderr; same way as it was in _AC_FEATURE_CHECK_LENGTH
+                    out, err = proc.communicate(self.grep_input)
+                    stat = proc.wait()
+                    if stat == 0:
+                        tgt = env.subst('$TARGET', target = target)
+                        with open(tgt, 'wt') as f:
+                            f.write(' '.join(cmd[:2]))
+                        return 0
+        if self.programs:
+            programs = self.programs
+            progargs = self.program_args
+            if progargs is None:
+                progargs = []
+            action = _PathProgsFeatureCheck(_feature_check_length, programs, progargs, *self.args, **self.kw)
+            return action(target,source, env)
+        return 1
+
+    def strfunction(self, target, source, env):
+        objstr = "%s(%r, %r, %r, %r, %r" % (self.__class__.__name__,
+                    self.grep, self.grep_args, self.grep_input, self.programs,
+                    self.program_args)
+        if self.args:
+            objstr = ', '.join([objstr] + map(repr, self.args))
+        if self.kw:
+            objstr = ', '.join([objstr] + ["%s=%r" % (k,v) for (k,v) in self.kw.iteritems()])
+        objstr = objstr + ")"
+        tgt = env.subst(target, target = target, source = source)
+        src = env.subst(source, target = target, source = source)
+        return "%s(%r, %r)" % (objstr, tgt, src)
+
+
+###############################################################################
+def _feature_check_length(env, cmd, match_string = None):
     """Corresponds to `_AC_FEATURE_CHECK_LENGTH`_.
 
     For use as the **feature_test** argument to `_PathProgsFeatureCheck`. On
@@ -135,18 +206,20 @@ def _feature_check_length(env, cmd, match_string = ''):
     count = 0
     # 10*(2^10) chars as input seems more than enough
     while count < 10:
-        content = (2**(1+count) * '0123456789') + "\n"
+        content = (2**(1+count) * '0123456789')
+        if match_string: content = content + match_string
+        content = content + '\n'
         try:
             proc = _subproc(env, cmd, 'raise', stdin = PIPE, stdout = PIPE)
         except EnvironmentError:
             break
         else:
             # we ignore stderr; same way as it was in _AC_FEATURE_CHECK_LENGTH
-            output = proc.communicate(content)
+            out, err = proc.communicate(content)
             if proc.wait() != 0:
                 break
-            #if not (output == content):
-            #    break
+            if not (out == content):
+                break
             count += 1
     return count
 
@@ -361,32 +434,58 @@ def _check_prog_awk(context,*args,**kw):
     kw['prog_str'] = 'awk'
     return _check_progs(context,['gawk', 'mawk', 'nawk', 'awk'], *args, **kw)
 
-###############################################################################
-def _check_prog_grep(context,*args,**kw):
-    """Corresponds to AC_PROG_GREP_ autoconf macro
-
-    .. _AC_PROG_GREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fGREP-258
-    """
-    context.Display("Checking for grep that handles long lines and -e... ")
-    raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _check_prog_egrep(context,*args,**kw):
+def _check_prog_egrep(context, grep = 'grep', *args,**kw):
     """Corresponds to AC_PROG_EGREP_ autoconf macro
 
     .. _AC_PROG_EGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fEGREP-262
     """
     context.Display("Checking for egrep... ")
-    raise NotImplementedError("not implemented")
+    context.sconf.cached = 1
+    action = _CheckProgXGrep(grep, ['-E', '(a|b)'], 'a\n', ['egrep'], ['EGREP$'],'EGREP')
+    stat, out = context.TryAction(action)
+    if stat and out:
+        context.Result(out)
+        return out
+    else:
+        context.Result('not found')
+        return None
 
 ###############################################################################
-def _check_prog_fgrep(context,*args,**kw):
+def _check_prog_fgrep(context, grep = 'grep', *args, **kw):
     """Corresponds to AC_PROG_FGREP_ autoconf macro
 
     .. _AC_PROG_FGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fFGREP-266
     """
     context.Display("Checking for fgrep... ")
-    raise NotImplementedError("not implemented")
+    context.sconf.cached = 1
+    action = _CheckProgXGrep(grep, ['-F', 'ab*c'], 'ab*c\n', ['fgrep'], ['FGREP'],'FGREP')
+    stat, out = context.TryAction(action)
+    if stat and out:
+        context.Result(out)
+        return out
+    else:
+        context.Result('not found')
+        return None
+
+###############################################################################
+def _check_prog_grep(context, *args, **kw):
+    """Corresponds to AC_PROG_GREP_ autoconf macro
+
+    .. _AC_PROG_GREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fGREP-258
+    """
+    context.Display("Checking for grep that handles long lines and -e... ")
+    context.sconf.cached = 1
+    args = ['-e', 'GREP$', '-e', '-(cannot match)-']
+    action = _CheckProgXGrep(None, None, None, ['grep', 'ggrep'], args, 'GREP')
+    stat, out = context.TryAction(action)
+    if stat and out:
+        context.Result(out)
+        return out
+    else:
+        context.Result('not found')
+        return None
 
 ###############################################################################
 def _check_prog_install(context,*args,**kw):
@@ -445,9 +544,8 @@ def _check_prog_sed(context,*args,**kw):
     # Script should not contain more than 9 commands (for HP-UX sed),
     # but more than about 7000 bytes, to cacth a limit in Solaris 8
     # /usr/ucb/sed.
-    line = 's/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/'
-    script = "\n".join(128 * [ line ]) + "\n"
-    programs = ['sed',  'gsed']
+    script = 128 * 's/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/\n'
+    programs = ['sed', 'gsed']
     progargs = ['-f', '$SOURCE']
     action = _PathProgsFeatureCheck(_feature_check_length, programs, progargs)
     stat, out = context.TryAction(action, text = script, extension = '.sed')
