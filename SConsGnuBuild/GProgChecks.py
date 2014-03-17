@@ -1,7 +1,7 @@
 """`SConsGnuBuild.GProgChecks`
 
-`Alternative Programs`_. Check whether they exist, and in some cases whether
-they support certain features.
+Autoconf-like check for `Alternative Programs`_. Check whether they exist, and
+in some cases whether they support certain features.
 
 .. _Alternative Programs: http://www.gnu.org/software/autoconf/manual/autoconf.html#Alternative-Programs
 """
@@ -29,6 +29,12 @@ they support certain features.
 # SOFTWARE
 
 __docformat__ = 'restructuredText'
+
+from SCons.Script import Delete, Mkdir
+from SCons.Action import _subproc
+from SCons.Util import CLVar, AppendPath, PrependPath
+from subprocess import PIPE
+import re, os, fnmatch
 
 
 ###############################################################################
@@ -96,8 +102,6 @@ class _PathProgsFeatureCheck(object):
         self.kw = kw
 
     def __call__(self, target, source, env):
-        from SCons.Util import CLVar
-        import os
         max_score = 0
         max_score_program = None
         for program in self.programs:
@@ -193,9 +197,9 @@ class _ProgGrep(object):
                 arguments necessary to check the **programs** for either egrep
                 or fgrep behavior, for egrep set it to ``['EGREP$']``, for
                 fgrep set it to ``['FGREP']``.
-            *args
+            args
                 passed directly to `_feature_check_length`
-            **kw
+            kw
                 passed directly to `_feature_check_length`
         """
         self.grep = grep
@@ -207,9 +211,6 @@ class _ProgGrep(object):
         self.kw = kw
 
     def __call__(self, target, source, env):
-        from SCons.Util import CLVar, AppendPath
-        from SCons.Action import _subproc
-        from subprocess import PIPE
         if self.grep:
             grep = env.subst(self.grep, target = target, source = source)
             path = env['ENV'].get('PATH','')
@@ -254,6 +255,149 @@ class _ProgGrep(object):
         src = env.subst(source, target = target, source = source)
         return "%s(%r, %r)" % (objstr, tgt, src)
 
+###############################################################################
+class _ProgInstall(object):
+    def __init__(self, programs = None, reject_paths = None):
+        self.programs = programs
+        self.reject_paths = reject_paths
+
+    def _check_install_prog(self, target, source, env, prog_path):
+        install_dir = env.subst("${TARGET}.dir", target = target, source = source)
+        base_names = ["${TARGET.file}.one", "${TARGET.file}.two"]
+        base_names = env.subst(base_names, target = target, source = source)
+        to_install = [ os.path.join("${TARGET.dir}", x) for x in base_names ]
+        to_install = env.subst(to_install, target = target, source = source)
+        installed = [ os.path.join(install_dir, x) for x in base_names ]
+        installed = env.subst(installed, target = target, source = source)
+
+        temps = to_install + installed + [install_dir]
+        delete_temps = Delete(temps)
+
+        # Delete files that could be left by previous (interrupted) action
+        env.Execute(delete_temps)
+
+        for ti in to_install:
+            with open(ti, 'w') as f:
+                f.write(ti + "\n")
+
+        env.Execute(Mkdir(install_dir))
+
+        install_dir_abs = env.Dir(install_dir).abspath
+        cmd = CLVar(prog_path) + CLVar('-c') + CLVar(to_install) + CLVar(install_dir_abs)
+
+        try:
+            if env.Execute(' '.join(cmd)):
+                return None
+            # Verify the size of the installed files
+            for f in installed:
+                try:
+                    if os.stat(f).st_size <= 0:
+                        return None
+                except OSError:
+                    return None
+        finally:
+            # Delete temporary files
+            env.Execute(delete_temps)
+        return ' '.join(cmd[:2])
+
+    def __call__(self, target, source, env):
+        path = env.get('ENV',{}).get('PATH','').split(os.pathsep)
+
+        programs = self.programs
+        reject_paths = self.reject_paths
+        if programs is None:
+            programs = ['ginstall', 'scoinst', 'install']
+        if reject_paths is None:
+            reject_paths =  [
+                './', './/', '/[cC]/*', '/etc/*', '/usr/sbin/*', '/usr/etc/*',
+                '/sbin/*', '/usr/afsws/bin/*', '?:[\\/]os2[\\/]install[\\/]*',
+                '?:[\\/]OS2[\\/]INSTALL[\\/]*', '/usr/ucb/*' 
+            ] 
+        for dir in path:
+            matches = False
+            for glob in reject_paths:
+                if fnmatch.fnmatch(dir, glob):
+                    matches = True
+                    break
+            if not matches: 
+                for prog in programs:
+                    prog_path = env.WhereIs(prog, path = dir)
+                    if prog_path:
+                        with open(prog_path, 'r') as prog_fd:
+                            content = prog_fd.read()
+                        if prog == 'install' and (0 <= content.find('dspmsg')):
+                            # AIX install. It has an incomplete calling convention.
+                            return 1 # Failed
+                        elif prog == 'install' and (0 <= content.find('pwplus')):
+                            # program-specific install script used by HP pwplus--don't use.
+                            return 1 # Failed
+                        else:
+                            result = self._check_install_prog(target, source, env, prog_path)
+                            if result:
+                                with open(env.subst('$TARGET', target = target), 'w') as f:
+                                    f.write(result)
+                                return 0 # Success
+        return 1 # Failed
+
+    def strfunction(self, target, source, env):
+        objstr = "%s(%r, %r)" % (self.__class__.__name__, self.programs, self.reject_paths)
+        tgt = env.subst(target, target = target, source = source)
+        src = env.subst(source, target = target, source = source)
+        return "%s(%r, %r)" % (objstr, tgt, src)
+    
+###############################################################################
+class _ProgMkdirP(object):
+    def __init__(self, programs = None):
+        self.programs = programs
+
+    def _check_mkdir_prog(self, target, source, env, prog_path):
+        from SCons.Script import Delete
+        from SCons.Action import _subproc
+        from SCons.Util import CLVar
+        from subprocess import PIPE
+        import re, os
+        cmd = CLVar(prog_path) + CLVar('--version')
+        try:
+            proc = _subproc(env, cmd, 'raise', stdin = PIPE, stdout = PIPE)
+        except EnvironmentError:
+            return None
+        else:
+            out, err = proc.communicate()
+            xpr = r'mkdir (\(GNU coreutils\)|\(coreutils\)|\(fileutils\) 4\.1)'
+            if re.findall(xpr, out):
+                return ' '.join([prog_path, '-p'])
+        finally:
+            if os.path.isdir("./--version"):
+                env.Execute(Delete("./--version"))
+        return None
+
+
+    def __call__(self, target, source, env):
+        path = env.get('ENV',{}).get('PATH','').split(os.pathsep) + [ '/opt/sfw/bin' ]
+
+        programs = self.programs
+        if programs is None:
+            programs = ['mkdir', 'gmkdir']
+
+        for dir in path:
+            for prog in programs:
+                prog_path = env.WhereIs(prog, path = dir)
+                if prog_path:
+                    result = self._check_mkdir_prog(target, source, env, prog_path)
+                    if result:
+                        with open(env.subst('$TARGET', target = target), 'w') as f:
+                            f.write(result)
+                        return 0 # Success
+
+        # FIXME: actually we should return '$ac_install_sh -d' here.
+        return 1 # Failed
+
+    def strfunction(self, target, source, env):
+        objstr = "%s(%r)" % (self.__class__.__name__, self.programs)
+        tgt = env.subst(target, target = target, source = source)
+        src = env.subst(source, target = target, source = source)
+        return "%s(%r, %r)" % (objstr, tgt, src)
+
 
 ###############################################################################
 def _path_prog_flavor_gnu(env, program):
@@ -266,14 +410,10 @@ def _path_prog_flavor_gnu(env, program):
             path to the program 
 
     :Returns:
-        `True` if **program* is a GNU program or `False` othrewise.
+        `True` if **program** is a GNU program or `False` othrewise.
 
     .. _`_AC_PATH_PROG_FLAVOR_GNU`: http://git.savannah.gnu.org/cgit/autoconf.git/tree/lib/autoconf/programs.m4
     """
-    from SCons.Action import _subproc
-    from SCons.Util import CLVar
-    from subprocess import PIPE
-    import re
     cmd = CLVar(program) + CLVar('--version')
     try:
         proc = _subproc(env, cmd, 'raise', stdin = PIPE, stdout = PIPE)
@@ -298,10 +438,6 @@ def _feature_check_length(env, cmd, match_string = None):
 
     .. _`_AC_FEATURE_CHECK_LENGTH`: http://git.savannah.gnu.org/cgit/autoconf.git/tree/lib/autoconf/programs.m4
     """
-    from SCons.Action import _subproc
-    from subprocess import PIPE
-    from SCons.Util import CLVar
-    
     score = 0
     score_max = 10 # 10*(2^10) chars as input seems more than enough
 
@@ -595,95 +731,9 @@ def _check_prog_grep(context, *args, **kw):
         context.Result('not found')
         return None
 
-###############################################################################
-class _ProgInstall(object):
-    def __init__(self, programs = None, reject_paths = None):
-        if programs is None:
-            programs = ['ginstall', 'scoinst', 'install']
-        if reject_paths is None:
-            reject_paths =  [
-                './', './/', '/[cC]/*', '/etc/*', '/usr/sbin/*', '/usr/etc/*',
-                '/sbin/*', '/usr/afsws/bin/*', '?:[\\/]os2[\\/]install[\\/]*',
-                '?:[\\/]OS2[\\/]INSTALL[\\/]*', '/usr/ucb/*' 
-            ] 
-        self.reject_paths = reject_paths
-        self.programs = programs
-
-    def _check_install_prog(self, target, source, env, prog):
-        from SCons.Script import Delete, Mkdir
-        from SCons.Util import CLVar
-        import os
-        install_dir = env.subst("${TARGET}.dir", target = target, source = source)
-        base_names = ["${TARGET.file}.one", "${TARGET.file}.two"]
-        base_names = env.subst(base_names, target = target, source = source)
-        to_install = [ os.path.join("${TARGET.dir}", x) for x in base_names ]
-        to_install = env.subst(to_install, target = target, source = source)
-        installed = [ os.path.join(install_dir, x) for x in base_names ]
-        installed = env.subst(installed, target = target, source = source)
-
-        temps = to_install + installed + [install_dir]
-        delete_temps = Delete(temps)
-
-        # Delete files that could be left by previous (interrupted) action
-        env.Execute(delete_temps)
-
-        for ti in to_install:
-            with open(ti, 'w') as f:
-                f.write(ti + "\n")
-
-        env.Execute(Mkdir(install_dir))
-
-        install_dir_abs = env.Dir(install_dir).abspath
-        cmd = CLVar(prog) + CLVar('-c') + CLVar(to_install) + CLVar(install_dir_abs)
-
-        try:
-            if env.Execute(' '.join(cmd)):
-                return None
-            # Verify the size of the installed files
-            for f in installed:
-                try:
-                    if os.stat(f).st_size <= 0:
-                        return None
-                except OSError:
-                    return None
-        finally:
-            # Delete temporary files
-            env.Execute(delete_temps)
-        return ' '.join(cmd[:2])
-
-    def __call__(self, target, source, env):
-        from SCons.Util import Split
-        import os
-        import fnmatch
-        path = env.get('ENV',{}).get('PATH','').split(os.pathsep)
-        for dir in path:
-            matches = False
-            for glob in self.reject_paths:
-                if fnmatch.fnmatch(dir, glob):
-                    matches = True
-                    break
-            if not matches: 
-                for prog in self.programs:
-                    prog_path = env.WhereIs(prog, path = dir)
-                    if prog_path:
-                        with open(prog_path, 'r') as prog_fd:
-                            content = prog_fd.read()
-                        if prog == 'install' and (0 <= content.find('dspmsg')):
-                            # AIX install. It has an incomplete calling convention.
-                            return 1 # Failed
-                        elif prog == 'install' and (0 <= content.find('pwplus')):
-                            # program-specific install script used by HP pwplus--don't use.
-                            return 1 # Failed
-                        else:
-                            result = self._check_install_prog(target, source, env, prog_path)
-                            if result:
-                                with open(env.subst('$TARGET', target = target), 'w') as f:
-                                    f.write(result)
-                                return 0 # Success
-        return 1 # Failed
 
 ###############################################################################
-def _check_prog_install(context,*args,**kw):
+def _check_prog_install(context, *args, **kw):
     """Corresponds to AC_PROG_INSTALL_ autoconf macro
 
     Find a good install program. We prefer a C program (faster), so one script
@@ -704,19 +754,66 @@ def _check_prog_install(context,*args,**kw):
     .. _AC_PROG_INSTALL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fINSTALL-270
     """
     context.Display("Checking for a BSD-compatible install... ")
-    action =  _ProgInstall()
+    context.sconf.cached = 1
+    action =  _ProgInstall(*args,**kw)
     stat, out = context.TryAction(action)
-
-    raise NotImplementedError("not implemented")
+    if stat and out:
+        context.Result(out)
+        return out
+    else:
+        context.Result('not found')
+        return None
 
 ###############################################################################
 def _check_prog_mkdir_p(context,*args,**kw):
     """Corresponds to AC_PROG_MKDIR_P_ autoconf macro
 
+    Check whether `mkdir -p' is known to be thread-safe, and fall back to
+    install-sh -d otherwise.
+   
+    We cannot accept any implementation of `mkdir' that recognizes `-p'.
+    Some implementations (such as Solaris 8's) are vulnerable to race conditions:
+    if a parallel build tries to run `mkdir -p a/b' and `mkdir -p a/c'
+    concurrently, both version can detect that a/ is missing, but only
+    one can create it and the other will error out.  Consequently we
+    restrict ourselves to known race-free implementations.
+   
+    Automake used to define mkdir_p as `mkdir -p .', in order to
+    allow $(mkdir_p) to be used without argument.  As in
+      $(mkdir_p) $(somedir)
+    where $(somedir) is conditionally defined.  However we don't do
+    that for MKDIR_P.
+     1. before we restricted the check to GNU mkdir, `mkdir -p .' was
+        reported to fail in read-only directories.  The system where this
+        happened has been forgotten.
+     2. in practice we call $(MKDIR_P) on directories such as
+          $(MKDIR_P) "$(DESTDIR)$(somedir)"
+        and we don't want to create $(DESTDIR) if $(somedir) is empty.
+        To support the latter case, we have to write
+          test -z "$(somedir)" || $(MKDIR_P) "$(DESTDIR)$(somedir)"
+        so $(MKDIR_P) always has an argument.
+        We will have better chances of detecting a missing test if
+        $(MKDIR_P) complains about missing arguments.
+     3. $(MKDIR_P) is named after `mkdir -p' and we don't expect this
+        to accept no argument.
+     4. having something like `mkdir .' in the output is unsightly.
+   
+    On NextStep and OpenStep, the `mkdir' command does not
+    recognize any option.  It will interpret all options as
+    directories to create.
+
     .. _AC_PROG_MKDIR_P: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fMKDIR_005fP-277
     """
     context.Display("Checking for a thread-safe mkdir -p... ")
-    raise NotImplementedError("not implemented")
+    context.sconf.cached = 1
+    action =  _ProgMkdirP(*args,**kw)
+    stat, out = context.TryAction(action)
+    if stat and out:
+        context.Result(out)
+        return out
+    else:
+        context.Result('not found')
+        return None
 
 ###############################################################################
 def _check_prog_lex(context,*args,**kw):
@@ -738,7 +835,7 @@ def _check_prog_ln_s(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _checkProg_ranlib(context,*args,**kw):
+def _check_prog_ranlib(context,*args,**kw):
     """Corresponds to AC_PROG_RANLIB_ autoconf macro
 
     .. _AC_PROG_RANLIB: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fRANLIB-291
