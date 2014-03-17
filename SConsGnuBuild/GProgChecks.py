@@ -119,7 +119,7 @@ class _PathProgsFeatureCheck(object):
             return 1
 
     def strfunction(self, target, source, env):
-        objstr = "%s(%s, %r, %r" % (self.__class__.__name__, 
+        objstr = "%s(%s, %r, %r" % (self.__class__.__name__,
                 self.feature_check.__name__, self.programs, self.program_args)
         if self.args:
             objstr = ', '.join([objstr] + map(repr, self.args))
@@ -131,9 +131,73 @@ class _PathProgsFeatureCheck(object):
         return "%s(%r, %r)" % (objstr, tgt, src)
 
 ###############################################################################
-class _CheckProgXGrep(object):
+class _ProgGrep(object):
+    """Corresponds to `_AC_PROG_GREP`_
+
+    This callable object is an action intended to be used by
+    `_check_prog_grep`, `_check_prog_egrep` and `_check_prog_fgrep`. It selects
+    the **grep** program which supports longest lines at stdin. Additionally it
+    may check if the **grep** program supports special flags such as ``-E`` or
+    ``-F`` and if not it may select alternative programs such as **egrep**
+    (instead of ``grep -E``) or **fgrep** (instead of ``grep -F``). For
+    `_check_prog_egrep` and `_check_prog_fgrep` it first tries "standard" grep
+    command (discovered previously by `_check_prog_grep`) with appropriate
+    arguments (**grep_args**, see `__init__`) and if the command fails, it
+    selects a program from **programs** list, the one which supports longest
+    lines.
+
+    .. _`_AC_PROG_GREP`: http://git.savannah.gnu.org/cgit/autoconf.git/tree/lib/autoconf/programs.m4
+    """
     def __init__(self, grep = None, grep_args = None, grep_input = '\n',
                  programs = None, program_args = None, *args, **kw):
+        """
+        **Example**:
+
+        The following code checks for grep::
+
+            args = ['-e', 'GREP$', '-e', '-(cannot match)-']
+            action = _ProgGrep(None, None, None, ['grep', 'ggrep'], args, 'GREP')
+            stat, out = context.TryAction(action)
+
+        **Example**:
+
+        The following code checks for egrep::
+
+            grep = '/bin/grep'
+            action = _ProgGrep(grep, ['-E', '(a|b)'], 'a\\n', ['egrep'], ['EGREP$'],'EGREP')
+            stat, out = context.TryAction(action)
+
+        **Example**:
+
+        The following code checks for fgrep::
+
+            grep = '/bin/grep'
+            action = _ProgGrep(grep, ['-F', 'ab*c'], 'ab*c\\n', ['fgrep'], ['FGREP'],'FGREP')
+            stat, out = context.TryAction(action)
+
+        :Parameters:
+            grep
+                absolute path to grep program discovered by `_check_prog_grep`
+            grep_args
+                arguments to necessary to check egrep or fgrep behavior of the
+                "standard" grep program, for egrep set it to ``['-E',
+                '(a|b)']``, for fgrep set ``['-F', 'ab*c']``,
+            grep_input
+                input string necessary to check egrep or fgrep behavior of the
+                "standard" grep command, for egrep set it to ``"a\\n"``, for
+                fgrep set it to ``"ab*c"``
+            programs
+                alternative programs to check, for egrep set it to
+                ``['egrep']``, for fgrep set it to ``['fgrep']``,
+            program_args
+                arguments necessary to check the **programs** for either egrep
+                or fgrep behavior, for egrep set it to ``['EGREP$']``, for
+                fgrep set it to ``['FGREP']``.
+            *args
+                passed directly to `_feature_check_length`
+            **kw
+                passed directly to `_feature_check_length`
+        """
         self.grep = grep
         self.grep_args = grep_args
         self.grep_input = grep_input
@@ -143,12 +207,14 @@ class _CheckProgXGrep(object):
         self.kw = kw
 
     def __call__(self, target, source, env):
-        from SCons.Util import CLVar
+        from SCons.Util import CLVar, AppendPath
         from SCons.Action import _subproc
         from subprocess import PIPE
         if self.grep:
             grep = env.subst(self.grep, target = target, source = source)
-            grep_path = env.WhereIs(grep)
+            path = env['ENV'].get('PATH','')
+            path = AppendPath(path, '/usr/xpg4/bin')
+            grep_path = env.WhereIs(grep, path = path)
             if grep_path:
                 cmd = CLVar(grep_path)
                 if self.grep_args is not None:
@@ -190,6 +256,37 @@ class _CheckProgXGrep(object):
 
 
 ###############################################################################
+def _path_prog_flavor_gnu(env, program):
+    """Corresponds to `_AC_PATH_PROG_FLAVOR_GNU`_.
+
+    Check if **program** is a GNU program.
+
+    :Parameters:
+        program
+            path to the program 
+
+    :Returns:
+        `True` if **program* is a GNU program or `False` othrewise.
+
+    .. _`_AC_PATH_PROG_FLAVOR_GNU`: http://git.savannah.gnu.org/cgit/autoconf.git/tree/lib/autoconf/programs.m4
+    """
+    from SCons.Action import _subproc
+    from SCons.Util import CLVar
+    from subprocess import PIPE
+    import re
+    cmd = CLVar(program) + CLVar('--version')
+    try:
+        proc = _subproc(env, cmd, 'raise', stdin = PIPE, stdout = PIPE)
+    except EnvironmentError:
+        return False
+    else:
+        out, err = proc.communicate()
+        if re.findall(r'GNU', out):
+            return True
+    return False
+
+
+###############################################################################
 def _feature_check_length(env, cmd, match_string = None):
     """Corresponds to `_AC_FEATURE_CHECK_LENGTH`_.
 
@@ -203,10 +300,18 @@ def _feature_check_length(env, cmd, match_string = None):
     """
     from SCons.Action import _subproc
     from subprocess import PIPE
-    count = 0
-    # 10*(2^10) chars as input seems more than enough
-    while count < 10:
-        content = (2**(1+count) * '0123456789')
+    from SCons.Util import CLVar
+    
+    score = 0
+    score_max = 10 # 10*(2^10) chars as input seems more than enough
+
+    prog = CLVar(cmd)[0]
+    if _path_prog_flavor_gnu(env, prog):
+        # seems like autoconf trust all GNU programs.
+        return score_max
+
+    while score < score_max:
+        content = (2**(1+score) * '0123456789')
         if match_string: content = content + match_string
         content = content + '\n'
         try:
@@ -220,8 +325,8 @@ def _feature_check_length(env, cmd, match_string = None):
                 break
             if not (out == content):
                 break
-            count += 1
-    return count
+            score += 1
+    return score
 
 ###############################################################################
 def _check_prog(context, prog, value_if_found=None, value_if_not_found=None,
@@ -436,14 +541,14 @@ def _check_prog_awk(context,*args,**kw):
 
 
 ###############################################################################
-def _check_prog_egrep(context, grep = 'grep', *args,**kw):
+def _check_prog_egrep(context, grep, *args,**kw):
     """Corresponds to AC_PROG_EGREP_ autoconf macro
 
     .. _AC_PROG_EGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fEGREP-262
     """
     context.Display("Checking for egrep... ")
     context.sconf.cached = 1
-    action = _CheckProgXGrep(grep, ['-E', '(a|b)'], 'a\n', ['egrep'], ['EGREP$'],'EGREP')
+    action = _ProgGrep(grep, ['-E', '(a|b)'], 'a\n', ['egrep'], ['EGREP$'],'EGREP')
     stat, out = context.TryAction(action)
     if stat and out:
         context.Result(out)
@@ -453,14 +558,14 @@ def _check_prog_egrep(context, grep = 'grep', *args,**kw):
         return None
 
 ###############################################################################
-def _check_prog_fgrep(context, grep = 'grep', *args, **kw):
+def _check_prog_fgrep(context, grep, *args, **kw):
     """Corresponds to AC_PROG_FGREP_ autoconf macro
 
     .. _AC_PROG_FGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fFGREP-266
     """
     context.Display("Checking for fgrep... ")
     context.sconf.cached = 1
-    action = _CheckProgXGrep(grep, ['-F', 'ab*c'], 'ab*c\n', ['fgrep'], ['FGREP'],'FGREP')
+    action = _ProgGrep(grep, ['-F', 'ab*c'], 'ab*c\n', ['fgrep'], ['FGREP'],'FGREP')
     stat, out = context.TryAction(action)
     if stat and out:
         context.Result(out)
@@ -473,12 +578,15 @@ def _check_prog_fgrep(context, grep = 'grep', *args, **kw):
 def _check_prog_grep(context, *args, **kw):
     """Corresponds to AC_PROG_GREP_ autoconf macro
 
+    Check for a fully functional grep program that handles the longest lines
+    possibla and which respoects multiple -e options.
+
     .. _AC_PROG_GREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fGREP-258
     """
     context.Display("Checking for grep that handles long lines and -e... ")
     context.sconf.cached = 1
     args = ['-e', 'GREP$', '-e', '-(cannot match)-']
-    action = _CheckProgXGrep(None, None, None, ['grep', 'ggrep'], args, 'GREP')
+    action = _ProgGrep(None, None, None, ['grep', 'ggrep'], args, 'GREP')
     stat, out = context.TryAction(action)
     if stat and out:
         context.Result(out)
@@ -488,12 +596,117 @@ def _check_prog_grep(context, *args, **kw):
         return None
 
 ###############################################################################
+class _ProgInstall(object):
+    def __init__(self, programs = None, reject_paths = None):
+        if programs is None:
+            programs = ['ginstall', 'scoinst', 'install']
+        if reject_paths is None:
+            reject_paths =  [
+                './', './/', '/[cC]/*', '/etc/*', '/usr/sbin/*', '/usr/etc/*',
+                '/sbin/*', '/usr/afsws/bin/*', '?:[\\/]os2[\\/]install[\\/]*',
+                '?:[\\/]OS2[\\/]INSTALL[\\/]*', '/usr/ucb/*' 
+            ] 
+        self.reject_paths = reject_paths
+        self.programs = programs
+
+    def _check_install_prog(self, target, source, env, prog):
+        from SCons.Script import Delete, Mkdir
+        from SCons.Util import CLVar
+        import os
+        install_dir = env.subst("${TARGET}.dir", target = target, source = source)
+        base_names = ["${TARGET.file}.one", "${TARGET.file}.two"]
+        base_names = env.subst(base_names, target = target, source = source)
+        to_install = [ os.path.join("${TARGET.dir}", x) for x in base_names ]
+        to_install = env.subst(to_install, target = target, source = source)
+        installed = [ os.path.join(install_dir, x) for x in base_names ]
+        installed = env.subst(installed, target = target, source = source)
+
+        temps = to_install + installed + [install_dir]
+        delete_temps = Delete(temps)
+
+        # Delete files that could be left by previous (interrupted) action
+        env.Execute(delete_temps)
+
+        for ti in to_install:
+            with open(ti, 'w') as f:
+                f.write(ti + "\n")
+
+        env.Execute(Mkdir(install_dir))
+
+        install_dir_abs = env.Dir(install_dir).abspath
+        cmd = CLVar(prog) + CLVar('-c') + CLVar(to_install) + CLVar(install_dir_abs)
+
+        try:
+            if env.Execute(' '.join(cmd)):
+                return None
+            # Verify the size of the installed files
+            for f in installed:
+                try:
+                    if os.stat(f).st_size <= 0:
+                        return None
+                except OSError:
+                    return None
+        finally:
+            # Delete temporary files
+            env.Execute(delete_temps)
+        return ' '.join(cmd[:2])
+
+    def __call__(self, target, source, env):
+        from SCons.Util import Split
+        import os
+        import fnmatch
+        path = env.get('ENV',{}).get('PATH','').split(os.pathsep)
+        for dir in path:
+            matches = False
+            for glob in self.reject_paths:
+                if fnmatch.fnmatch(dir, glob):
+                    matches = True
+                    break
+            if not matches: 
+                for prog in self.programs:
+                    prog_path = env.WhereIs(prog, path = dir)
+                    if prog_path:
+                        with open(prog_path, 'r') as prog_fd:
+                            content = prog_fd.read()
+                        if prog == 'install' and (0 <= content.find('dspmsg')):
+                            # AIX install. It has an incomplete calling convention.
+                            return 1 # Failed
+                        elif prog == 'install' and (0 <= content.find('pwplus')):
+                            # program-specific install script used by HP pwplus--don't use.
+                            return 1 # Failed
+                        else:
+                            result = self._check_install_prog(target, source, env, prog_path)
+                            if result:
+                                with open(env.subst('$TARGET', target = target), 'w') as f:
+                                    f.write(result)
+                                return 0 # Success
+        return 1 # Failed
+
+###############################################################################
 def _check_prog_install(context,*args,**kw):
     """Corresponds to AC_PROG_INSTALL_ autoconf macro
+
+    Find a good install program. We prefer a C program (faster), so one script
+    is as good as another. But avoid the broken or incompatible versions:
+
+    - SysV /etc/install, /usr/sbin/install
+    - SunOS /usr/etc/install
+    - IRIX /sbin/install
+    - AIX /bin/install
+    - AmigaOS /C/install, which installs bootblocks on floppy discs
+    - AIX 4 /usr/bin/installbsd, which doesn't work without a -g flag
+    - AFS /usr/afsws/bin/install, which mishandles nonexistent args
+    - SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
+    - OS/2's system install, which has a completely different semantic
+    - ./install, which can be erroneously created by make from ./install.sh.
+    - Reject install programs that cannot install multiple files.
 
     .. _AC_PROG_INSTALL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fINSTALL-270
     """
     context.Display("Checking for a BSD-compatible install... ")
+    action =  _ProgInstall()
+    stat, out = context.TryAction(action)
+
     raise NotImplementedError("not implemented")
 
 ###############################################################################
