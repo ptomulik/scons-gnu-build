@@ -768,39 +768,38 @@ def _check_prog_install(context, *args, **kw):
 def _check_prog_mkdir_p(context,*args,**kw):
     """Corresponds to AC_PROG_MKDIR_P_ autoconf macro
 
-    Check whether `mkdir -p' is known to be thread-safe, and fall back to
-    install-sh -d otherwise.
+    Check whether ``mkdir -p`` is known to be thread-safe, and fall back to
+    ``install-sh -d`` otherwise.
    
-    We cannot accept any implementation of `mkdir' that recognizes `-p'.
-    Some implementations (such as Solaris 8's) are vulnerable to race conditions:
-    if a parallel build tries to run `mkdir -p a/b' and `mkdir -p a/c'
-    concurrently, both version can detect that a/ is missing, but only
-    one can create it and the other will error out.  Consequently we
-    restrict ourselves to known race-free implementations.
+    We cannot accept any implementation of ``mkdir`` that recognizes ``-p``.
+    Some implementations (such as Solaris 8's) are vulnerable to race
+    conditions: if a parallel build tries to run ``mkdir -p a/b`` and 
+    ``mkdir -p a/c`` concurrently, both version can detect that ``a/`` is
+    missing, but only one can create it and the other will error out.
+    Consequently we restrict ourselves to known race-free implementations.
    
-    Automake used to define mkdir_p as `mkdir -p .', in order to
-    allow $(mkdir_p) to be used without argument.  As in
-      $(mkdir_p) $(somedir)
-    where $(somedir) is conditionally defined.  However we don't do
-    that for MKDIR_P.
-     1. before we restricted the check to GNU mkdir, `mkdir -p .' was
-        reported to fail in read-only directories.  The system where this
-        happened has been forgotten.
-     2. in practice we call $(MKDIR_P) on directories such as
-          $(MKDIR_P) "$(DESTDIR)$(somedir)"
-        and we don't want to create $(DESTDIR) if $(somedir) is empty.
-        To support the latter case, we have to write
-          test -z "$(somedir)" || $(MKDIR_P) "$(DESTDIR)$(somedir)"
-        so $(MKDIR_P) always has an argument.
-        We will have better chances of detecting a missing test if
-        $(MKDIR_P) complains about missing arguments.
-     3. $(MKDIR_P) is named after `mkdir -p' and we don't expect this
-        to accept no argument.
-     4. having something like `mkdir .' in the output is unsightly.
-   
-    On NextStep and OpenStep, the `mkdir' command does not
-    recognize any option.  It will interpret all options as
-    directories to create.
+    Automake used to define ``mkdir_p`` as ``mkdir -p .``, in order to
+    allow ``$(mkdir_p)`` to be used without argument. As in ``$(mkdir_p) $(somedir)``
+    where ``$(somedir)`` is conditionally defined. However we don't do
+    that for ``MKDIR_P``.
+
+    #. Before we restricted the check to GNU mkdir, ``mkdir -p .`` was reported
+       to fail in read-only directories.  The system where this happened has
+       been forgotten.
+    #. In practice we call ``$(MKDIR_P)`` on directories such as ``$(MKDIR_P)
+       "$(DESTDIR)$(somedir)"`` and we don't want to create ``$(DESTDIR)`` if
+       ``$(somedir)`` is empty.  To support the latter case, we have to write
+       ``test -z "$(somedir)" || $(MKDIR_P) "$(DESTDIR)$(somedir)"`` so
+       ``$(MKDIR_P)`` always has an argument. We will have better chances of
+       detecting a missing test if ``$(MKDIR_P)`` complains about missing
+       arguments.
+    #. ``$(MKDIR_P)`` is named after ``mkdir -p`` and we don't expect this to
+       accept no argument.
+    #. Having something like ``mkdir .`` in the output is unsightly.
+
+
+    On NextStep and OpenStep, the ``mkdir`` command does not recognize any
+    option.  It will interpret all options as directories to create.
 
     .. _AC_PROG_MKDIR_P: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fMKDIR_005fP-277
     """
