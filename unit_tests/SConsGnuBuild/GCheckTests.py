@@ -1,7 +1,9 @@
-"""`SConsGnuBuild.Defaults`
+""" SConsGnuBuild.GCheckTests
 
-Defaults for several other modules.
+Unit tests for SConsGnuBuild.GCheck
 """
+
+__docformat__ = "restructuredText"
 
 #
 # Copyright (c) 2014 by Pawel Tomulik
@@ -24,36 +26,26 @@ Defaults for several other modules.
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE
 
-__docformat__ = "restructuredText"
+import unittest
 
+#from SConsGnuBuild import GCheck
 
-gvar_env_key_prefix     = 'GNUBLD_'
-gvar_env_key_suffix     = ''
-gvar_env_key_transform  = lambda x : gvar_env_key_prefix \
-                        + x \
-                        + gvar_env_key_suffix
+class TestCase(unittest.TestCase):
+    def test_fff(self):
+        pass
 
-gvar_var_key_prefix     = ''
-gvar_var_key_suffix     = ''
-gvar_var_key_transform  = lambda x : gvar_var_key_prefix \
-                        + x \
-                        + gvar_var_key_suffix
+if __name__ == "__main__":
+    ldr = unittest.TestLoader()
+    suite = unittest.TestSuite()
+    # Load tests to test suite
+    tclasses = [ TestCase ]
 
-gvar_opt_key_prefix     = 'gnubld_'
-gvar_opt_key_suffix     = ''
-gvar_opt_key_transform  = lambda x : gvar_opt_key_prefix \
-                        + x.lower() \
-                        + gvar_opt_key_suffix
+    for tclass in tclasses:
+        suite.addTests(ldr.loadTestsFromTestCase(tclass))
 
-gvar_opt_prefix         = '--'
-gvar_opt_name_prefix    = ''
-gvar_opt_name_suffix    = ''
-gvar_opt_name_transform = lambda x : gvar_opt_prefix \
-                        + (gvar_opt_name_prefix \
-                        + x.lower() \
-                        + gvar_opt_name_suffix).replace('_','-')
+    if not unittest.TextTestRunner(verbosity = 2).run(suite).wasSuccessful():
+        sys.exit(1)
 
-gvar_declarations_var   = 'GVAR_DECLARATIONS'
 # Local Variables:
 # # tab-width:4
 # # indent-tabs-mode:nil

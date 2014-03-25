@@ -64,6 +64,10 @@ class Test_gvar_opt(unittest.TestCase):
     def test_gvar_opt_name_transform(self):
         self.assertEqual(Defaults.gvar_opt_name_transform('FOo_bAr'), '--foo-bar')
 
+class Test_gvar_declarations_var(unittest.TestCase):
+    def test_gvar_declarations_var(self):
+        self.assertEqual(Defaults.gvar_declarations_var, 'GVAR_DECLARATIONS')
+
 if __name__ == "__main__":
     ldr = unittest.TestLoader()
     suite = unittest.TestSuite()
@@ -72,6 +76,7 @@ if __name__ == "__main__":
                , Test_gvar_var_key
                , Test_gvar_opt_key
                , Test_gvar_opt
+               , Test_gvar_declarations_var
                ]
 
     for tclass in tclasses:

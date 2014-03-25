@@ -1,7 +1,19 @@
 """`SConsGnuBuild.GProgChecks`
 
-Autoconf-like check for `Alternative Programs`_. Check whether they exist, and
+Autoconf-like checks for `Alternative Programs`_. Check whether they exist, and
 in some cases whether they support certain features.
+
+**Example**::
+
+    from SConsGnuBuild import GProgChecks
+
+    env = Environment()
+    cfg = Configure(env, config_h = 'config.h')
+    cfg.AddTests(GProgChecks.Tests())
+
+    install = cfg.CheckProgInstall()
+
+
 
 .. _Alternative Programs: http://www.gnu.org/software/autoconf/manual/autoconf.html#Alternative-Programs
 """
@@ -32,10 +44,17 @@ __docformat__ = 'restructuredText'
 
 from SCons.Script import Delete, Mkdir
 from SCons.Action import _subproc
-from SCons.Util import CLVar, AppendPath, PrependPath
+from SCons.Util import CLVar, AppendPath, PrependPath, is_Sequence, is_String
 from subprocess import PIPE
 import re, os, fnmatch
 
+from SConsGnuBuild.GProgVars import _auto, gvar_names, declare_gvars
+from SConsGnuBuild.GProgVars import GVarNames, DeclareGVars
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 ###############################################################################
 class _PathProgsFeatureCheck(object):
@@ -44,15 +63,16 @@ class _PathProgsFeatureCheck(object):
     Use this as an action for ``context.TryAction()``. This action calls
     the provided **feature_check**  method (see `__init__`) once for each
     program from **programs** to check which of the **programs** provides best
-    support for a feature. The **feature_check** function checks single program
-    at once and assigns it score points. The higher score means the better
+    support for the feature. The **feature_check** function checks single
+    program at once and assigns it a score - the higher score, the better is
     support for a feature.
 
     **Example**
 
-    Thi following code looks for best available ``sed`` program::
+    The following code looks for "best" available ``sed`` program. We select
+    the version which accepts longest lines at input::
 
-        def _check_prog_sed(context, *args, **kw):
+        def CheckProgSed(context):
             context.Display("Checking for a sed that does not truncate output... ")
             context.sconf.cached = 1
             # Script should not contain more than 9 commands (for HP-UX sed),
@@ -80,18 +100,26 @@ class _PathProgsFeatureCheck(object):
             feature_check
                 function or callable object, with the following interface::
 
-                    feature_check(env, cmd)
+                    feature_check(env, cmd [, ...] )
 
                 where the ``env`` is a `SCons environment`_ and ``cmd`` is
-                command to be tested (program name + arguments). The
-                ``feature_check`` method should check whether (and how well)
-                the ``cmd`` support feature and return score representing
-                feature support (0 - no support, the higher score the better
-                support for feature).
+                command to be tested (program name + arguments). The method may
+                optionally accept additional arguments.
+
+                The ``feature_check`` method should check whether (and how
+                well) the ``cmd`` command supports certain feature and return
+                score representing feature support (0 - no support, the higher
+                score the better support for feature),
             programs
-                list of programs to be checked
+                list of programs to be checked,
             program_args
-                list of arguments passed to each programs when checking it
+                list of arguments passed to each program when checking it,
+            args
+                positional arguments to be passed as additional arguments to
+                the **feature_check** function,
+            kw
+                keyword arguments to be passed as additional arguments to the
+                **feature_check** function,
 
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
         """
@@ -113,11 +141,11 @@ class _PathProgsFeatureCheck(object):
             score = self.feature_check(env, cmd, *self.args, **self.kw)
             if score > max_score:
                 max_score = score
-                max_score_program = program_path
+                max_score_program = CLVar(program_path)
         if max_score_program:
             # Cache the result to the target file.
             with open(env.subst('$TARGET', target = target), 'wt') as f:
-                f.write(max_score_program)
+                f.write(pickle.dumps(max_score_program))
             return 0
         else:
             return 1
@@ -138,17 +166,16 @@ class _PathProgsFeatureCheck(object):
 class _ProgGrep(object):
     """Corresponds to `_AC_PROG_GREP`_
 
-    This callable object is an action intended to be used by
-    `_check_prog_grep`, `_check_prog_egrep` and `_check_prog_fgrep`. It selects
-    the **grep** program which supports longest lines at stdin. Additionally it
-    may check if the **grep** program supports special flags such as ``-E`` or
-    ``-F`` and if not it may select alternative programs such as **egrep**
-    (instead of ``grep -E``) or **fgrep** (instead of ``grep -F``). For
-    `_check_prog_egrep` and `_check_prog_fgrep` it first tries "standard" grep
-    command (discovered previously by `_check_prog_grep`) with appropriate
-    arguments (**grep_args**, see `__init__`) and if the command fails, it
-    selects a program from **programs** list, the one which supports longest
-    lines.
+    This is an action to be used in `CheckProgGrep`, `CheckProgEgrep` and
+    `CheckProgFgrep`. It selects the **grep** program which supports longest
+    lines at stdin. Additionally it may check if the **grep** program supports
+    special flags such as ``-E`` or ``-F`` and if not it may select alternative
+    programs such as **egrep** (instead of ``grep -E``) or **fgrep** (instead
+    of ``grep -F``). For `CheckProgEgrep` and `CheckProgFgrep` it first tries
+    "standard" grep command (discovered previously by `CheckProgGrep`) with
+    appropriate arguments (**grep_args**, see `__init__`) and if the command
+    fails, it selects a program from **programs** list, the one which supports
+    longest lines.
 
     .. _`_AC_PROG_GREP`: http://git.savannah.gnu.org/cgit/autoconf.git/tree/lib/autoconf/programs.m4
     """
@@ -181,7 +208,7 @@ class _ProgGrep(object):
 
         :Parameters:
             grep
-                absolute path to grep program discovered by `_check_prog_grep`
+                absolute path to grep program discovered by `CheckProgGrep`
             grep_args
                 arguments to necessary to check egrep or fgrep behavior of the
                 "standard" grep program, for egrep set it to ``['-E',
@@ -213,9 +240,13 @@ class _ProgGrep(object):
     def __call__(self, target, source, env):
         if self.grep:
             grep = env.subst(self.grep, target = target, source = source)
+            if is_Sequence(grep):
+                grep_prog = grep[0]
+            else:
+                grep_prog = grep
             path = env['ENV'].get('PATH','')
             path = AppendPath(path, '/usr/xpg4/bin')
-            grep_path = env.WhereIs(grep, path = path)
+            grep_path = env.WhereIs(grep_prog, path = path)
             if grep_path:
                 cmd = CLVar(grep_path)
                 if self.grep_args is not None:
@@ -231,7 +262,7 @@ class _ProgGrep(object):
                     if stat == 0:
                         tgt = env.subst('$TARGET', target = target)
                         with open(tgt, 'wt') as f:
-                            f.write(' '.join(cmd[:2]))
+                            f.write(pickle.dumps(cmd[:2]))
                         return 0
         if self.programs:
             programs = self.programs
@@ -257,7 +288,35 @@ class _ProgGrep(object):
 
 ###############################################################################
 class _ProgInstall(object):
-    def __init__(self, programs = None, reject_paths = None):
+    """Finds a good install program.
+
+    This is an action to be used in `CheckProgInstall`. It finds a good install
+    program avoiding broken or incompatible versions:
+
+    - SysV ``/etc/install``, ``/usr/sbin/install``
+    - SunOS ``/usr/etc/install``
+    - IRIX ``/sbin/install``
+    - AIX ``/bin/install``
+    - AmigaOS ``/C/install``, which installs bootblocks on floppy discs
+    - AIX 4 ``/usr/bin/installbsd``, which doesn't work without a ``-g`` flag
+    - AFS ``/usr/afsws/bin/install``, which mishandles nonexistent args
+    - SVR4 ``/usr/ucb/install``, which tries to use the nonexistent group "staff"
+    - OS/2's system ``install``, which has a completely different semantic
+    - ``./install``, which can be erroneously created by make from ``./install.sh``.
+    """
+    def __init__(self, programs=None, reject_paths=None):
+        """Initialize ``_ProgInstall`` object.
+
+        :Parameters:
+            programs
+                list of programs to be checked for, if ``None``,  the action
+                will check for ``ginstall``, ``scoinst``, and ``install`` in
+                this order,
+            reject_paths
+                a list of globs to be excluded from search path when looking
+                for ``install`` program,
+
+        """
         self.programs = programs
         self.reject_paths = reject_paths
 
@@ -286,7 +345,7 @@ class _ProgInstall(object):
         cmd = CLVar(prog_path) + CLVar('-c') + CLVar(to_install) + CLVar(install_dir_abs)
 
         try:
-            if env.Execute(' '.join(cmd)):
+            if env.Execute(str(cmd)):
                 return None
             # Verify the size of the installed files
             for f in installed:
@@ -298,7 +357,7 @@ class _ProgInstall(object):
         finally:
             # Delete temporary files
             env.Execute(delete_temps)
-        return ' '.join(cmd[:2])
+        return cmd[:2]
 
     def __call__(self, target, source, env):
         path = env.get('ENV',{}).get('PATH','').split(os.pathsep)
@@ -311,15 +370,15 @@ class _ProgInstall(object):
             reject_paths =  [
                 './', './/', '/[cC]/*', '/etc/*', '/usr/sbin/*', '/usr/etc/*',
                 '/sbin/*', '/usr/afsws/bin/*', '?:[\\/]os2[\\/]install[\\/]*',
-                '?:[\\/]OS2[\\/]INSTALL[\\/]*', '/usr/ucb/*' 
-            ] 
+                '?:[\\/]OS2[\\/]INSTALL[\\/]*', '/usr/ucb/*'
+            ]
         for dir in path:
             matches = False
             for glob in reject_paths:
                 if fnmatch.fnmatch(dir, glob):
                     matches = True
                     break
-            if not matches: 
+            if not matches:
                 for prog in programs:
                     prog_path = env.WhereIs(prog, path = dir)
                     if prog_path:
@@ -335,7 +394,7 @@ class _ProgInstall(object):
                             result = self._check_install_prog(target, source, env, prog_path)
                             if result:
                                 with open(env.subst('$TARGET', target = target), 'w') as f:
-                                    f.write(result)
+                                    f.write(pickle.dumps(result))
                                 return 0 # Success
         return 1 # Failed
 
@@ -344,10 +403,29 @@ class _ProgInstall(object):
         tgt = env.subst(target, target = target, source = source)
         src = env.subst(source, target = target, source = source)
         return "%s(%r, %r)" % (objstr, tgt, src)
-    
+
 ###############################################################################
 class _ProgMkdirP(object):
+    """Check whether ``mkdir -p`` is known to be thread-safe, and fall back to
+    ``install-sh -d`` otherwise.
+
+    This action object is to be used by `CheckProgMkdirP` method.
+
+    We cannot accept any implementation of ``mkdir`` that recognizes ``-p``.
+    Some implementation (such as Solaris 8's) are vulnerable to race
+    conditions: if a parallel make tries to run ``mkdir -p a/b`` and ``mkdir -p
+    a/c`` concurrently, both versions can detect that ``a/`` is missing, but
+    only one can create it and the other will error out. Consequently we
+    restrict ourselves to known race-free implementations.
+    """
     def __init__(self, programs = None):
+        """Initialize _ProgMkdirP object.
+
+        :Parameters:
+            programs
+                list of program names to be checked, if ``None``, the default
+                list ``[ 'mkdir', 'gmkdir' ]`` is used
+        """
         self.programs = programs
 
     def _check_mkdir_prog(self, target, source, env, prog_path):
@@ -365,7 +443,7 @@ class _ProgMkdirP(object):
             out, err = proc.communicate()
             xpr = r'mkdir (\(GNU coreutils\)|\(coreutils\)|\(fileutils\) 4\.1)'
             if re.findall(xpr, out):
-                return ' '.join([prog_path, '-p'])
+                return CLVar([prog_path, '-p'])
         finally:
             if os.path.isdir("./--version"):
                 env.Execute(Delete("./--version"))
@@ -386,7 +464,7 @@ class _ProgMkdirP(object):
                     result = self._check_mkdir_prog(target, source, env, prog_path)
                     if result:
                         with open(env.subst('$TARGET', target = target), 'w') as f:
-                            f.write(result)
+                            f.write(pickle.dumps(result))
                         return 0 # Success
 
         # FIXME: actually we should return '$ac_install_sh -d' here.
@@ -398,6 +476,82 @@ class _ProgMkdirP(object):
         src = env.subst(source, target = target, source = source)
         return "%s(%r, %r)" % (objstr, tgt, src)
 
+###############################################################################
+class _ProgSed(object):
+    """Check for a fully functional sed program that truncates as few
+    characters as possible. Prefer GNU sed if found.
+
+    This action object is to be used by `CheckProgSed` method.
+    """
+    def __init__(self, programs):
+        """Initialize _ProgSed object.
+
+        :Parameters:
+            programs
+                list of program names to be checked, if ``None``, the default
+                list ``[ 'sed', 'gsed' ]`` will be used.
+        """
+        self.programs = programs
+
+    def __call__(self, target, source, env):
+        # Script should not contain more than 9 commands (for HP-UX sed),
+        # but more than about 7000 bytes, to cacth a limit in Solaris 8
+        # /usr/ucb/sed.
+        script = 128 * 's/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/\n'
+        script_file = env.subst("${TARGET}.sed", target = target, source = source)
+        pograms = self.programs
+        if programs is None:
+            programs = ['sed', 'gsed']
+        progargs = ['-f', script_file]
+
+        with open(script_file,'w') as f:
+            f.write(script)
+        try:
+            action = _PathProgsFeatureCheck(_feature_check_length, programs, progargs)
+            result = action(target, source, env)
+        finally:
+            env.Execute(Delete(script_file))
+
+        return result
+
+    def strfunction(self, target, source, env):
+        objstr = "%s(%r)" % (self.__class__.__name__, self.programs)
+        tgt = env.subst(target, target = target, source = source)
+        src = env.subst(source, target = target, source = source)
+        return "%s(%r, %r)" % (objstr, tgt, src)
+
+###############################################################################
+class _ActionWrapper(object):
+    """Wrapper used to handle properly the **selection** argument present in
+    most of the program checks.
+    """
+    def __init__(self, check):
+        self.check = check
+
+    def __call__(self, target, source, env):
+        try:
+            with open(env.subst("$SOURCE", source = source), 'r')  as sf:
+                args = pickle.loads(sf.read())
+                try:
+                    selection = args.get('selection', _auto)
+                except AttributeError:
+                    selection = _auto
+        except IOError:
+            selection = _auto
+
+        if selection is _auto:
+            return self.check(target, source, env)
+        else:
+            with open(env.subst("$TARGET", target = target), 'w') as tf:
+                selection = CLVar(selection)
+                tf.write(pickle.dumps(selection))
+            return 0
+
+    def strfunction(self, target, source, env):
+        if hasattr(self.check, 'strfunction'):
+            return self.check.strfunction(target, source, env)
+        else:
+            return str(self.check) + "(%r,%r,%r)" % (target, source, env)
 
 ###############################################################################
 def _path_prog_flavor_gnu(env, program):
@@ -407,7 +561,7 @@ def _path_prog_flavor_gnu(env, program):
 
     :Parameters:
         program
-            path to the program 
+            path to the program
 
     :Returns:
         `True` if **program** is a GNU program or `False` othrewise.
@@ -465,19 +619,23 @@ def _feature_check_length(env, cmd, match_string = None):
     return score
 
 ###############################################################################
-def _check_prog(context, prog, value_if_found=None, value_if_not_found=None,
-               path=None, pathext=None, reject=[], prog_str = None):
+def CheckProg(context, program, selection=_auto, value_if_found=None,
+              value_if_not_found=None, path=None, pathext=None, reject=[],
+              prog_str=None):
     """Corresponds to AC_CHECK_PROG_ autoconf macro.
 
-    Check whether program **prog** exists in **path**. If it is found, the
-    function returns **value_if_found** (which defaults to **prog**). Otherwise
+    Check whether **program** exists in **path**. If it is found, the function
+    returns **value_if_found** (which defaults to **prog**). Otherwise
     it returns **value_if_not_found** (which defaults to ``None``).
 
     :Parameters:
         context
             SCons configuration context.
-        prog
+        program
             Program name of the program to be checked.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
         value_if_found
             Value to be returned, when the program is found.
         value_if_not_found
@@ -495,28 +653,33 @@ def _check_prog(context, prog, value_if_found=None, value_if_not_found=None,
     """
 
     if value_if_found is None:
-        value_if_found = prog
+        value_if_found = program
 
     if prog_str is None:
-        prog_str = prog
+        prog_str = program
 
     context.Display("Checking for %s... " % prog_str)
-    path = context.env.WhereIs(prog, path, pathext, reject)
-    if path:
-        context.Result(prog)
-        return value_if_found
-    if value_if_not_found:
-        context.Result("not found, using '%s'" % value_if_not_found)
+
+    if selection is _auto:
+        path = context.env.WhereIs(prog, path, pathext, reject)
+        if path:
+            context.Result(prog)
+            return value_if_found
+        if value_if_not_found:
+            context.Result("not found, using '%s'" % value_if_not_found)
+        else:
+            context.Result('not found')
+        return value_if_not_found
     else:
-        context.Result('not found')
-    return value_if_not_found
+        context.Result(str(selection))
+        return selection
 
 ###############################################################################
-def _check_progs(context, progs, value_if_not_found=None, path=None, pathext=None,
-                reject=[], prog_str = None):
+def CheckProgs(context, programs, selection=_auto, value_if_not_found=None,
+               path=None, pathext=None, reject=[], prog_str = None):
     """Corresponds to AC_CHECK_PROGS_ autoconf macro.
 
-    Check for each program in **progs** list existing in **path**. If one is
+    Check for each program in **programs** list existing in **path**. If one is
     found, return the name of that program. Otherwise, continue checking the
     next program in the list. If none of the programs in the list are found,
     return the **value_if_not_found** (which defaults to ``None``).
@@ -524,8 +687,11 @@ def _check_progs(context, progs, value_if_not_found=None, path=None, pathext=Non
     :Parameters:
         context
             SCons configuration context.
-        progs
+        programs
             Program names of the programs to be checked.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
         value_if_not_found
             Value to be returned, when the program is not found.
         path
@@ -541,26 +707,31 @@ def _check_progs(context, progs, value_if_not_found=None, path=None, pathext=Non
     """
 
     if prog_str is None:
-        if len(progs) > 1:
-            prog_str = ' or '.join([', '.join(progs[:-1]), progs[-1]])
-        elif len(progs) == 1:
-            prog_str = progs[0]
+        if len(programs) > 1:
+            prog_str = ' or '.join([', '.join(programs[:-1]), programs[-1]])
+        elif len(programs) == 1:
+            prog_str = programs[0]
+
     context.Display("Checking for %s... " % prog_str)
 
-    for prog in progs:
-        path = context.env.WhereIs(prog, path, pathext, reject)
-        if path:
-            context.Result(prog)
-            return prog
-    if value_if_not_found:
-        context.Result("not found, using '%s'" % value_if_not_found)
+    if selection is _auto:
+        for prog in programs:
+            path = context.env.WhereIs(prog, path, pathext, reject)
+            if path:
+                context.Result(prog)
+                return prog
+        if value_if_not_found:
+            context.Result("not found, using '%s'" % value_if_not_found)
+        else:
+            context.Result('not found')
+        return value_if_not_found
     else:
-        context.Result('not found')
-    return value_if_not_found
+        context.Result(str(selection))
+        return selection
 
 ###############################################################################
-def _check_target_tool(context, prog, value_if_not_found=None,
-                     path=None, pathext=None, reject=[]):
+def CheckTargetTool(context, prog, value_if_not_found=None,
+                    path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TARGET_TOOL_ autoconf macro.
 
     .. _AC_CHECK_TARGET_TOOL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fTARGET_005fTOOL-310
@@ -569,8 +740,8 @@ def _check_target_tool(context, prog, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _check_tool(context, prog, value_if_not_found=None,
-               path=None, pathext=None, reject=[]):
+def CheckTool(context, prog, value_if_not_found=None,
+                path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TOOL_ autoconf macro.
 
     .. _AC_CHECK_TOOL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fTOOL-312
@@ -579,8 +750,8 @@ def _check_tool(context, prog, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _check_target_tools(context, progs, value_if_not_found=None,
-                      path=None, pathext=None, reject=[]):
+def CheckTargetTools(context, programs, value_if_not_found=None,
+                     path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TARGET_TOOLS_ autoconf macro.
 
     .. _AC_CHECK_TARGET_TOOLS: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fTARGET_005fTOOLS-314
@@ -589,8 +760,8 @@ def _check_target_tools(context, progs, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _check_tools(context, progs, value_if_not_found=None,
-                path=None, pathext=None, reject=[]):
+def CheckTools(context, programs, value_if_not_found=None,
+                 path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TOOLS_ autoconf macro.
 
     .. _AC_CHECK_TOOLS: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fTOOLS-316
@@ -599,55 +770,103 @@ def _check_tools(context, progs, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _check_path_prog(context, prog, value_if_not_found=None, path=None,
-                   pathext=None, reject=[], prog_str=None):
+def CheckPathProg(context, program, selection=_auto, value_if_not_found=None,
+                  path=None, pathext=None, reject=[], prog_str=None):
     """Corresponds to AC_PATH_PROG_ autoconf macro.
+
+    :Parameters:
+        context
+            SCons configuration context.
+        program
+            Name of the program to be checked.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
+        value_if_not_found
+            Value to be returned, when the program is not found.
+        path
+            Search path.
+        pathext
+            Extensions used for executable files.
+        reject
+            List of file names to be rejected if found.
+        prog_str
+            Used to display 'Checking for <prog_str>...' message.
 
     .. _AC_PATH_PROG: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fPROG-318
     """
     if prog_str is None:
-        prog_str = prog
+        prog_str = program
 
     context.Display("Checking for %s... " % prog_str)
-    path = context.env.WhereIs(prog, path, pathext, reject)
-    if path:
-        context.Result(path)
-        return path
-    if value_if_not_found:
-        context.Result("not found, using '%s'" % value_if_not_found)
+
+    if selection is _auto:
+        path = context.env.WhereIs(program, path, pathext, reject)
+        if path:
+            context.Result(path)
+            return path
+        if value_if_not_found:
+            context.Result("not found, using '%s'" % value_if_not_found)
+        else:
+            context.Result('not found')
+        return value_if_not_found
     else:
-        context.Result('not found')
-    return value_if_not_found
+        context.Result(str(selection))
+        return selection
 
 ###############################################################################
-def _check_path_progs(context, progs, value_if_not_found=None, path=None,
-                    pathext=None, reject=[], prog_str=None):
+def CheckPathProgs(context, programs, selection=_auto, value_if_not_found=None,
+                   path=None, pathext=None, reject=[], prog_str=None):
     """Corresponds to AC_PATH_PROGS_ autoconf macro.
+
+    :Parameters:
+        context
+            SCons configuration context.
+        programs
+            List of program names to be checked.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
+        value_if_not_found
+            Value to be returned, when the program is not found.
+        path
+            Search path.
+        pathext
+            Extensions used for executable files.
+        reject
+            List of file names to be rejected if found.
+        prog_str
+            Used to display 'Checking for <prog_str>...' message.
 
     .. _AC_PATH_PROGS: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fPROGS-321
     """
 
     if prog_str is None:
-        if len(progs) > 1:
-            prog_str = ' or '.join([', '.join(progs[:-1]), progs[-1]])
-        elif len(progs) == 1:
-            prog_str = progs[0]
+        if len(programs) > 1:
+            prog_str = ' or '.join([', '.join(programs[:-1]), programs[-1]])
+        elif len(programs) == 1:
+            prog_str = programs[0]
+
     context.Display("Checking for %s... " % prog_str)
 
-    for prog in progs:
-        path = context.env.WhereIs(prog, path, pathext, reject)
-        if path:
-            context.Result(path)
-            return path
-    if value_if_not_found:
-        context.Result("not found, using '%s'" % value_if_not_found)
+    if selection is _auto:
+        for prog in programs:
+            path = context.env.WhereIs(prog, path, pathext, reject)
+            if path:
+                context.Result(path)
+                return path
+        if value_if_not_found:
+            context.Result("not found, using '%s'" % value_if_not_found)
+        else:
+            context.Result('not found')
+        return value_if_not_found
     else:
-        context.Result('not found')
-    return value_if_not_found
+        context.Result(str(selection))
+        return selection
 
 ###############################################################################
-def _check_path_target_tool(context, prog, value_if_not_found=None,
-                         path=None, pathext=None, reject=[]):
+def CheckPathTargetTool(context, program, value_if_not_found=None,
+                        path=None, pathext=None, reject=[]):
     """Corresponds to AC_PATH_TARGET_TOOL_ autoconf macro.
 
     .. _AC_PATH_TARGET_TOOL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fTARGET_005fTOOL-329
@@ -656,9 +875,16 @@ def _check_path_target_tool(context, prog, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _check_path_tool(context, prog, value_if_not_found=None,
+def CheckPathTool(context, program, selection=_auto, value_if_not_found=None,
                    path=None, pathext=None, reject=[]):
     """Corresponds to AC_PATH_TOOL_ autoconf macro.
+
+    :Parameters:
+        context
+            SCons configuration context.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
 
     .. _AC_PATH_TOOL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fTOOL-331
     """
@@ -667,52 +893,90 @@ def _check_path_tool(context, prog, value_if_not_found=None,
 
 
 ###############################################################################
-def _check_prog_awk(context,*args,**kw):
+def CheckProgAwk(context, selection=_auto):
     """Corresponds to AC_PROG_AWK_ autoconf macro
+
+    :Parameters:
+        context
+            SCons configuration context.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_AWK: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fAWK-254
     """
-    kw['prog_str'] = 'awk'
-    return _check_progs(context,['gawk', 'mawk', 'nawk', 'awk'], *args, **kw)
+    programs = ['gawk', 'mawk', 'nawk', 'awk']
+    return CheckProgs(context, programs, selection, prog_str = 'awk')
 
 
 ###############################################################################
-def _check_prog_egrep(context, grep, *args,**kw):
+def CheckProgEgrep(context, grep, selection=_auto):
     """Corresponds to AC_PROG_EGREP_ autoconf macro
+
+    :Parameters:
+        context
+            SCons configuration context.
+        grep
+            Path to ``grep`` program as found by `CheckProgGrep`.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_EGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fEGREP-262
     """
     context.Display("Checking for egrep... ")
     context.sconf.cached = 1
     action = _ProgGrep(grep, ['-E', '(a|b)'], 'a\n', ['egrep'], ['EGREP$'],'EGREP')
-    stat, out = context.TryAction(action)
+    action = _ActionWrapper(action)
+    args = pickle.dumps({'grep' : grep, 'selection' : selection})
+    stat, out = context.TryAction(action, args, '.arg')
     if stat and out:
-        context.Result(out)
+        out = pickle.loads(out)
+        context.Result(str(out))
         return out
     else:
         context.Result('not found')
         return None
 
 ###############################################################################
-def _check_prog_fgrep(context, grep, *args, **kw):
+def CheckProgFgrep(context, grep, selection=_auto):
     """Corresponds to AC_PROG_FGREP_ autoconf macro
+
+    :Parameters:
+        context
+            SCons configuration context.
+        grep
+            Path to ``grep`` program as found by `CheckProgGrep`.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_FGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fFGREP-266
     """
     context.Display("Checking for fgrep... ")
     context.sconf.cached = 1
     action = _ProgGrep(grep, ['-F', 'ab*c'], 'ab*c\n', ['fgrep'], ['FGREP'],'FGREP')
-    stat, out = context.TryAction(action)
+    action = _ActionWrapper(action)
+    args = pickle.dumps({'grep' : grep, 'selection' : selection})
+    stat, out = context.TryAction(action, args, '.arg')
     if stat and out:
-        context.Result(out)
+        out = pickle.loads(out)
+        context.Result(str(out))
         return out
     else:
         context.Result('not found')
         return None
 
 ###############################################################################
-def _check_prog_grep(context, *args, **kw):
+def CheckProgGrep(context, selection=_auto):
     """Corresponds to AC_PROG_GREP_ autoconf macro
+
+    :Parameters:
+        context
+            SCons configuration context.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
 
     Check for a fully functional grep program that handles the longest lines
     possibla and which respoects multiple -e options.
@@ -723,9 +987,12 @@ def _check_prog_grep(context, *args, **kw):
     context.sconf.cached = 1
     args = ['-e', 'GREP$', '-e', '-(cannot match)-']
     action = _ProgGrep(None, None, None, ['grep', 'ggrep'], args, 'GREP')
-    stat, out = context.TryAction(action)
+    action = _ActionWrapper(action)
+    args = pickle.dumps({'selection' : selection })
+    stat, out = context.TryAction(action, args, '.arg')
     if stat and out:
-        context.Result(out)
+        out = pickle.loads(out)
+        context.Result(str(out))
         return out
     else:
         context.Result('not found')
@@ -733,100 +1000,127 @@ def _check_prog_grep(context, *args, **kw):
 
 
 ###############################################################################
-def _check_prog_install(context, *args, **kw):
+def CheckProgInstall(context, selection=_auto, programs=None, reject_paths=None):
     """Corresponds to AC_PROG_INSTALL_ autoconf macro
 
     Find a good install program. We prefer a C program (faster), so one script
     is as good as another. But avoid the broken or incompatible versions:
 
-    - SysV /etc/install, /usr/sbin/install
-    - SunOS /usr/etc/install
-    - IRIX /sbin/install
-    - AIX /bin/install
-    - AmigaOS /C/install, which installs bootblocks on floppy discs
-    - AIX 4 /usr/bin/installbsd, which doesn't work without a -g flag
-    - AFS /usr/afsws/bin/install, which mishandles nonexistent args
-    - SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
-    - OS/2's system install, which has a completely different semantic
-    - ./install, which can be erroneously created by make from ./install.sh.
-    - Reject install programs that cannot install multiple files.
+        - SysV ``/etc/install``, ``/usr/sbin/install``
+        - SunOS ``/usr/etc/install``
+        - IRIX ``/sbin/install``
+        - AIX ``/bin/install``
+        - AmigaOS ``/C/install``, which installs bootblocks on floppy discs
+        - AIX 4 ``/usr/bin/installbsd``, which doesn't work without a ``-g`` flag
+        - AFS ``/usr/afsws/bin/install``, which mishandles nonexistent args
+        - SVR4 ``/usr/ucb/install``, which tries to use the nonexistent group "staff"
+        - OS/2's system ``install``, which has a completely different semantic
+        - ``./install``, which can be erroneously created by make from ``./install.sh``.
+        - Reject ``install`` programs that cannot install multiple files.
+
+    :Parameters:
+        context
+            SCons configuration context.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
+        programs
+            List of program names to look for. If ``None`` (default), the
+            default list ``[ 'ginstall', 'scoinst', 'install' ]`` will be used.
+        reject_paths
+            List of paths to be rejected from search path. If ``None``, a
+            default list will be used which excludes all the broken versions
+            described above.
 
     .. _AC_PROG_INSTALL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fINSTALL-270
     """
     context.Display("Checking for a BSD-compatible install... ")
     context.sconf.cached = 1
-    action =  _ProgInstall(*args,**kw)
-    stat, out = context.TryAction(action)
+    action = _ActionWrapper(_ProgInstall(programs,reject_paths))
+    args = pickle.dumps({ 'selection' : selection,
+                          'programs' : programs,
+                          'reject_paths' : reject_paths })
+    stat, out = context.TryAction(action, args, '.arg')
     if stat and out:
-        context.Result(out)
+        out = pickle.loads(out)
+        context.Result(str(out))
         return out
     else:
         context.Result('not found')
         return None
 
 ###############################################################################
-def _check_prog_mkdir_p(context,*args,**kw):
+def CheckProgMkdirP(context, selection=_auto, programs=None):
     """Corresponds to AC_PROG_MKDIR_P_ autoconf macro
 
     Check whether ``mkdir -p`` is known to be thread-safe, and fall back to
     ``install-sh -d`` otherwise.
-   
+
     We cannot accept any implementation of ``mkdir`` that recognizes ``-p``.
     Some implementations (such as Solaris 8's) are vulnerable to race
-    conditions: if a parallel build tries to run ``mkdir -p a/b`` and 
+    conditions: if a parallel build tries to run ``mkdir -p a/b`` and
     ``mkdir -p a/c`` concurrently, both version can detect that ``a/`` is
     missing, but only one can create it and the other will error out.
     Consequently we restrict ourselves to known race-free implementations.
-   
+
     Automake used to define ``mkdir_p`` as ``mkdir -p .``, in order to
     allow ``$(mkdir_p)`` to be used without argument. As in ``$(mkdir_p) $(somedir)``
     where ``$(somedir)`` is conditionally defined. However we don't do
     that for ``MKDIR_P``.
 
-    #. Before we restricted the check to GNU mkdir, ``mkdir -p .`` was reported
-       to fail in read-only directories.  The system where this happened has
-       been forgotten.
-    #. In practice we call ``$(MKDIR_P)`` on directories such as ``$(MKDIR_P)
-       "$(DESTDIR)$(somedir)"`` and we don't want to create ``$(DESTDIR)`` if
-       ``$(somedir)`` is empty.  To support the latter case, we have to write
-       ``test -z "$(somedir)" || $(MKDIR_P) "$(DESTDIR)$(somedir)"`` so
-       ``$(MKDIR_P)`` always has an argument. We will have better chances of
-       detecting a missing test if ``$(MKDIR_P)`` complains about missing
-       arguments.
-    #. ``$(MKDIR_P)`` is named after ``mkdir -p`` and we don't expect this to
-       accept no argument.
-    #. Having something like ``mkdir .`` in the output is unsightly.
-
-
     On NextStep and OpenStep, the ``mkdir`` command does not recognize any
     option.  It will interpret all options as directories to create.
+
+    :Parameters:
+        context
+            SCons configuration context.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
+        programs
+            List of program names to look for. If ``None`` (default), the
+            default list ``[ 'mkdir', 'gmkdir' ]`` will be used.
 
     .. _AC_PROG_MKDIR_P: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fMKDIR_005fP-277
     """
     context.Display("Checking for a thread-safe mkdir -p... ")
     context.sconf.cached = 1
-    action =  _ProgMkdirP(*args,**kw)
-    stat, out = context.TryAction(action)
+    action = _ActionWrapper(_ProgMkdirP(programs))
+    args = pickle.dumps({ 'selection' : selection, 'programs' : programs })
+    stat, out = context.TryAction(action, args, '.arg')
     if stat and out:
-        context.Result(out)
+        out = pickle.loads(out)
+        context.Result(str(out))
         return out
     else:
         context.Result('not found')
         return None
 
 ###############################################################################
-def _check_prog_lex(context,*args,**kw):
+def CheckProgLex(context, selection=_auto):
     """Corresponds to AC_PROG_LEX_ autoconf macro
+
+    :Parameters:
+        context
+            SCons configuration context.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_LEX: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLEX-281
     """
-    kw['prog_str'] = 'lex'
     raise NotImplementedError("not implemented")
-    return _check_progs(['flex', 'lex'], *args, **kw)
 
 ###############################################################################
-def _check_prog_ln_s(context,*args,**kw):
+def CheckProgLnS(context, selection=_auto):
     """Corresponds to AC_PROG_LN_S_ autoconf macro
+
+    :Parameters:
+        context
+            SCons configuration context.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_LN_S: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288
     """
@@ -834,46 +1128,93 @@ def _check_prog_ln_s(context,*args,**kw):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def _check_prog_ranlib(context,*args,**kw):
+def CheckProgRanlib(context, selection=_auto):
     """Corresponds to AC_PROG_RANLIB_ autoconf macro
+
+    :Parameters:
+        context
+            SCons configuration context.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_RANLIB: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fRANLIB-291
     """
     raise NotImplementedError("not implemented")
-    return _check_tool('ranlib',*args,**kw)
 
 ###############################################################################
-def _check_prog_sed(context,*args,**kw):
+def CheckProgSed(context, selection=_auto, programs=None):
     """Corresponds to AC_PROG_SED_ autoconf macro
+
+    :Parameters:
+        context
+            SCons configuration context.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
+        programs
+            List of program names to look for. If ``None`` (default), the
+            default list ``[ 'sed', 'gsed' ]`` will be used.
 
     .. _AC_PROG_SED: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fSED-294
     """
     context.Display("Checking for a sed that does not truncate output... ")
     context.sconf.cached = 1
-    # Script should not contain more than 9 commands (for HP-UX sed),
-    # but more than about 7000 bytes, to cacth a limit in Solaris 8
-    # /usr/ucb/sed.
-    script = 128 * 's/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/\n'
-    programs = ['sed', 'gsed']
-    progargs = ['-f', '$SOURCE']
-    action = _PathProgsFeatureCheck(_feature_check_length, programs, progargs)
-    stat, out = context.TryAction(action, text = script, extension = '.sed')
+    action = _ActionWrapper(_ProgSed(programs))
+    args = pickle.dumps({ 'selection' : selection, 'programs' : programs})
+    stat, out = context.TryAction(action, args, '.arg')
     if stat and out:
-        context.Result(out)
+        out = pickle.loads(out)
+        context.Result(str(out))
         return out
     else:
         context.Result('not found')
         return None
 
 ###############################################################################
-def _check_prog_yacc(context,*args,**kw):
+def CheckProgYacc(context, selection=_auto):
     """Corresponds to AC_PROG_YACC_ autoconf macro
+
+    :Parameters:
+        context
+            SCons configuration context.
+        selection
+            If `_auto` (default), the program will be found automatically,
+            otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_YACC: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fYACC-298
     """
     raise NotImplementedError("not implemented")
-    kw['prog_str'] = 'yacc'
-    return _check_progs(['bison', 'byacc', 'yacc'], *args, **kw)
+    programs = ['bison', 'byacc', 'yacc']
+    return CheckProgs(programs, selection, prog_str = 'yacc')
+
+###############################################################################
+def Tests():
+    """Get the program checks as a dictionary.
+    """
+    return { 'CheckProg': CheckProg
+           , 'CheckProgs': CheckProgs
+           , 'CheckTargetTool': CheckTargetTool
+           , 'CheckTool': CheckTool
+           , 'CheckTargetTools': CheckTargetTools
+           , 'CheckTools': CheckTools
+           , 'CheckPathProg': CheckPathProg
+           , 'CheckPathProgs': CheckPathProgs
+           , 'CheckPathTargetTool': CheckPathTargetTool
+           , 'CheckPathTool': CheckPathTool
+           , 'CheckProgAwk': CheckProgAwk
+           , 'CheckProgEgrep': CheckProgEgrep
+           , 'CheckProgFgrep': CheckProgFgrep
+           , 'CheckProgGrep': CheckProgGrep
+           , 'CheckProgInstall': CheckProgInstall
+           , 'CheckProgMkdirP': CheckProgMkdirP
+           , 'CheckProgLex': CheckProgLex
+           , 'CheckProgLnS': CheckProgLnS
+           , 'CheckProgRanlib': CheckProgRanlib
+           , 'CheckProgSed': CheckProgSed
+           , 'CheckProgYacc': CheckProgYacc }
+
+
 
 # Local Variables:
 # # tab-width:4
