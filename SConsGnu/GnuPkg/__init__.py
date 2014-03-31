@@ -1,10 +1,10 @@
-"""`SConsGnuBuild.Defaults`
+"""`SConsGnu.GnuPkg`
 
-Defaults for several other modules.
+TODO: Write docs for SConsGnu.GnuPkg
 """
 
 #
-# Copyright (c) 2014 by Pawel Tomulik
+# Copyright (c) 2012 by Pawel Tomulik
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,33 +27,18 @@ Defaults for several other modules.
 __docformat__ = "restructuredText"
 
 
-gvar_env_key_prefix     = 'GNUBLD_'
-gvar_env_key_suffix     = ''
-gvar_env_key_transform  = lambda x : gvar_env_key_prefix \
-                        + x \
-                        + gvar_env_key_suffix
+def _init_env_with_dir_vars(env, files = [], args = {}, is_global = 1, **kw):
+    from SCons.Script import ARGUMENTS, Help
+    from SConsGnuVariables import GDirVariables
+    # We use build variables (and not SCons flags) because variables
+    # may be stored to file
+    gnuvars = GDirVariables.AsSConsVariables(files,args,is_global,**kw)
+    gnuvars.Update(env, ARGUMENTS)
+    Help(gnuvars.GenerateHelpText(env))
 
-gvar_var_key_prefix     = ''
-gvar_var_key_suffix     = ''
-gvar_var_key_transform  = lambda x : gvar_var_key_prefix \
-                        + x \
-                        + gvar_var_key_suffix
+def InitEnv(env, files = [], args = {}, is_global = 1, **kw):
+    _init_env_with_dir_vars(env,files,args,is_global,**kw)
 
-gvar_opt_key_prefix     = 'gnubld_'
-gvar_opt_key_suffix     = ''
-gvar_opt_key_transform  = lambda x : gvar_opt_key_prefix \
-                        + x.lower() \
-                        + gvar_opt_key_suffix
-
-gvar_opt_prefix         = '--'
-gvar_opt_name_prefix    = ''
-gvar_opt_name_suffix    = ''
-gvar_opt_name_transform = lambda x : gvar_opt_prefix \
-                        + (gvar_opt_name_prefix \
-                        + x.lower() \
-                        + gvar_opt_name_suffix).replace('_','-')
-
-gvar_declarations_var   = 'GVAR_DECLARATIONS'
 # Local Variables:
 # # tab-width:4
 # # indent-tabs-mode:nil

@@ -1,4 +1,4 @@
-"""`SConsGnuBuild.GConfig`
+"""`SConsGnu.GConfig`
 
 TODO: Write docs for XXX
 """
@@ -33,7 +33,7 @@ class _GConfig(object):
 
     ..python::
 
-        from SConsGnuBuild.GConfig import _GConfig
+        from SConsGnu.GConfig import _GConfig
         env = Environment()
         conf = _GConfig(env)
         gdecls = conf.DeclareGVars()
@@ -52,7 +52,7 @@ class _GConfig(object):
             May be ``True`` (default) or ``False`` to determine whether we want
             to have the "GNU directory variables" (``prefix``, ``exec_prefix``,
             ``bindir`` and so on); it may be a dict with default values of
-            keyword arguments to `SConsGnuBuild.GDirVars.DeclareGVars()`
+            keyword arguments to `SConsGnu.GDirVars.DeclareGVars()`
 
     .. _SCons.Variables.Variables: http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html
     """
@@ -99,7 +99,7 @@ class _GConfig(object):
 
     def __init_gvar_decls(self, gvar_decls):
         "For internal use only"
-        from SConsGnuBuild.GVars import GVarDecls
+        from SConsGnu.GVars import GVarDecls
         if gvar_decls is None:
             gvar_decls = GVarDecls()
         self.gvar_decls = gvar_decls
@@ -125,7 +125,7 @@ class _GConfig(object):
 
     def DeclareGVars(self, **kw):
         """Declare ``GVar`` variables provided by all relevant modules"""
-        from SConsGnuBuild import GDirVars
+        from SConsGnu import GDirVars
         # 1. GDirVars
         kw2 = _GConfig._mix_kwargs(self.dir_var_options, **kw)
         self.gvar_decls.update(GDirVars.DeclareGVars(**kw2))

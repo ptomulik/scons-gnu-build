@@ -1,6 +1,6 @@
-""" SConsGnuBuild.GVarsTest
+""" SConsGnu.GVarsTest
 
-Unit tests for SConsGnuBuild.GVars
+Unit tests for SConsGnu.GVars
 """
 
 __docformat__ = "restructuredText"
@@ -28,8 +28,8 @@ __docformat__ = "restructuredText"
 
 import unittest
 
-from SConsGnuBuild import GVars
-from SConsGnuBuild.GVars import GVarDecl, GVarDeclU, GVarDecls, GVarDeclsU
+from SConsGnu import GVars
+from SConsGnu.GVars import GVarDecl, GVarDeclU, GVarDecls, GVarDeclsU
 from mock import Mock, patch
 
 #############################################################################
@@ -525,7 +525,7 @@ class Test__GVars(unittest.TestCase):
     def XxxEnvProxy_test(self, x):
         gv = GVars._GVars(self._gdecls_mock_4())
         env = { 'env_a' : 'A', 'env_b' : 'B'}
-        with patch('SConsGnuBuild.GVars._GVarsEnvProxy', return_value = 'ok') as ProxyClass:
+        with patch('SConsGnu.GVars._GVarsEnvProxy', return_value = 'ok') as ProxyClass:
             if x == 'var_':
                 proxy = gv.VarEnvProxy(env)
             elif x == 'opt_':

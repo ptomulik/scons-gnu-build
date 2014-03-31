@@ -1,4 +1,4 @@
-"""`SConsGnuBuild.AmUniform`
+"""`SConsGnu.AmUniform`
 
 Provides automake's uniform naming scheme.
 
@@ -344,7 +344,7 @@ __std_install_exec_prefixes = [
 
 #############################################################################
 def __init_module_vars():
-    from SConsGnuBuild.Common import standard_man_sections
+    from SConsGnu.Common import standard_man_sections
     # generate manX directory prefixes
     for sec in standard_man_sections():
         __std_primary_main_prefixes['MANS'].append('man%s' % sec)
@@ -752,7 +752,7 @@ def decompose_name(funame, primary_names=None, main_prefixes=None,
     **Few examples**:
 
         >>> def dun(*args):
-        ...     from SConsGnuBuild.AmUniform import decompose_name
+        ...     from SConsGnu.AmUniform import decompose_name
         ...     try: return decompose_name(*args)
         ...     except ValueError, e:
         ...         print 'ValueError:', e
@@ -845,7 +845,7 @@ def _ensure_not_forbidden(prefixes, main_prefix, primary,
     **Examples**
 
         >>> def enf(*args):
-        ...     from SConsGnuBuild.AmUniform import _ensure_not_forbidden
+        ...     from SConsGnu.AmUniform import _ensure_not_forbidden
         ...     try: return _ensure_not_forbidden(*args)
         ...     except ValueError, e:
         ...         print 'ValueError:', e
@@ -1179,7 +1179,7 @@ def is_install_exec_name(funame, primary_names=None, main_prefixes=None,
 
     **Examples**:
 
-        >>> from SConsGnuBuild.AmUniform import is_install_exec_name
+        >>> from SConsGnu.AmUniform import is_install_exec_name
         >>> is_install_exec_name('bin_PROGRAMS')
         True
         >>> is_install_exec_name('data_DATA')
@@ -1231,7 +1231,7 @@ def is_install_data_name(funame, primary_names=None, main_prefixes=None,
 
     **Examples**:
 
-        >>> from SConsGnuBuild.AmUniform import is_install_data_name
+        >>> from SConsGnu.AmUniform import is_install_data_name
         >>> is_install_data_name('bin_PROGRAMS')
         False
         >>> is_install_data_name('data_DATA')
@@ -1537,7 +1537,7 @@ def FilterInstallExecNames(funames,**kw):
     **Example usage:**
 
     .. python::
-        >>> from SConsGnuBuild.AmUniform import FilterInstallExecNames
+        >>> from SConsGnu.AmUniform import FilterInstallExecNames
         >>> funames = ['bin_PROGRAMS', 'lib_LIBRARIES', 'nobase_include_HEADERS', 'sysconf_DATA']
         >>> FilterInstallExecNames(funames)
         ['bin_PROGRAMS', 'lib_LIBRARIES', 'sysconf_DATA']
@@ -1573,7 +1573,7 @@ def FilterInstallDataNames(funames,**kw):
     **Example usage:**
 
     .. python::
-        >>> from SConsGnuBuild.AmUniform import FilterInstallDataNames
+        >>> from SConsGnu.AmUniform import FilterInstallDataNames
         >>> funames =  ['bin_PROGRAMS', 'lib_LIBRARIES', 'nobase_include_HEADERS', 'sysconf_DATA']
         >>> FilterInstallDataNames(funames)
         ['nobase_include_HEADERS']

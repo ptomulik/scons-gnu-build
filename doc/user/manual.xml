@@ -121,7 +121,7 @@
 				<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				GVars</code>
 				submodule:
-				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild import GVars</programlisting>
+				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu import GVars</programlisting>
 				Their usage is basically a three step procedure:
 			</para>
 			<orderedlist xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -226,7 +226,7 @@
 						xvar</varname>
 						:
 					</para>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDecl
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDecl
     decl = GVarDecl( {&apos;xvar&apos; : None}, None, (&apos;--xvar&apos;, {&apos;dest&apos; : &apos;xvar&apos;, &apos;type&apos; : &apos;string&apos;}) )</programlisting>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						The above code creates a new GVar declaration which associates 
@@ -863,7 +863,7 @@
 						GVarDeclU</methodname>
 						:
 					</para>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDeclU
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDeclU
 decl = GVarDeclU(env_key = &apos;xvar&apos;, opt_key = &apos;xvar&apos;, option = &apos;--xvar&apos;, type = &apos;string&apos;)
     </programlisting>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -896,7 +896,7 @@ decl = GVarDeclU(env_key = &apos;xvar&apos;, opt_key = &apos;xvar&apos;, option 
 					which represents a collection of GVar declarations. It&apos;s a 
 					kind of dict, but it also adds few methods on its own. The
 					<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					SConsGnuBuild.GVars</code>
+					SConsGnu.GVars</code>
 					module provides two factory methods to create such collections, 
 					these are
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -927,7 +927,7 @@ decl = GVarDeclU(env_key = &apos;xvar&apos;, opt_key = &apos;xvar&apos;, option 
 						bar</varname>
 						.
 					</para>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDecls, GVarDecl
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDecls, GVarDecl
 # create single declarations
 foodecl = GVarDecl( {&apos;ENV_FOO&apos; : &apos;default ENV_FOO&apos;},            # ENV
               (&apos;var_foo&apos;, &apos;var_foo help&apos;, ),                    # VAR
@@ -970,7 +970,7 @@ decls = GVarDecls({ &apos;foo&apos; : foodecl, &apos;bar&apos; : bardecl })</pro
 				<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Using GVarDecls with bare parameters</title>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDecls
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDecls
 # create multiple declarations at once
 decls = GVarDecls({
   # GVar &apos;foo&apos;
@@ -992,7 +992,7 @@ decls = GVarDecls({
 				<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Using GVarDecls with arrays</title>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDecls
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDecls
 decls = GVarDecls([
   # GVar &apos;foo&apos;
   (&apos;foo&apos;,  ( {&apos;ENV_FOO&apos; : &apos;default ENV_FOO&apos;},                  # ENV
@@ -1013,7 +1013,7 @@ decls = GVarDecls([
              xml:id="example-using-gvardecls-with-keyword-arguments">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Using GVarDecls with keyword arguments</title>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDecls
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDecls
 decls = GVarDecls(
   # GVar &apos;foo&apos;
   foo =  ( {&apos;ENV_FOO&apos; : &apos;default ENV_FOO&apos;},                  # ENV
@@ -1032,7 +1032,7 @@ decls = GVarDecls(
 				<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Using GVarDecls with array and keyword arguments</title>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDecls
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDecls
 decls = GVarDecls(
    # GVar &apos;foo&apos;
    [(&apos;foo&apos;,(  {&apos;ENV_FOO&apos; : &apos;ENV default FOO&apos;},                    # ENV
@@ -1079,7 +1079,7 @@ decls = GVarDecls(
 						GVarDeclsU</methodname>
 						.
 					</para>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDeclsU
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDeclsU
 decls = GVarDeclsU(
   foo = { &apos;env_key&apos;: &apos;ENV_FOO&apos;, &apos;var_key&apos; : &apos;var_foo&apos;, &apos;opt_key&apos; : &apos;opt_foo&apos;,
           &apos;option&apos; : &apos;--foo&apos;, &apos;default&apos; : &apos;Default FOO&apos;,
@@ -1143,7 +1143,7 @@ scons: `.&apos; is up to date.</screen>
 						<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						bar</varname>
 						as follows:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDecls
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDecls
 decls = GVarDecls(
   foo = ( { &apos;ENV_FOO&apos; : None }, (&apos;VAR_FOO&apos;, &apos;Help for VAR_FOO&apos;, &apos;$VAR_BAR&apos;), None),
   bar = ( { &apos;ENV_BAR&apos; : None }, (&apos;VAR_BAR&apos;, &apos;Help for VAR_BAR&apos;, &apos;BAR&apos;), None),
@@ -1337,7 +1337,7 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 				_GVars</classname>
 				at a later stage:
 			</para>
-			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild import GVars
+			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu import GVars
 vars = GVars._GVars(decls)</programlisting>
 		</section>
 		<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -1505,7 +1505,7 @@ vars = GVars._GVars(decls)</programlisting>
 					foo</varname>
 					name.
 				</para>
-				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDeclsU
+				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDeclsU
 
 env = Environment()
 var = Variables()
@@ -1641,7 +1641,7 @@ scons: `.&apos; is up to date.</screen>
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Complete example involving GVars</title>
 				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
-from SConsGnuBuild import GVars
+from SConsGnu import GVars
 decls = GVars.GVarDeclsU(
   prefix      = { &apos;env_key&apos; : &apos;GNU_PREFIX&apos;, &apos;var_key&apos; : &apos;PREFIX&apos;, &apos;opt_key&apos; : &apos;opt_prefix&apos;,
                   &apos;option&apos; : &apos;--prefix&apos;, &apos;default&apos; : &apos;/usr/local&apos;, &apos;type&apos; : &apos;string&apos;,
@@ -1858,12 +1858,12 @@ PREFIX = &apos;/opt&apos;
 			GDirVars</code>
 			submodule:
 		</para>
-		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild import GDirVars</programlisting>
+		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu import GDirVars</programlisting>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 		In order to have Installation Directory Variables activated you need 
 		to append predefined directory variable declarations to your current 
 		set of GVars declarations:</para>
-		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild import GDirVars
+		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu import GDirVars
 # ...
 # Assume, decls is an instance of _GVarDecls
 decls.update(GDirVars.DeclareGVars())
@@ -1886,7 +1886,7 @@ decls.update(GDirVars.DeclareGVars())
 				option to display help for all the defined command line variables.
 			</para>
 			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
-from SConsGnuBuild import GVars, GDirVars
+from SConsGnu import GVars, GDirVars
 env = Environment()
 var = Variables(&apos;.scons_variables&apos;)
 decls = GDirVars.DeclareGVars()

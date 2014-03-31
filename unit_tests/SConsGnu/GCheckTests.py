@@ -1,10 +1,12 @@
-"""`SConsGnuBuild.GnuPkg.Control`
+""" SConsGnu.GCheckTests
 
-Common functions to handle control information of GNU package.
+Unit tests for SConsGnu.GCheck
 """
 
+__docformat__ = "restructuredText"
+
 #
-# Copyright (c) 2012 by Pawel Tomulik
+# Copyright (c) 2014 by Pawel Tomulik
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,10 +26,26 @@ Common functions to handle control information of GNU package.
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE
 
-__docformat__ = "restructuredText"
+import unittest
 
-# TODO: Implement
-#
+#from SConsGnu import GCheck
+
+class TestCase(unittest.TestCase):
+    def test_fff(self):
+        pass
+
+if __name__ == "__main__":
+    ldr = unittest.TestLoader()
+    suite = unittest.TestSuite()
+    # Load tests to test suite
+    tclasses = [ TestCase ]
+
+    for tclass in tclasses:
+        suite.addTests(ldr.loadTestsFromTestCase(tclass))
+
+    if not unittest.TextTestRunner(verbosity = 2).run(suite).wasSuccessful():
+        sys.exit(1)
+
 # Local Variables:
 # # tab-width:4
 # # indent-tabs-mode:nil

@@ -22,7 +22,7 @@
 
 Import('env')
 
-from SConsGnuBuild import GDirVars
+from SConsGnu import GDirVars
 
 only = ('prefix','exec_prefix','bindir')
 gdecls = GDirVars.DeclareGVars(name_filter = lambda x : x in only)

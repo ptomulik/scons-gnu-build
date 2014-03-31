@@ -1,8 +1,3 @@
-"""`SConsGnuBuild.GnuPkg.Install`
-
-Installation procedures for user defined software packages.
-"""
-
 #
 # Copyright (c) 2012 by Pawel Tomulik
 #
@@ -26,7 +21,24 @@ Installation procedures for user defined software packages.
 
 __docformat__ = "restructuredText"
 
-# TODO: Implement
+"""
+Tests declaring variables with SConsGnu.GVar.GVarDecl() factory method.
+"""
+
+import TestSCons
+
+##############################################################################
+# GVarDecl(): Test 1 - declare GVar that is not bound to anything.
+##############################################################################
+test = TestSCons.TestSCons()
+test.subdir(['t1'])
+test.dir_fixture('../../../../SConsGnu', 't1/site_scons/SConsGnu')
+test.write(['t1', 'SConstruct'],
+"""
+# SConstruct
+from SConsGnu.GVars import GVarDecl
+""")
+test.run(chdir = 't1')
 
 # Local Variables:
 # # tab-width:4

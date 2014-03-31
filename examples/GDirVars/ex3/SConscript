@@ -22,9 +22,9 @@
 
 Import('env')
 
-from SConsGnuBuild import GDirVars
-from SConsGnuBuild.GDirVars import default_var_key_transform
-from SConsGnuBuild.GDirVars import default_opt_key_transform
+from SConsGnu import GDirVars
+from SConsGnu.GDirVars import default_var_key_transform
+from SConsGnu.GDirVars import default_opt_key_transform
 
 options = [ '--prefix', '--exec-prefix' ]
 

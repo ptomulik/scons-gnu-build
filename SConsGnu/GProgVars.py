@@ -1,4 +1,4 @@
-"""`SConsGnuBuild.GProgVars`
+"""`SConsGnu.GProgVars`
 
 Variables for `Alternative Programs`_.
 
@@ -75,7 +75,7 @@ Supported variables:
 __docformat__ = 'restructuredText'
 
 from os import path
-from SConsGnuBuild import Defaults
+from SConsGnu import Defaults
 
 #############################################################################
 class _auto(object): pass
@@ -195,7 +195,7 @@ def declare_gvars(name_filter=lambda x : False,
                   env_key_transform=default_env_key_transform,
                   var_key_transform=default_var_key_transform):
     from SCons.Variables.PathVariable import PathVariable
-    from SConsGnuBuild.GVars import GVarDeclsU
+    from SConsGnu.GVars import GVarDeclsU
     def _callback(name, desc, default):
         decl = { 'env_key'  : env_key_transform(name),
                  'var_key'  : var_key_transform(name),
@@ -225,7 +225,7 @@ def GVarNames(**kw):
 ###############################################################################
 def DeclareGVars(**kw):
     """Return the standard GNU directory variables as
-    ``GVar`` variable declarations `_GVarDecls` (see `SConsGnuBuild.GVars`).
+    ``GVar`` variable declarations `_GVarDecls` (see `SConsGnu.GVars`).
 
     :Keywords:
         name_filter : callable
@@ -241,7 +241,7 @@ def DeclareGVars(**kw):
             keys used for corresponding SCons command-line variables
             ``variable=value`` (default: `default_var_key_transform`)
     :Returns:
-        a dictionary-like object of type `SConsGnuBuild.GVar._GVarDecls`
+        a dictionary-like object of type `SConsGnu.GVar._GVarDecls`
     """
     args = ['name_filter', 'env_key_transform', 'var_key_transform']
     kw2 = { key : kw[key] for key in args if key in kw }

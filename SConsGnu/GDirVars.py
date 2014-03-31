@@ -1,4 +1,4 @@
-"""`SConsGnuBuild.GDirVars`
+"""`SConsGnu.GDirVars`
 
 Provides GNU directory variables.
 
@@ -117,7 +117,7 @@ Supported variables:
 __docformat__ = 'restructuredText'
 
 from os import path
-from SConsGnuBuild import Defaults
+from SConsGnu import Defaults
 
 #############################################################################
 # NOTE: variable substitutions must be in curly brackets, so use ${prefix}
@@ -239,7 +239,7 @@ default_opt_name_transform  = Defaults.gvar_opt_name_transform
 
 #############################################################################
 def __init_module_vars():
-    from SConsGnuBuild.Common import standard_man_sections
+    from SConsGnu.Common import standard_man_sections
     for sec in standard_man_sections():
         dir_help = 'The directory for installing section %s man pages.' % sec
         ext_help = 'The file name extension for installed section %s man pages.' % sec
@@ -291,7 +291,7 @@ def declare_gvars(name_filter=lambda x : True,
                   opt_key_transform=default_opt_key_transform,
                   opt_name_transform=default_opt_name_transform):
     from SCons.Variables.PathVariable import PathVariable
-    from SConsGnuBuild.GVars import GVarDeclsU
+    from SConsGnu.GVars import GVarDeclsU
     def _callback(name, desc, default):
         decl = { 'env_key'  : env_key_transform(name),
                  'var_key'  : var_key_transform(name),
@@ -323,7 +323,7 @@ def GVarNames(**kw):
 ###############################################################################
 def DeclareGVars(**kw):
     """Return the standard GNU directory variables as
-    ``GVar`` variable declarations `_GVarDecls` (see `SConsGnuBuild.GVars`).
+    ``GVar`` variable declarations `_GVarDecls` (see `SConsGnu.GVars`).
 
     :Keywords:
         name_filter : callable
@@ -346,7 +346,7 @@ def DeclareGVars(**kw):
             function or lambda used to transform canonical ``GVar`` names to
             option names (default: `default_opt_name_transform`)
     :Returns:
-        a dictionary-like object of type `SConsGnuBuild.GVar._GVarDecls`
+        a dictionary-like object of type `SConsGnu.GVar._GVarDecls`
     """
     args = ['name_filter', 'env_key_transform', 'var_key_transform',
             'opt_key_transform', 'opt_name_transform']

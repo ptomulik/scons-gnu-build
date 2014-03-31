@@ -26,10 +26,10 @@ if epydoc:
     path = ':'.join(sys.path)
     epydocflags = '-v --html --css grayscale --inheritance listed'
     epydoccom = 'PYTHONPATH=%s %s -o $TARGET.dir %s %s' \
-            % (path,epydoc,epydocflags, 'SConsGnuBuild')
-    source =  [ env.Glob('#SConsGnuBuild/*.py'),
-                env.Glob('#SConsGnuBuild/*/*.py'),
-                env.Glob('#SConsGnuBuild/*/*/*.py') ]
+            % (path,epydoc,epydocflags, 'SConsGnu')
+    source =  [ env.Glob('#SConsGnu/*.py'),
+                env.Glob('#SConsGnu/*/*.py'),
+                env.Glob('#SConsGnu/*/*/*.py') ]
     target = ['index.html']
     api_doc = env.Command(target, source, epydoccom)
     env.AlwaysBuild(env.Alias('api-doc', api_doc))

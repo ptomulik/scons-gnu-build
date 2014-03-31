@@ -35,10 +35,10 @@ There are two method for installation:
 
 ### Installation by simple copy
 
-Copy recursively the entire directory ``SConsGnuBuild`` to your
+Copy recursively the entire directory ``SConsGnu`` to your
 ``site_scons/`` directory
 
-    cp -r scons-gnu-build/SConsGnuBuild your/projects/site_scons/
+    cp -r scons-gnu-build/SConsGnu your/projects/site_scons/
 
 ### Installation as a submodule in git-based projects
 

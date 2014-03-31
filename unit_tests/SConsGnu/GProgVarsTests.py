@@ -1,6 +1,6 @@
-""" SConsGnuBuild.GProgVarsTests
+""" SConsGnu.GProgVarsTests
 
-Unit tests for SConsGnuBuild.GProgVars
+Unit tests for SConsGnu.GProgVars
 """
 
 __docformat__ = "restructuredText"
@@ -29,9 +29,9 @@ __docformat__ = "restructuredText"
 import unittest
 
 from mock import Mock, patch
-from SConsGnuBuild import GProgVars
-from SConsGnuBuild import GVars
-from SConsGnuBuild import Defaults
+from SConsGnu import GProgVars
+from SConsGnu import GVars
+from SConsGnu import Defaults
 
 class Test_default_env_key_transform(unittest.TestCase):
     def test_default_env_key_prefix(self):
@@ -107,57 +107,57 @@ class Test_declare_gvars(unittest.TestCase):
         self.assertEqual(gdecl.get_xxx_key(GVars.VAR), name)
     def test_AWK(self):
         """test GProgVars.declare_gvars(lambda x : True)['AWK']"""
-        self.check_decl('AWK', None)
+        self.check_decl('AWK', GProgVars._auto)
     def test_EGREP(self):
         """test GProgVars.declare_gvars(lambda x : True)['EGREP']"""
-        self.check_decl('EGREP', None)
+        self.check_decl('EGREP', GProgVars._auto)
     def test_FGREP(self):
         """test GProgVars.declare_gvars(lambda x : True)['FGREP']"""
-        self.check_decl('FGREP', None)
+        self.check_decl('FGREP', GProgVars._auto)
     def test_GREP(self):
         """test GProgVars.declare_gvars(lambda x : True)['GREP']"""
-        self.check_decl('GREP', None)
+        self.check_decl('GREP', GProgVars._auto)
     def test_INSTALL(self):
         """test GProgVars.declare_gvars(lambda x : True)['INSTALL']"""
-        self.check_decl('INSTALL', None)
+        self.check_decl('INSTALL', GProgVars._auto)
     def test_INSTALL_DATA(self):
         """test GProgVars.declare_gvars(lambda x : True)['INSTALL_DATA']"""
-        self.check_decl('INSTALL_DATA', None)
+        self.check_decl('INSTALL_DATA', GProgVars._auto)
     def test_INSTALL_PROGRAM(self):
         """test GProgVars.declare_gvars(lambda x : True)['INSTALL_PROGRAM']"""
-        self.check_decl('INSTALL_PROGRAM', None)
+        self.check_decl('INSTALL_PROGRAM', GProgVars._auto)
     def test_INSTALL_SCRIPT(self):
         """test GProgVars.declare_gvars(lambda x : True)['INSTALL_SCRIPT']"""
-        self.check_decl('INSTALL_SCRIPT', None)
+        self.check_decl('INSTALL_SCRIPT', GProgVars._auto)
     def test_LEX(self):
         """test GProgVars.declare_gvars(lambda x : True)['LEX']"""
-        self.check_decl('LEX', None)
+        self.check_decl('LEX', GProgVars._auto)
     def test_LEX_OUTPUT_ROOT(self):
         """test GProgVars.declare_gvars(lambda x : True)['LEX_OUTPUT_ROOT']"""
-        self.check_decl('LEX_OUTPUT_ROOT', None)
+        self.check_decl('LEX_OUTPUT_ROOT', GProgVars._auto)
     def test_LEXLIB(self):
         """test GProgVars.declare_gvars(lambda x : True)['LEXLIB']"""
-        self.check_decl('LEXLIB', None)
+        self.check_decl('LEXLIB', GProgVars._auto)
     def test_LN_S(self):
         """test GProgVars.declare_gvars(lambda x : True)['LN_S']"""
-        self.check_decl('LN_S', None)
+        self.check_decl('LN_S', GProgVars._auto)
     def test_MKDIR_P(self):
         """test GProgVars.declare_gvars(lambda x : True)['MKDIR_P']"""
-        self.check_decl('MKDIR_P', None)
+        self.check_decl('MKDIR_P', GProgVars._auto)
     def test_RANLIB(self):
         """test GProgVars.declare_gvars(lambda x : True)['RANLIB']"""
-        self.check_decl('RANLIB', None)
+        self.check_decl('RANLIB', GProgVars._auto)
     def test_SED(self):
         """test GProgVars.declare_gvars(lambda x : True)['SED']"""
-        self.check_decl('SED', None)
+        self.check_decl('SED', GProgVars._auto)
     def test_YACC(self):
         """test GProgVars.declare_gvars(lambda x : True)['YACC']"""
-        self.check_decl('YACC', None)
+        self.check_decl('YACC', GProgVars._auto)
 
 class Test_GVarNames(unittest.TestCase):
     def test_GVarNames_1(self):
         """GProgVars.GVarNames() should invoke GProgVars.gvar_names() once"""
-        with patch('SConsGnuBuild.GProgVars.gvar_names') as gvar_names:
+        with patch('SConsGnu.GProgVars.gvar_names') as gvar_names:
             GProgVars.GVarNames()
             try:
                 gvar_names.assert_called_once_with()
@@ -165,7 +165,7 @@ class Test_GVarNames(unittest.TestCase):
                 self.fail(str(e))
     def test_GVarNames_2(self):
         """GProgVars.GVarNames(foo = 'FOO', name_filter = 'NAME_FILTER') should invoke GProgVars.gvar_names(name_filter = 'NAME_FILTER') once"""
-        with patch('SConsGnuBuild.GProgVars.gvar_names') as gvar_names:
+        with patch('SConsGnu.GProgVars.gvar_names') as gvar_names:
             GProgVars.GVarNames(foo = 'FOO', name_filter = 'NAME_FILTER')
             try:
                 gvar_names.assert_called_once_with(name_filter = 'NAME_FILTER')
@@ -175,7 +175,7 @@ class Test_GVarNames(unittest.TestCase):
 class Test_DeclareGVars(unittest.TestCase):
     def test_DeclareGVars_1(self):
         """GProgVars.DeclareGVars() should invoke GProgVars.declare_gvars() once"""
-        with patch('SConsGnuBuild.GProgVars.declare_gvars', return_value = 'ok') as declare_gvars:
+        with patch('SConsGnu.GProgVars.declare_gvars', return_value = 'ok') as declare_gvars:
             decls = GProgVars.DeclareGVars()
             try:
                 declare_gvars.assert_called_once_with()
@@ -185,7 +185,7 @@ class Test_DeclareGVars(unittest.TestCase):
 
     def test_DeclareGVars_2(self):
         """GProgVars.DeclareGVars(foo = 'FOO', name_filter = 'NF', env_key_transform = 'EKT', var_key_transform = 'VKT')"""
-        with patch('SConsGnuBuild.GProgVars.declare_gvars', return_value = 'ok') as declare_gvars:
+        with patch('SConsGnu.GProgVars.declare_gvars', return_value = 'ok') as declare_gvars:
             decls = GProgVars.DeclareGVars(foo = 'FOO', name_filter = 'NF', env_key_transform = 'EKT', var_key_transform = 'VKT')
             try:
                 declare_gvars.assert_called_once_with(name_filter = 'NF', env_key_transform = 'EKT', var_key_transform = 'VKT')

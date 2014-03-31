@@ -1,6 +1,6 @@
-"""unittest.SConsGnuBuild.AmUniformTests
+"""unittest.SConsGnu.AmUniformTests
 
-Unit tests for SConsGnuBuild.AmUniform
+Unit tests for SConsGnu.AmUniform
 """
 
 __docformat__ = "restructuredText"
@@ -27,7 +27,7 @@ __docformat__ = "restructuredText"
 # SOFTWARE
 
 import unittest
-from SConsGnuBuild.AmUniform import *
+from SConsGnu.AmUniform import *
 
 #############################################################################
 class Test_std_primary_names(unittest.TestCase):

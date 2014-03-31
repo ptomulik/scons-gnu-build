@@ -1,8 +1,3 @@
-"""`SConsGnuBuild.GnuPkg`
-
-TODO: Write docs for SConsGnuBuild.GnuPkg
-"""
-
 #
 # Copyright (c) 2012 by Pawel Tomulik
 #
@@ -26,18 +21,24 @@ TODO: Write docs for SConsGnuBuild.GnuPkg
 
 __docformat__ = "restructuredText"
 
+"""
+Tests declaring variables with SConsGnu.GVar.GVarDecl() factory method.
+"""
 
-def _init_env_with_dir_vars(env, files = [], args = {}, is_global = 1, **kw):
-    from SCons.Script import ARGUMENTS, Help
-    from SConsGnuVariables import GDirVariables
-    # We use build variables (and not SCons flags) because variables
-    # may be stored to file
-    gnuvars = GDirVariables.AsSConsVariables(files,args,is_global,**kw)
-    gnuvars.Update(env, ARGUMENTS)
-    Help(gnuvars.GenerateHelpText(env))
+import TestSCons
 
-def InitEnv(env, files = [], args = {}, is_global = 1, **kw):
-    _init_env_with_dir_vars(env,files,args,is_global,**kw)
+##############################################################################
+# GVarDecl(): Test 1 - declare GVar that is not bound to anything.
+##############################################################################
+test = TestSCons.TestSCons()
+test.subdir(['t1'])
+test.dir_fixture('../../../../SConsGnu', 't1/site_scons/SConsGnu')
+test.write(['t1', 'SConstruct'],
+"""
+# SConstruct
+from SConsGnu.GVars import GVarDecl
+""")
+test.run(chdir = 't1')
 
 # Local Variables:
 # # tab-width:4

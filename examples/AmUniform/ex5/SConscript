@@ -22,7 +22,7 @@
 Import('env')
 
 from pprint import PrettyPrinter
-from SConsGnuBuild.AmUniform import FilterInstallExecNames, \
+from SConsGnu.AmUniform import FilterInstallExecNames, \
                                     FilterInstallDataNames
 
 names = [

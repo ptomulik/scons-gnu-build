@@ -1,11 +1,11 @@
-"""`SConsGnuBuild.GProgChecks`
+"""`SConsGnu.GProgChecks`
 
 Autoconf-like checks for `Alternative Programs`_. Check whether they exist, and
 in some cases whether they support certain features.
 
 **Example**::
 
-    from SConsGnuBuild import GProgChecks
+    from SConsGnu import GProgChecks
 
     env = Environment()
     cfg = Configure(env, config_h = 'config.h')
@@ -48,8 +48,8 @@ from SCons.Util import CLVar, AppendPath, PrependPath, is_Sequence, is_String
 from subprocess import PIPE
 import re, os, fnmatch
 
-from SConsGnuBuild.GProgVars import _auto, gvar_names, declare_gvars
-from SConsGnuBuild.GProgVars import GVarNames, DeclareGVars
+from SConsGnu.GProgVars import _auto, gvar_names, declare_gvars
+from SConsGnu.GProgVars import GVarNames, DeclareGVars
 
 try:
     import cPickle as pickle

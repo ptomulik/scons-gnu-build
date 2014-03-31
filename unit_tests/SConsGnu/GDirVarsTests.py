@@ -1,6 +1,6 @@
-""" SConsGnuBuild.GDirVarsTests
+""" SConsGnu.GDirVarsTests
 
-Unit tests for SConsGnuBuild.GDirVars
+Unit tests for SConsGnu.GDirVars
 """
 
 __docformat__ = "restructuredText"
@@ -28,9 +28,9 @@ __docformat__ = "restructuredText"
 
 import unittest
 from mock import Mock, patch
-from SConsGnuBuild import GDirVars
-from SConsGnuBuild import GVars
-from SConsGnuBuild import Defaults
+from SConsGnu import GDirVars
+from SConsGnu import GVars
+from SConsGnu import Defaults
 
 class Test_default_env_key_transform(unittest.TestCase):
     def test_default_env_key_prefix(self):
@@ -248,7 +248,7 @@ class Test_declare_gvars(unittest.TestCase):
 class Test_GVarNames(unittest.TestCase):
     def test_GVarNames_1(self):
         """GDirVars.GVarNames() should invoke GDirVars.gvar_names() once"""
-        with patch('SConsGnuBuild.GDirVars.gvar_names') as gvar_names:
+        with patch('SConsGnu.GDirVars.gvar_names') as gvar_names:
             GDirVars.GVarNames()
             try:
                 gvar_names.assert_called_once_with()
@@ -256,7 +256,7 @@ class Test_GVarNames(unittest.TestCase):
                 self.fail(str(e))
     def test_GVarNames_2(self):
         """GDirVars.GVarNames(foo = 'FOO', name_filter = 'NAME_FILTER') should invoke GDirVars.gvar_names(name_filter = 'NAME_FILTER') once"""
-        with patch('SConsGnuBuild.GDirVars.gvar_names') as gvar_names:
+        with patch('SConsGnu.GDirVars.gvar_names') as gvar_names:
             GDirVars.GVarNames(foo = 'FOO', name_filter = 'NAME_FILTER')
             try:
                 gvar_names.assert_called_once_with(name_filter = 'NAME_FILTER')
@@ -266,7 +266,7 @@ class Test_GVarNames(unittest.TestCase):
 class Test_DeclareGVars(unittest.TestCase):
     def test_DeclareGVars_1(self):
         """GDirVars.DeclareGVars() should invoke GDirVars.declare_gvars() once"""
-        with patch('SConsGnuBuild.GDirVars.declare_gvars', return_value = 'ok') as declare_gvars:
+        with patch('SConsGnu.GDirVars.declare_gvars', return_value = 'ok') as declare_gvars:
             decls = GDirVars.DeclareGVars()
             try:
                 declare_gvars.assert_called_once_with()
@@ -276,7 +276,7 @@ class Test_DeclareGVars(unittest.TestCase):
 
     def test_DeclareGVars_2(self):
         """GDirVars.DeclareGVars(foo = 'FOO', name_filter = 'NF', env_key_transform = 'EKT', var_key_transform = 'VKT', opt_key_transform = 'OKT', opt_name_transform = 'ONT')"""
-        with patch('SConsGnuBuild.GDirVars.declare_gvars', return_value = 'ok') as declare_gvars:
+        with patch('SConsGnu.GDirVars.declare_gvars', return_value = 'ok') as declare_gvars:
             decls = GDirVars.DeclareGVars(foo = 'FOO', name_filter = 'NF', env_key_transform = 'EKT', var_key_transform = 'VKT', opt_key_transform = 'OKT', opt_name_transform = 'ONT')
             try:
                 declare_gvars.assert_called_once_with(name_filter = 'NF', env_key_transform = 'EKT', var_key_transform = 'VKT', opt_key_transform = 'OKT', opt_name_transform = 'ONT')

@@ -1,4 +1,4 @@
-"""`SConsGnuBuild.Common`
+"""`SConsGnu.Common`
 
 Functions and objects used by more than one modules.
 """
@@ -45,7 +45,7 @@ class __null(object) : pass
 ##
 ##    **Example**:
 ##
-##        >>> from SConsGnuBuild.Common import map_named_tuples
+##        >>> from SConsGnu.Common import map_named_tuples
 ##        >>> tuples = [ ('foo', 1), ('bar', 2), ('geez', 3) ]
 ##        >>> map_named_tuples(lambda *x : x, tuples, only = ('foo', 'geez'), prefix='PFX_')
 ##        [('PFX_foo', 1), ('PFX_geez', 3)]

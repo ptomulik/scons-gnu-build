@@ -1,6 +1,6 @@
-""" SConsGnuBuild.DefaultsTests
+""" SConsGnu.DefaultsTests
 
-Unit tests for SConsGnuBuild.Defaults
+Unit tests for SConsGnu.Defaults
 """
 
 __docformat__ = "restructuredText"
@@ -28,7 +28,7 @@ __docformat__ = "restructuredText"
 
 import unittest
 
-from SConsGnuBuild import Defaults
+from SConsGnu import Defaults
 
 class Test_gvar_env_key(unittest.TestCase):
     def test_gvar_env_key_prefix(self):

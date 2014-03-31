@@ -1,4 +1,4 @@
-"""`SConsGnuBuild.GVars`
+"""`SConsGnu.GVars`
 
 This module provides an implementation of what we call ``GVars`` (abbreviation
 of "gluing variables"). A ``GVar`` variable correlates single construction
@@ -68,7 +68,7 @@ Consider following ``SConsctruct`` file
 
 .. python::
 
-    from SConsGnuBuild.GVars import GVarDecls
+    from SConsGnu.GVars import GVarDecls
     env = Environment()
     gdecls = GVarDecls(
        # GVar 'foo'
@@ -165,7 +165,7 @@ Consider following ``SConstruct`` file:
 
 .. python::
 
-    from SConsGnuBuild.GVars import GVarDecls
+    from SConsGnu.GVars import GVarDecls
     env = Environment()
     gdecls = GVarDecls(
        # GVar 'foo'
@@ -316,7 +316,7 @@ def _build_resubst_dict(rename_dict):
 
     .. python::
 
-        >>> from SConsGnuBuild.GVars import _build_resubst_dict
+        >>> from SConsGnu.GVars import _build_resubst_dict
         >>> _build_resubst_dict( {"xxx":"yyy", "vvv":"www", "zzz":"zzz" })
         {'vvv': '${www}', 'xxx': '${yyy}'}
 
@@ -342,7 +342,7 @@ def _build_iresubst_dict(rename_dict):
 
     .. python::
 
-        >>> from SConsGnuBuild.GVars import _build_resubst_dict
+        >>> from SConsGnu.GVars import _build_resubst_dict
         >>> _build_iresubst_dict( {"xxx":"yyy", "vvv":"www", "zzz":"zzz" })
         {'www': '${vvv}', 'yyy': '${xxx}'}
 
@@ -395,7 +395,7 @@ class _GVarsEnvProxy(object):
 
         user@host:$ scons -Q -f -
 
-        from SConsGnuBuild.GVars import _GVarsEnvProxy
+        from SConsGnu.GVars import _GVarsEnvProxy
         env = Environment()
         proxy = _GVarsEnvProxy(env, {'foo':'ENV_FOO'}, {'foo':'${ENV_FOO}'},
                                     {'ENV_FOO':'foo'}, {'ENV_FOO':'${foo}'})

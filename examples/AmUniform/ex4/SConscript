@@ -22,7 +22,7 @@
 Import('env')
 
 from pprint import PrettyPrinter
-from SConsGnuBuild.AmUniform import StandardPrimaryNames, \
+from SConsGnu.AmUniform import StandardPrimaryNames, \
                                     StandardPrimaryMainPrefixes
 
 pp = PrettyPrinter(indent = 4)

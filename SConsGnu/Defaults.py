@@ -1,5 +1,10 @@
+"""`SConsGnu.Defaults`
+
+Defaults for several other modules.
+"""
+
 #
-# Copyright (c) 2012 by Pawel Tomulik
+# Copyright (c) 2014 by Pawel Tomulik
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +26,34 @@
 
 __docformat__ = "restructuredText"
 
-"""
-Tests declaring variables with SConsGnuBuild.GVar.GVarDecl() factory method.
-"""
 
-import TestSCons
+gvar_env_key_prefix     = 'GNUBLD_'
+gvar_env_key_suffix     = ''
+gvar_env_key_transform  = lambda x : gvar_env_key_prefix \
+                        + x \
+                        + gvar_env_key_suffix
 
-##############################################################################
-# GVarDecl(): Test 1 - declare GVar that is not bound to anything.
-##############################################################################
-test = TestSCons.TestSCons()
-test.subdir(['t1'])
-test.dir_fixture('../../../../SConsGnuBuild', 't1/site_scons/SConsGnuBuild')
-test.write(['t1', 'SConstruct'],
-"""
-# SConstruct
-from SConsGnuBuild.GVars import GVarDecl
-""")
-test.run(chdir = 't1')
+gvar_var_key_prefix     = ''
+gvar_var_key_suffix     = ''
+gvar_var_key_transform  = lambda x : gvar_var_key_prefix \
+                        + x \
+                        + gvar_var_key_suffix
 
+gvar_opt_key_prefix     = 'gnubld_'
+gvar_opt_key_suffix     = ''
+gvar_opt_key_transform  = lambda x : gvar_opt_key_prefix \
+                        + x.lower() \
+                        + gvar_opt_key_suffix
+
+gvar_opt_prefix         = '--'
+gvar_opt_name_prefix    = ''
+gvar_opt_name_suffix    = ''
+gvar_opt_name_transform = lambda x : gvar_opt_prefix \
+                        + (gvar_opt_name_prefix \
+                        + x.lower() \
+                        + gvar_opt_name_suffix).replace('_','-')
+
+gvar_declarations_var   = 'GVAR_DECLARATIONS'
 # Local Variables:
 # # tab-width:4
 # # indent-tabs-mode:nil

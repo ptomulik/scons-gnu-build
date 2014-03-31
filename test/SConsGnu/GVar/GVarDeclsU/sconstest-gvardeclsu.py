@@ -22,7 +22,7 @@
 __docformat__ = "restructuredText"
 
 """
-Tests declaring variables with SConsGnuBuild.GVar.GVarDecl() factory method.
+Tests declaring variables with SConsGnu.GVar.GVarDecl() factory method.
 """
 
 import TestSCons
@@ -32,11 +32,11 @@ import TestSCons
 ##############################################################################
 test = TestSCons.TestSCons()
 test.subdir(['t1'])
-test.dir_fixture('../../../../SConsGnuBuild', 't1/site_scons/SConsGnuBuild')
+test.dir_fixture('../../../../SConsGnu', 't1/site_scons/SConsGnu')
 test.write(['t1', 'SConstruct'],
 """
 # SConstruct
-from SConsGnuBuild.GVars import GVarDecl
+from SConsGnu.GVars import GVarDecl
 """)
 test.run(chdir = 't1')
 
