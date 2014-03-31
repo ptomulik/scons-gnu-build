@@ -145,7 +145,9 @@
 				</listitem>
 			</orderedlist>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			In the following subsections we will explain all these steps.</para>
+			You may further access (read and modify) the values of GVars in your 
+			SCons environment via so-called proxy objects. In the following 
+			subsections we will explain all these steps and techniques.</para>
 		</section>
 		<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
            xml:id="sec-declaring-gvars">
@@ -169,9 +171,10 @@
 				<function xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				GVarDeclsU</function>
 				create multiple declarations at once returning dict-like collection 
-				where GVar names are mapped onto their declarations. In steps 2. 
-				and 3. of the previously outlined procedure we will actually need 
-				this dict object.
+				where GVar names are mapped onto their declarations. The dictionary 
+				is a kind of flat namespace which encloses multiple GVar 
+				declarations. In steps 2. and 3. of the previously outlined 
+				procedure we will actually need this dict object.
 			</para>
 			<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -656,9 +659,15 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								type</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as type in 
-							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
-							optparse option attributes</link>.</td>
+							<td xmlns="http://docbook.org/ns/docbook">
+								Same as
+								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								type</parameter>
+								in 
+								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
+								optparse option attributes</link>
+								 .
+							</td>
 						</tr>
 						<tr xmlns="http://docbook.org/ns/docbook">
 							<td xmlns="http://docbook.org/ns/docbook">
@@ -671,9 +680,14 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								default</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as type in 
-							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
-							optparse option attributes</link></td>
+							<td xmlns="http://docbook.org/ns/docbook">
+								Same as
+								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								default</parameter>
+								in 
+								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
+								optparse option attributes</link>
+							</td>
 						</tr>
 						<tr xmlns="http://docbook.org/ns/docbook">
 							<td xmlns="http://docbook.org/ns/docbook">
@@ -686,9 +700,14 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								metavar</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as type in 
-							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
-							optparse option attributes</link></td>
+							<td xmlns="http://docbook.org/ns/docbook">
+								Same as
+								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								metavar</parameter>
+								in 
+								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
+								optparse option attributes</link>
+							</td>
 						</tr>
 						<tr xmlns="http://docbook.org/ns/docbook">
 							<td xmlns="http://docbook.org/ns/docbook">
@@ -701,9 +720,14 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								nargs</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as type in 
-							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
-							optparse option attributes</link></td>
+							<td xmlns="http://docbook.org/ns/docbook">
+								Same as
+								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								nargs</parameter>
+								in 
+								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
+								optparse option attributes</link>
+							</td>
 						</tr>
 						<tr xmlns="http://docbook.org/ns/docbook">
 							<td xmlns="http://docbook.org/ns/docbook">
@@ -716,9 +740,14 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								choices</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as type in 
-							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
-							optparse option attributes</link></td>
+							<td xmlns="http://docbook.org/ns/docbook">
+								Same as
+								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								choices</parameter>
+								in 
+								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
+								optparse option attributes</link>
+							</td>
 						</tr>
 						<tr xmlns="http://docbook.org/ns/docbook">
 							<td xmlns="http://docbook.org/ns/docbook">
@@ -731,9 +760,14 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								action</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as type in 
-							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
-							optparse option attributes</link></td>
+							<td xmlns="http://docbook.org/ns/docbook">
+								Same as
+								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								action</parameter>
+								in 
+								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
+								optparse option attributes</link>
+							</td>
 						</tr>
 						<tr xmlns="http://docbook.org/ns/docbook">
 							<td xmlns="http://docbook.org/ns/docbook">
@@ -746,9 +780,14 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								const</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as type in 
-							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
-							optparse option attributes</link></td>
+							<td xmlns="http://docbook.org/ns/docbook">
+								Same as
+								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								const</parameter>
+								in 
+								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
+								optparse option attributes</link>
+							</td>
 						</tr>
 						<tr xmlns="http://docbook.org/ns/docbook">
 							<td xmlns="http://docbook.org/ns/docbook">
@@ -761,9 +800,14 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								callback</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as type in 
-							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
-							optparse option attributes</link></td>
+							<td xmlns="http://docbook.org/ns/docbook">
+								Same as
+								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								callback</parameter>
+								in 
+								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
+								optparse option attributes</link>
+							</td>
 						</tr>
 						<tr xmlns="http://docbook.org/ns/docbook">
 							<td xmlns="http://docbook.org/ns/docbook">
@@ -776,9 +820,14 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								callback_args</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as type in 
-							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
-							optparse option attributes</link></td>
+							<td xmlns="http://docbook.org/ns/docbook">
+								Same as
+								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								callback_args</parameter>
+								in 
+								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
+								optparse option attributes</link>
+							</td>
 						</tr>
 						<tr xmlns="http://docbook.org/ns/docbook">
 							<td xmlns="http://docbook.org/ns/docbook">
@@ -791,9 +840,14 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								callback_kwargs</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as type in 
-							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-							optparse option attributes</link></td>
+							<td xmlns="http://docbook.org/ns/docbook">
+								Same as
+								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								callback_kwargs</parameter>
+								in 
+								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								optparse option attributes</link>
+							</td>
 						</tr>
 					</tbody>
 				</informaltable>
@@ -810,7 +864,7 @@
 						:
 					</para>
 					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDeclU
-    decl = GVarDeclU(env_key = &apos;xvar&apos;, opt_key = &apos;xvar&apos;, option = &apos;--xvar&apos;, type = &apos;string&apos;)
+decl = GVarDeclU(env_key = &apos;xvar&apos;, opt_key = &apos;xvar&apos;, option = &apos;--xvar&apos;, type = &apos;string&apos;)
     </programlisting>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					As you may see, this notation is a little bit more compact than 
@@ -828,8 +882,8 @@
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Declaring multiple GVars</title>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				The GVar workflow assumes that there is a point in time when all 
-				GVar declarationss are collected together. At this point we have a 
+				The GVar workflow assumes that there is a point when all GVar 
+				declarationss get collected together. At this point we have a 
 				complete information for the next step in the three-step procedure 
 				outlined in 
 				<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars-basics"/>
@@ -904,7 +958,7 @@ decls = GVarDecls({ &apos;foo&apos; : foodecl, &apos;bar&apos; : bardecl })</pro
 				</example>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					You don&apos;t have to create each GVar declaration separatelly 
-					before putting all your GVars to a collection. Instead you may 
+					before putting all your GVars to a collection. Instead, you may 
 					simply put declaration arguments as parameters to GVarDecls and 
 					they will be passed to
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1138,14 +1192,17 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 				Once created, GVar declarations shall be committed with
 				<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				_GVarDecls.Commit()</code>
-				method. By committing declarations you freeze them such that 
+				method. By committing declarations you create their associatted 
+				commandline options and variables, construction variables, fill 
+				them with default values and freeze the declarations such that 
 				it&apos;s guaranteed that they will not change. The
 				<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Commit</methodname>
 				method optionally spawns the actual GVar variables (to this end we 
-				talked about variable &quot;declarations&quot;, not the variables 
-				in fact) which may be used to update scons environment. The result 
-				of commit is a new collection of GVar variables - an object of type
+				talked about variable &quot;declarations&quot;, not the variables) 
+				which may be used to pass values between commandline 
+				options/variables and scons environment. The result of commit is a 
+				new collection of GVar variables - an object of type
 				<classname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				_GVars</classname>
 				. Once
@@ -1220,7 +1277,7 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 						<td xmlns="http://docbook.org/ns/docbook">A 
 						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html">
 						SCons Variables</link> object to be populated with new variables 
-						defined by GVar variables declared here.</td>
+						defined by GVar variables.</td>
 					</tr>
 					<tr xmlns="http://docbook.org/ns/docbook">
 						<td xmlns="http://docbook.org/ns/docbook">
@@ -1395,6 +1452,99 @@ vars = GVars._GVars(decls)</programlisting>
 		</section>
 		<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+			Accessing GVar values</title>
+			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				Values assigned to GVars get stored in their associated variables 
+				in a SCons environment. For example, a value of GVar
+				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				foo</varname>
+				may be stored in a construction variable
+				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				xyz</varname>
+				. The name of the associatted construction variable (
+				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				xyz</varname>
+				) may be other than the name of its GVar and the mapping from GVars 
+				to SCon environment does not have to be obvious. If we have a 
+				number of such variables and we keep track of GVar names only, then 
+				accessing their values directly in SCons environment may be 
+				cumbersome.
+			</para>
+			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				We may use 
+				<emphasis xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				proxies</emphasis>
+				 to access GVar values using their original names. A proxy object 
+				is a thin wrapper around SCons environment which internally 
+				transforms GVar names to the names of their associated construction 
+				variables. In the previous example you would query such a proxy for 
+				the value of
+				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				foo</varname>
+				and it would return the value of construction variable
+				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				xyz</varname>
+				.
+			</para>
+			<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				Accessing GVar values via proxy</title>
+				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					In this example, we create a GVar variable named
+					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					foo</varname>
+					which associates command line variable
+					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					foo</varname>
+					and construction variable
+					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					env_foo</varname>
+					. We&apos;ll then create a proxy object to access the value of 
+					variable using the
+					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					foo</varname>
+					name.
+				</para>
+				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnuBuild.GVars import GVarDeclsU
+
+env = Environment()
+var = Variables()
+
+decls = GVarDeclsU( foo = { &apos;env_key&apos; : &apos;env_foo&apos;, &apos;var_key&apos; : &apos;foo&apos; } )
+gv = decls.Commit(env, var)
+gv.UpdateEnvironment(env, var)
+
+# create proxy object
+proxy = gv.EnvProxy(env)
+# access variable via proxy
+print &quot;foo: %s&quot; % proxy[&apos;foo&apos;]
+</programlisting>
+				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The above script may be tested as follows
+					<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt><command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command><option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option> foo=&quot;it&apos;s a foo&quot;
+foo: it&apos;s a foo
+scons: `.&apos; is up to date.</screen>
+				</para>
+			</example>
+			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				The proxy object provides dict-like access to GVars as well as 
+				substitutions. In the above example, you may freely replace the line
+				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">print &quot;foo: %s&quot; % proxy[&apos;foo&apos;]</programlisting>
+				with
+				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">print proxy.subst(&quot;foo: $foo&quot;)</programlisting>
+			</para>
+			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				Note, that the proxy object does not wrap all the functionality of 
+				the environment, so most functions are not available. It just wraps 
+				dict access and the
+				<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				subst</methodname>
+				method. So other methods, including builders, pseudobuilders etc. 
+				are not available via proxy.
+			</para>
+		</section>
+		<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Putting it all together</title>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				In this section we&apos;ll walk through a complete example. 
@@ -1508,19 +1658,23 @@ var = Variables()
 gv = decls.Commit(env, var, True)
 gv.UpdateEnvironment(env, var, True)
 
+# Create proxy to access GVars using their original names
+proxy = gv.EnvProxy(env)
+
 # Print values.
-print &quot;env.subst(&apos;$GNU_PREFIX&apos;):      %r&quot; % env.subst(&apos;$GNU_PREFIX&apos;)
-print &quot;env.subst(&apos;$GNU_EXEC_PREFIX&apos;): %r&quot; % env.subst(&apos;$GNU_EXEC_PREFIX&apos;)
-print &quot;env.subst(&apos;$GNU_BINDIR&apos;):      %r&quot; % env.subst(&apos;$GNU_BINDIR&apos;)</programlisting>
+print proxy.subst(&apos;prefix:      $prefix&apos;)
+print proxy.subst(&apos;exec_prefix: $exec_prefix&apos;)
+print proxy.subst(&apos;bindir:      $bindir&apos;)
+</programlisting>
 			</example>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Let&apos;s play for a while with the 
 			<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="example-gvars-complete"/>
-			 . First we&apos;ll check how default values work</para>
+			 . First we&apos;ll check the default values</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option>
-env.subst(&apos;$GNU_PREFIX&apos;):      &apos;/usr/local&apos;
-env.subst(&apos;$GNU_EXEC_PREFIX&apos;): &apos;/usr/local&apos;
-env.subst(&apos;$GNU_BINDIR&apos;):      &apos;/usr/local/bin&apos;
+prefix:      /usr/local
+exec_prefix: /usr/local
+bindir:      /usr/local/bin
 scons: `.&apos; is up to date.
 </screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1530,31 +1684,31 @@ scons: `.&apos; is up to date.
 				via comman line variable:
 			</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option> EXEC_PREFIX=&apos;$PREFIX/exec&apos;
-env.subst(&apos;$GNU_PREFIX&apos;):      &apos;/usr/local&apos;
-env.subst(&apos;$GNU_EXEC_PREFIX&apos;): &apos;/usr/local/exec&apos;
-env.subst(&apos;$GNU_BINDIR&apos;):      &apos;/usr/local/exec/bin&apos;
+prefix:      /usr/local
+exec_prefix: /usr/local/exec
+bindir:      /usr/local/exec/bin
 scons: `.&apos; is up to date.
 </screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			And same thing with command line option:</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">--exec-prefix</option>=&apos;$opt_prefix/exec&apos;
-env.subst(&apos;$GNU_PREFIX&apos;):      &apos;/usr/local&apos;
-env.subst(&apos;$GNU_EXEC_PREFIX&apos;): &apos;/usr/local/exec&apos;
-env.subst(&apos;$GNU_BINDIR&apos;):      &apos;/usr/local/exec/bin&apos;
+prefix:      /usr/local
+exec_prefix: /usr/local/exec
+bindir:      /usr/local/exec/bin
 scons: `.&apos; is up to date.
 </screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			If we specify both, the command line variable and the command line 
 			option, the option takes precedence</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">--exec-prefix</option>=&apos;$opt_prefix/exec_o&apos; EXEC_PREFIX=&apos;$PREFIX/exec_v&apos;
-env.subst(&apos;$GNU_PREFIX&apos;):      &apos;/usr/local&apos;
-env.subst(&apos;$GNU_EXEC_PREFIX&apos;): &apos;/usr/local/exec_o&apos;
-env.subst(&apos;$GNU_BINDIR&apos;):      &apos;/usr/local/exec_o/bin&apos;
+prefix:      /usr/local
+exec_prefix: /usr/local/exec_o
+bindir:      /usr/local/exec_o/bin
 scons: `.&apos; is up to date.
 </screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				The help strings for new options are added automatically, we may 
-				see it under 
+				Help strings for options are added automatically, we may see them 
+				under 
 				<emphasis xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Local Options</emphasis>
 				 section when running
@@ -1696,7 +1850,7 @@ PREFIX = &apos;/opt&apos;
 			scons-gnu-build</package>
 			has a predefined set of GVar variables (see 
 			<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars"/>
-			 ) that serve similar purpose.
+			 ) with similar purpose.
 		</para>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Standard Installation Directory Variables are implemented in
@@ -1872,9 +2026,6 @@ man1ext:
 					to transform canonical GVar names to keys used for corresponding 
 					SCons command-line options --option=value</td>
 				</tr>
-				<tr xmlns="http://docbook.org/ns/docbook"/>
-				<tr xmlns="http://docbook.org/ns/docbook"/>
-				<tr xmlns="http://docbook.org/ns/docbook"/>
 				<tr xmlns="http://docbook.org/ns/docbook">
 					<td xmlns="http://docbook.org/ns/docbook">
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
