@@ -1584,7 +1584,7 @@ def CheckProgSed(context, selection=_auto, programs=None):
         return None
 
 ###############################################################################
-def CheckProgYacc(context, selection=_auto, programs=None):
+def CheckProgYacc(context, selection=_auto, programs=None, value_if_not_found='yacc'):
     """Corresponds to AC_PROG_YACC_ autoconf macro
 
     :Parameters:
@@ -1593,13 +1593,20 @@ def CheckProgYacc(context, selection=_auto, programs=None):
         selection
             If `_auto` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
+        programs
+            List of program names to look for (in order). If None (default),
+            the default list ``[ 'bison -y', 'byacc' ]`` will be used.
+        value_if_not_found
+            Value to be returned when none of the programs is detected.
+            Defaults to ``'yacc'``.
 
     .. _AC_PROG_YACC: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fYACC-298
     """
     context.did_show_result = 1
     if programs is None:
         programs = ['bison -y', 'byacc']
-    prog = context.sconf.CheckProgs(programs, selection, value_if_not_found = 'yacc')
+    prog = context.sconf.CheckProgs(programs, selection,
+                                    value_if_not_found = value_if_not_found)
     if prog:
         prog = CLVar(prog)
     return prog

@@ -2922,11 +2922,14 @@ ln_s: [&apos;ln&apos;, &apos;-s&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					CheckProgRanlib</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Corresponds to 
-						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288">
-						AC_PROG_RANLIB</link>
-						 autoconf macro. The prototype of this test is:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">cfg.CheckProgRanlib(selection=SConsGnu.GProgVars._auto)</programlisting>
+						<remark>Not implemented yet!</remark>
+					</para>
+					<para>Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288">
+					AC_PROG_RANLIB</link> autoconf macro.</para>
+					<para>
+						Synopsis:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">?? = cfg.CheckProgRanlib(selection=SConsGnu.GProgVars._auto)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -2955,10 +2958,11 @@ ln_s: [&apos;ln&apos;, &apos;-s&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					CheckProgSed</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Corresponds to 
-						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fSED-294">
-						AC_PROG_SED</link>
-						 autoconf macro. The prototype of this test is:
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fSED-294">
+					AC_PROG_SED</link> autoconf macro.</para>
+					<para>
+						Synopsis:
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">sed = cfg.CheckProgSed(selection=SConsGnu.GProgVars._auto, programs=None)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3022,11 +3026,12 @@ sed: [&apos;/bin/sed&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					CheckProgYacc</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Corresponds to 
-						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fYACC-298">
-						AC_PROG_YACC</link>
-						 autoconf macro. The prototype of this test is:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">cfg.CheckProgYacc(selection=SConsGnu.GProgVars._auto)</programlisting>
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fYACC-298">
+					AC_PROG_YACC</link> autoconf macro.</para>
+					<para>
+						Synopsis:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">yacc = cfg.CheckProgYacc(selection=SConsGnu.GProgVars._auto)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -3048,8 +3053,52 @@ sed: [&apos;/bin/sed&apos;]
 								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									programs</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									List of program names to look for (in order). If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 (default), the default list
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									[ &apos;bison -y&apos;, &apos;byacc&apos; ]</code>
+									will be used.
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<parameter>value_if_not_found</parameter>
+								</td>
+								<td>
+									Value to be returned when none of the 
+									<parameter>programs</parameter>
+									 is detected. Defaults to &apos;yacc&apos;.
+								</td>
+							</tr>
 						</tbody>
 					</informaltable>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgYacc</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()                 # create an environment
+cfg = Configure(env)                # create SConf object
+cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
+yacc = cfg.CheckProgYacc()          # perform the check
+env = cfg.Finish()                  # finish configuration
+print &quot;yacc: %r&quot; % yacc             # print returned value
+</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt><command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for bison... bison -y
+yacc: [&apos;bison&apos;, &apos;-y&apos;]
+
+&lt; ... &gt;</screen>
+					</example>
 				</section>
 			</section>
 			<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
