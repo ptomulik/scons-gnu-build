@@ -2123,7 +2123,7 @@ gvs.UpdateEnvironment(env, var, True)
 proxy = gvs.EnvProxy(env)
 
 # Now we can perform tests implemented by GProgChecks module, for example:
-proxy[&apos;AWK&apos;] = cfg.CheckProgAwk(proxy[&apos;AWK&apos;])
+proxy[&apos;AWK&apos;] = cfg.AcProgAwk(proxy[&apos;AWK&apos;])
 
 # Finish configuration
 env = cfg.Finish()
@@ -2177,14 +2177,14 @@ AWK: [&apos;myawk&apos;]
 				in some cases whether they support certain features.</para>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgAwk</title>
+					AcProgAwk</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fAWK-254">
 					AC_PROG_AWK</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">awk = cfg.CheckProgAwk(selection=SConsGnu.GProgVars._auto, programs=None)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">awk = cfg.AcProgAwk(selection=SConsGnu.GProgVars._auto, programs=None)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -2231,13 +2231,13 @@ AWK: [&apos;myawk&apos;]
 					first place.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgAwk</title>
+						Usage example for AcProgAwk</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()               # create an environment
 cfg = Configure(env)              # create SConf object
 cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
-prog = cfg.CheckProgAwk()         # perform the check
+prog = cfg.AcProgAwk()            # perform the check
 env = cfg.Finish()                # finish configuration
 print &quot;awk: %r&quot; % prog            # print the returned value</programlisting>
 						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
@@ -2250,14 +2250,14 @@ awk: [&apos;gawk&apos;]
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgEgrep</title>
+					AcProgEgrep</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fEGREP-262">
 					AC_PROG_EGREP</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">egrep = cfg.CheckProgEgrep(grep, selection=SConsGnu.GProgVars._auto)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">egrep = cfg.AcProgEgrep(grep, selection=SConsGnu.GProgVars._auto)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -2280,7 +2280,7 @@ awk: [&apos;gawk&apos;]
 									grep</command>
 									 program as found by
 									<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-									CheckProgGrep</methodname>
+									AcProgGrep</methodname>
 									.
 								</td>
 							</tr>
@@ -2304,14 +2304,14 @@ awk: [&apos;gawk&apos;]
 					command line options.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgEgrep</title>
+						Usage example for AcProgEgrep</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()               # create an environment
 cfg = Configure(env)              # create SConf object
 cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
-grep = cfg.CheckProgGrep()
-prog = cfg.CheckProgEgrep(grep)   # perform the check
+grep = cfg.AcProgGrep()
+prog = cfg.AcProgEgrep(grep)      # perform the check
 env = cfg.Finish()                # finish configuration
 print &quot;egrep: %r&quot; % prog          # print the returned value</programlisting>
 						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
@@ -2325,14 +2325,14 @@ egrep: [&apos;/bin/grep&apos;, &apos;-E&apos;]
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgFgrep</title>
+					AcProgFgrep</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fFGREP-266">
 					AC_PROG_FGREP</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">fgrep = cfg.CheckProgFgrep(grep, selection=SConsGnu.GProgVars._auto)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">fgrep = cfg.AcProgFgrep(grep, selection=SConsGnu.GProgVars._auto)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -2355,7 +2355,7 @@ egrep: [&apos;/bin/grep&apos;, &apos;-E&apos;]
 									grep</command>
 									 program as found by
 									<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-									CheckProgGrep</methodname>
+									AcProgGrep</methodname>
 									.
 								</td>
 							</tr>
@@ -2379,14 +2379,14 @@ egrep: [&apos;/bin/grep&apos;, &apos;-E&apos;]
 					command line options.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgFgrep</title>
+						Usage example for AcProgFgrep</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()               # create an environment
 cfg = Configure(env)              # create SConf object
 cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
-grep = cfg.CheckProgGrep()
-prog = cfg.CheckProgFgrep(grep)   # perform the check
+grep = cfg.AcProgGrep()
+prog = cfg.AcProgFgrep(grep)      # perform the check
 env = cfg.Finish()                # finish configuration
 print &quot;fgrep: %r&quot; % prog          # print the returned value</programlisting>
 						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
@@ -2400,14 +2400,14 @@ fgrep: [&apos;/bin/grep&apos;, &apos;-F&apos;]
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgGrep</title>
+					AcProgGrep</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fGREP-258">
 					AC_PROG_GREP</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">grep = cfg.CheckProgGrep(selection=SConsGnu.GProgVars._auto)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">grep = cfg.AcProgGrep(selection=SConsGnu.GProgVars._auto)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -2453,13 +2453,13 @@ fgrep: [&apos;/bin/grep&apos;, &apos;-F&apos;]
 					program in the first place followed by necessary options.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgGrep</title>
+						Usage example for AcProgGrep</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()               # create an environment
 cfg = Configure(env)              # create SConf object
 cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
-grep = cfg.CheckProgGrep()        # perform the check
+grep = cfg.AcProgGrep()           # perform the check
 env = cfg.Finish()                # finish configuration
 print &quot;grep: %r&quot; % grep           # print the returned value</programlisting>
 						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
@@ -2472,14 +2472,14 @@ grep: [&apos;/bin/grep&apos;]
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgInstall</title>
+					AcProgInstall</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fINSTALL-270">
 					AC_PROG_INSTALL</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">install = cfg.CheckProgInstall(selection=SConsGnu.GProgVars._auto, programs=None, reject_paths=None)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">install = cfg.AcProgInstall(selection=SConsGnu.GProgVars._auto, programs=None, reject_paths=None)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -2537,13 +2537,13 @@ grep: [&apos;/bin/grep&apos;]
 					program in the first place.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgInstall</title>
+						Usage example for AcProgInstall</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()               # create an environment
 cfg = Configure(env)              # create SConf object
 cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
-prog = cfg.CheckProgInstall()     # perform the check
+prog = cfg.AcProgInstall()        # perform the check
 env = cfg.Finish()                # finish configuration
 print &quot;install: %r&quot; % prog        # print the returned value</programlisting>
 						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
@@ -2556,14 +2556,14 @@ install: [&apos;/usr/bin/install&apos;, &apos;-c&apos;]
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgMkdirP</title>
+					AcProgMkdirP</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fMKDIR_005fP-277">
 					AC_PROG_MKDIR_P</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">mkdir_p = cfg.CheckProgMkdirP(selection=SConsGnu.GProgVars._auto, programs=None)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">mkdir_p = cfg.AcProgMkdirP(selection=SConsGnu.GProgVars._auto, programs=None)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -2610,13 +2610,13 @@ install: [&apos;/usr/bin/install&apos;, &apos;-c&apos;]
 					options.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgMkdirP</title>
+						Usage example for AcProgMkdirP</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()               # create an environment
 cfg = Configure(env)              # create SConf object
 cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
-prog = cfg.CheckProgMkdirP()      # perform the check
+prog = cfg.AcProgMkdirP()         # perform the check
 env = cfg.Finish()                # finish configuration
 print &quot;mkdir_p: %r&quot; % prog        # print the returned value
 </programlisting>
@@ -2630,14 +2630,14 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgLex</title>
+					AcProgLex</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLEX-281">
 					AC_PROG_LEX</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">lex, lexroot, lexlibs, yytextptr = cfg.CheckProgLex(selection=SConsGnu.GProgVars._auto, programs=None, lexroots=None, lexlibs=None)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">lex, lexroot, lexlibs, yytextptr = cfg.AcProgLex(selection=SConsGnu.GProgVars._auto, programs=None, lexroots=None, lexlibs=None)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -2711,7 +2711,7 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 									lexyy</literal>
 									 is called the lex file root. The
 									<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-									CheckProgLex</methodname>
+									AcProgLex</methodname>
 									method determines the lex file root and returns it as
 									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lexroot</varname>
@@ -2821,13 +2821,13 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 					</informaltable>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgLex</title>
+						Usage example for AcProgLex</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()               # create an environment
 cfg = Configure(env)              # create SConf object
 cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
-lex, lexroot, lexlibs, yytextptr = cfg.CheckProgLex()      # perform the check
+lex, lexroot, lexlibs, yytextptr = cfg.AcProgLex()      # perform the check
 env = cfg.Finish()                # finish configuration
 # print the returned values
 print &quot;lex:       %r&quot; % lex 
@@ -2851,14 +2851,14 @@ yytextptr: True
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgLnS</title>
+					AcProgLnS</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288">
 					AC_PROG_LN_S</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ln_s = cfg.CheckProgLnS(selection=SConsGnu.GProgVars._auto)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ln_s = cfg.AcProgLnS(selection=SConsGnu.GProgVars._auto)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -2900,13 +2900,13 @@ yytextptr: True
 					</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgLnS</title>
+						Usage example for AcProgLnS</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()                 # create an environment
 cfg = Configure(env)                # create SConf object
 cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
-ln_s = cfg.CheckProgLnS()           # perform the check
+ln_s = cfg.AcProgLnS()              # perform the check
 env = cfg.Finish()                  # finish configuration
 print &quot;ln_s: %r&quot; % ln_s             # print returned value
 </programlisting>
@@ -2920,16 +2920,18 @@ ln_s: [&apos;ln&apos;, &apos;-s&apos;]
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgRanlib</title>
+					AcProgRanlib</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						<remark>Not implemented yet!</remark>
+						<remark xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Not implemented yet!</remark>
 					</para>
-					<para>Corresponds to 
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288">
 					AC_PROG_RANLIB</link> autoconf macro.</para>
-					<para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">?? = cfg.CheckProgRanlib(selection=SConsGnu.GProgVars._auto)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">?? = cfg.AcProgRanlib(selection=SConsGnu.GProgVars._auto)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -2956,14 +2958,14 @@ ln_s: [&apos;ln&apos;, &apos;-s&apos;]
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgSed</title>
+					AcProgSed</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fSED-294">
 					AC_PROG_SED</link> autoconf macro.</para>
-					<para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">sed = cfg.CheckProgSed(selection=SConsGnu.GProgVars._auto, programs=None)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">sed = cfg.AcProgSed(selection=SConsGnu.GProgVars._auto, programs=None)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -3004,13 +3006,13 @@ ln_s: [&apos;ln&apos;, &apos;-s&apos;]
 					</informaltable>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgSed</title>
+						Usage example for AcProgSed</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()                 # create an environment
 cfg = Configure(env)                # create SConf object
 cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
-sed = cfg.CheckProgSed()            # perform the check
+sed = cfg.AcProgSed()               # perform the check
 env = cfg.Finish()                  # finish configuration
 print &quot;sed: %r&quot; % sed               # print returned value
 </programlisting>
@@ -3024,14 +3026,14 @@ sed: [&apos;/bin/sed&apos;]
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgYacc</title>
+					AcProgYacc</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fYACC-298">
 					AC_PROG_YACC</link> autoconf macro.</para>
-					<para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						Synopsis:
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">yacc = cfg.CheckProgYacc(selection=SConsGnu.GProgVars._auto)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">yacc = cfg.AcProgYacc(selection=SConsGnu.GProgVars._auto)</programlisting>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
@@ -3068,27 +3070,29 @@ sed: [&apos;/bin/sed&apos;]
 									will be used.
 								</td>
 							</tr>
-							<tr>
-								<td>
-									<parameter>value_if_not_found</parameter>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									value_if_not_found</parameter>
 								</td>
-								<td>
-									Value to be returned when none of the 
-									<parameter>programs</parameter>
-									 is detected. Defaults to &apos;yacc&apos;.
+								<td xmlns="http://docbook.org/ns/docbook">
+									Value to be returned when none of the
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									programs</parameter>
+									is detected. Defaults to &apos;yacc&apos;.
 								</td>
 							</tr>
 						</tbody>
 					</informaltable>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgYacc</title>
+						Usage example for AcProgYacc</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()                 # create an environment
 cfg = Configure(env)                # create SConf object
 cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
-yacc = cfg.CheckProgYacc()          # perform the check
+yacc = cfg.AcProgYacc()             # perform the check
 env = cfg.Finish()                  # finish configuration
 print &quot;yacc: %r&quot; % yacc             # print returned value
 </programlisting>
@@ -3106,14 +3110,14 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 				Generic Program and File Checks</title>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProg</title>
+					AcCheckProg</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fPROG-304">
 					AC_CHECK_PROG_</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Synopsis:</para>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.CheckProg(program, selection=SConsGnu.GProgVars._auto, value_if_found=None, value_if_not_found=None, path=None, pathext=None, reject=[], prog_str=None)</programlisting>
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.AcCheckProg(program, selection=SConsGnu.GProgVars._auto, value_if_found=None, value_if_not_found=None, path=None, pathext=None, reject=[], prog_str=None)</programlisting>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
 					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3233,13 +3237,13 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 					</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProg</title>
+						Usage example for AcCheckProg</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()                 # create an environment
 cfg = Configure(env)                # create SConf object
 cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
-curl = cfg.CheckProg(&apos;curl&apos;)        # perform the check
+curl = cfg.AcCheckProg(&apos;curl&apos;)      # perform the check
 env = cfg.Finish()                  # finish configuration
 print &quot;curl: %r&quot; % curl             # print returned value
 </programlisting>
@@ -3253,14 +3257,14 @@ curl: &apos;curl&apos;
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckProgs</title>
+					AcCheckProgs</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fPROGS-307">
 					AC_CHECK_PROGS_</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Synopsis:</para>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.CheckProgs(programs, selection=SConsGnu.GProgVars._auto, value_if_not_found=None, path=None, pathext=None, reject=[])</programlisting>
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.AcCheckProgs(programs, selection=SConsGnu.GProgVars._auto, value_if_not_found=None, path=None, pathext=None, reject=[])</programlisting>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
 					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3333,7 +3337,7 @@ curl: &apos;curl&apos;
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						The function invokes
 						<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						CheckProg</methodname>
+						AcCheckProg</methodname>
 						for each program from
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						programs</parameter>
@@ -3345,13 +3349,13 @@ curl: &apos;curl&apos;
 					</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgs</title>
+						Usage example for AcCheckProgs</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()                 # create an environment
 cfg = Configure(env)                # create SConf object
 cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
-curl = cfg.CheckProgs([&apos;gcurl&apos;, &apos;curl&apos;])     # perform the check
+curl = cfg.AcCheckProgs([&apos;gcurl&apos;, &apos;curl&apos;])     # perform the check
 env = cfg.Finish()                  # finish configuration
 print &quot;curl: %r&quot; % curl             # print returned value
 </programlisting>
@@ -3366,14 +3370,14 @@ curl: &apos;curl&apos;
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckPathProg</title>
+					AcPathProg</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fPROG-318">
 					AC_PATH_PROG_</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Synopsis:</para>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.CheckPathProg(program, selection=SConsGnu.GProgVars._auto, value_if_not_found=None, path=None, pathext=None, reject=[], prog_str=None)</programlisting>
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.AcPathProg(program, selection=SConsGnu.GProgVars._auto, value_if_not_found=None, path=None, pathext=None, reject=[], prog_str=None)</programlisting>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
 					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3463,20 +3467,20 @@ curl: &apos;curl&apos;
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						program</parameter>
 						is found, then absolute path to the program is returned. 
-						Otherwise, 
+						Otherwise,
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						value_if_not_found</parameter>
 						is returned.
 					</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckPathProg</title>
+						Usage example for AcPathProg</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()                 # create an environment
 cfg = Configure(env)                # create SConf object
 cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
-curl = cfg.CheckPathProg(&apos;curl&apos;)    # perform the check
+curl = cfg.AcPathProg(&apos;curl&apos;)       # perform the check
 env = cfg.Finish()                  # finish configuration
 print &quot;curl: %r&quot; % curl             # print returned value
 </programlisting>
@@ -3490,14 +3494,14 @@ curl: &apos;/usr/bin/curl&apos;
 				</section>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					CheckPathProgs</title>
+					AcPathProgs</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fPROGS-321">
 					AC_PATH_PROGS_</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Synopsis:</para>
-					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.CheckPathProgs(programs, selection=SConsGnu.GProgVars._auto, value_if_not_found=None, path=None, pathext=None, reject=[])</programlisting>
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.AcPathProgs(programs, selection=SConsGnu.GProgVars._auto, value_if_not_found=None, path=None, pathext=None, reject=[])</programlisting>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					The parameters are summarized in the following table</para>
 					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3570,7 +3574,7 @@ curl: &apos;/usr/bin/curl&apos;
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						The function invokes
 						<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						CheckPathProg</methodname>
+						AcPathProg</methodname>
 						for each program from
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						programs</parameter>
@@ -3582,13 +3586,13 @@ curl: &apos;/usr/bin/curl&apos;
 					</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Usage example for CheckProgs</title>
+						Usage example for AcPathProgs</title>
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import GProgChecks
 env = Environment()                 # create an environment
 cfg = Configure(env)                # create SConf object
 cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
-curl = cfg.CheckPathProgs([&apos;gcurl&apos;, &apos;curl&apos;])    # perform the check
+curl = cfg.AcPathProgs([&apos;gcurl&apos;, &apos;curl&apos;])    # perform the check
 env = cfg.Finish()                  # finish configuration
 print &quot;curl: %r&quot; % curl             # print returned value
 </programlisting>

@@ -11,7 +11,7 @@ in some cases whether they support certain features.
     cfg = Configure(env, config_h = 'config.h')
     cfg.AddTests(GProgChecks.Tests())
 
-    install = cfg.CheckProgInstall()
+    install = cfg.AcProgInstall()
 
 
 
@@ -88,7 +88,7 @@ class _PathProgsFeatureCheck(object):
     The following code looks for "best" available ``sed`` program. We select
     the version which accepts longest lines at input::
 
-        def CheckProgSed(context):
+        def AcProgSed(context):
             context.Display("Checking for a sed that does not truncate output... ")
             context.sconf.cached = 1
             # Script should not contain more than 9 commands (for HP-UX sed),
@@ -182,13 +182,13 @@ class _PathProgsFeatureCheck(object):
 class _ProgGrep(object):
     """Corresponds to `_AC_PROG_GREP`_
 
-    This is an action to be used in `CheckProgGrep`, `CheckProgEgrep` and
-    `CheckProgFgrep`. It selects the **grep** program which supports longest
+    This is an action to be used in `AcProgGrep`, `AcProgEgrep` and
+    `AcProgFgrep`. It selects the **grep** program which supports longest
     lines at stdin. Additionally it may check if the **grep** program supports
     special flags such as ``-E`` or ``-F`` and if not it may select alternative
     programs such as **egrep** (instead of ``grep -E``) or **fgrep** (instead
-    of ``grep -F``). For `CheckProgEgrep` and `CheckProgFgrep` it first tries
-    "standard" grep command (discovered previously by `CheckProgGrep`) with
+    of ``grep -F``). For `AcProgEgrep` and `AcProgFgrep` it first tries
+    "standard" grep command (discovered previously by `AcProgGrep`) with
     appropriate arguments (**grep_args**, see `__init__`) and if the command
     fails, it selects a program from **programs** list, the one which supports
     longest lines.
@@ -224,7 +224,7 @@ class _ProgGrep(object):
 
         :Parameters:
             grep
-                absolute path to grep program discovered by `CheckProgGrep`
+                absolute path to grep program discovered by `AcProgGrep`
             grep_args
                 arguments to necessary to check egrep or fgrep behavior of the
                 "standard" grep program, for egrep set it to ``['-E',
@@ -306,7 +306,7 @@ class _ProgGrep(object):
 class _ProgInstall(object):
     """Finds a good install program.
 
-    This is an action to be used in `CheckProgInstall`. It finds a good install
+    This is an action to be used in `AcProgInstall`. It finds a good install
     program avoiding broken or incompatible versions:
 
     - SysV ``/etc/install``, ``/usr/sbin/install``
@@ -425,7 +425,7 @@ class _ProgMkdirP(object):
     """Check whether ``mkdir -p`` is known to be thread-safe, and fall back to
     ``install-sh -d`` otherwise.
 
-    This action object is to be used by `CheckProgMkdirP` method.
+    This action object is to be used by `AcProgMkdirP` method.
 
     We cannot accept any implementation of ``mkdir`` that recognizes ``-p``.
     Some implementation (such as Solaris 8's) are vulnerable to race
@@ -497,7 +497,7 @@ class _ProgSed(object):
     """Check for a fully functional sed program that truncates as few
     characters as possible. Prefer GNU sed if found.
 
-    This action object is to be used by `CheckProgSed` method.
+    This action object is to be used by `AcProgSed` method.
     """
     def __init__(self, programs):
         """Initialize _ProgSed object.
@@ -562,7 +562,7 @@ main (void)
 class _LexExe(object):
     """Look for the flex of lex.
 
-    This action object is to be used by `CheckLexExe` method.
+    This action object is to be used by `AcLexExe` method.
     """
 
     def __init__(self, programs):
@@ -848,7 +848,7 @@ def _feature_check_length(env, cmd, match_string = None):
     return score
 
 ###############################################################################
-def CheckProg(context, program, selection=_auto, value_if_found=None,
+def AcCheckProg(context, program, selection=_auto, value_if_found=None,
               value_if_not_found=None, path=None, pathext=None, reject=[],
               prog_str=None):
     """Corresponds to AC_CHECK_PROG_ autoconf macro.
@@ -907,7 +907,7 @@ def CheckProg(context, program, selection=_auto, value_if_found=None,
         return selection
 
 ###############################################################################
-def CheckProgs(context, programs, selection=_auto, value_if_not_found=None,
+def AcCheckProgs(context, programs, selection=_auto, value_if_not_found=None,
                path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_PROGS_ autoconf macro.
 
@@ -941,7 +941,7 @@ def CheckProgs(context, programs, selection=_auto, value_if_not_found=None,
     if selection is _auto:
         sconf = context.sconf
         for program in programs:
-            result = sconf.CheckProg(program, _auto, None, None, path, pathext, reject)
+            result = sconf.AcCheckProg(program, _auto, None, None, path, pathext, reject)
             if result:
                 return result
         return value_if_not_found
@@ -949,7 +949,7 @@ def CheckProgs(context, programs, selection=_auto, value_if_not_found=None,
         return selection
 
 ###############################################################################
-def CheckTargetTool(context, prog, value_if_not_found=None, path=None,
+def AcCheckTargetTool(context, prog, value_if_not_found=None, path=None,
                     pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TARGET_TOOL_ autoconf macro.
 
@@ -959,7 +959,7 @@ def CheckTargetTool(context, prog, value_if_not_found=None, path=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def CheckTool(context, prog, value_if_not_found=None,
+def AcCheckTool(context, prog, value_if_not_found=None,
                 path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TOOL_ autoconf macro.
 
@@ -969,7 +969,7 @@ def CheckTool(context, prog, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def CheckTargetTools(context, programs, value_if_not_found=None,
+def AcCheckTargetTools(context, programs, value_if_not_found=None,
                      path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TARGET_TOOLS_ autoconf macro.
 
@@ -979,7 +979,7 @@ def CheckTargetTools(context, programs, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def CheckTools(context, programs, value_if_not_found=None,
+def AcCheckTools(context, programs, value_if_not_found=None,
                  path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TOOLS_ autoconf macro.
 
@@ -989,7 +989,7 @@ def CheckTools(context, programs, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def CheckPathProg(context, program, selection=_auto, value_if_not_found=None,
+def AcPathProg(context, program, selection=_auto, value_if_not_found=None,
                   path=None, pathext=None, reject=[], prog_str=None):
     """Corresponds to AC_PATH_PROG_ autoconf macro.
 
@@ -1035,7 +1035,7 @@ def CheckPathProg(context, program, selection=_auto, value_if_not_found=None,
         return selection
 
 ###############################################################################
-def CheckPathProgs(context, programs, selection=_auto, value_if_not_found=None,
+def AcPathProgs(context, programs, selection=_auto, value_if_not_found=None,
                    path=None, pathext=None, reject=[]):
     """Corresponds to AC_PATH_PROGS_ autoconf macro.
 
@@ -1063,7 +1063,7 @@ def CheckPathProgs(context, programs, selection=_auto, value_if_not_found=None,
     if selection is _auto:
         sconf = context.sconf
         for program in programs:
-            result = sconf.CheckPathProg(program, _auto, None, path, pathext, reject)
+            result = sconf.AcPathProg(program, _auto, None, path, pathext, reject)
             if result:
                 return result
         return value_if_not_found
@@ -1071,7 +1071,7 @@ def CheckPathProgs(context, programs, selection=_auto, value_if_not_found=None,
         return selection
 
 ###############################################################################
-def CheckPathTargetTool(context, program, value_if_not_found=None,
+def AcPathTargetTool(context, program, value_if_not_found=None,
                         path=None, pathext=None, reject=[]):
     """Corresponds to AC_PATH_TARGET_TOOL_ autoconf macro.
 
@@ -1081,7 +1081,7 @@ def CheckPathTargetTool(context, program, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def CheckPathTool(context, program, selection=_auto, value_if_not_found=None,
+def AcPathTool(context, program, selection=_auto, value_if_not_found=None,
                    path=None, pathext=None, reject=[]):
     """Corresponds to AC_PATH_TOOL_ autoconf macro.
 
@@ -1099,7 +1099,7 @@ def CheckPathTool(context, program, selection=_auto, value_if_not_found=None,
 
 
 ###############################################################################
-def CheckProgAwk(context, selection=_auto, programs=None):
+def AcProgAwk(context, selection=_auto, programs=None):
     """Corresponds to AC_PROG_AWK_ autoconf macro
 
     :Parameters:
@@ -1113,21 +1113,21 @@ def CheckProgAwk(context, selection=_auto, programs=None):
     """
     if programs is None:
         programs = ['gawk', 'mawk', 'nawk', 'awk']
-    prog = CheckProgs(context, programs, selection, prog_str = 'awk')
+    prog = AcCheckProgs(context, programs, selection)
     if prog:
         prog = CLVar(prog)
     return prog
 
 
 ###############################################################################
-def CheckProgEgrep(context, grep, selection=_auto):
+def AcProgEgrep(context, grep, selection=_auto):
     """Corresponds to AC_PROG_EGREP_ autoconf macro
 
     :Parameters:
         context
             SCons configuration context.
         grep
-            Path to ``grep`` program as found by `CheckProgGrep`.
+            Path to ``grep`` program as found by `AcProgGrep`.
         selection
             If `_auto` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
@@ -1149,14 +1149,14 @@ def CheckProgEgrep(context, grep, selection=_auto):
         return None
 
 ###############################################################################
-def CheckProgFgrep(context, grep, selection=_auto):
+def AcProgFgrep(context, grep, selection=_auto):
     """Corresponds to AC_PROG_FGREP_ autoconf macro
 
     :Parameters:
         context
             SCons configuration context.
         grep
-            Path to ``grep`` program as found by `CheckProgGrep`.
+            Path to ``grep`` program as found by `AcProgGrep`.
         selection
             If `_auto` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
@@ -1178,7 +1178,7 @@ def CheckProgFgrep(context, grep, selection=_auto):
         return None
 
 ###############################################################################
-def CheckProgGrep(context, selection=_auto, programs = None):
+def AcProgGrep(context, selection=_auto, programs = None):
     """Corresponds to AC_PROG_GREP_ autoconf macro
 
     :Parameters:
@@ -1215,7 +1215,7 @@ def CheckProgGrep(context, selection=_auto, programs = None):
 
 
 ###############################################################################
-def CheckProgInstall(context, selection=_auto, programs=None, reject_paths=None):
+def AcProgInstall(context, selection=_auto, programs=None, reject_paths=None):
     """Corresponds to AC_PROG_INSTALL_ autoconf macro
 
     Find a good install program. We prefer a C program (faster), so one script
@@ -1265,7 +1265,7 @@ def CheckProgInstall(context, selection=_auto, programs=None, reject_paths=None)
         return None
 
 ###############################################################################
-def CheckProgMkdirP(context, selection=_auto, programs=None):
+def AcProgMkdirP(context, selection=_auto, programs=None):
     """Corresponds to AC_PROG_MKDIR_P_ autoconf macro
 
     Check whether ``mkdir -p`` is known to be thread-safe, and fall back to
@@ -1312,7 +1312,7 @@ def CheckProgMkdirP(context, selection=_auto, programs=None):
         return None
 
 ###############################################################################
-def CheckLexExe(context, selection=_auto, programs=None):
+def AcLexExe(context, selection=_auto, programs=None):
     """Check for lex executable
 
     :Parameters:
@@ -1336,7 +1336,7 @@ def CheckLexExe(context, selection=_auto, programs=None):
     return out
 
 ###############################################################################
-def CheckLexFileRoot(context, lex, selection=_auto, lexroots=None, script=None):
+def AcLexFileRoot(context, lex, selection=_auto, lexroots=None, script=None):
     """Determine the root of the file name produced by lex by default.
 
     :Parameters:
@@ -1360,7 +1360,7 @@ def CheckLexFileRoot(context, lex, selection=_auto, lexroots=None, script=None):
     return out
 
 #################################################################################
-def CheckLexOutput(context, lex, lexroot, script=None, silent=True):
+def AcLexOutput(context, lex, lexroot, script=None, silent=True):
     """TODO: write documentation"""
     if not silent:
         context.Display("Checking for lex output... ")
@@ -1384,7 +1384,7 @@ def CheckLexOutput(context, lex, lexroot, script=None, silent=True):
     return out
 
 #################################################################################
-def CheckLexLibs(context, text, selection=_auto, lexlibs=None):
+def AcLexLibs(context, text, selection=_auto, lexlibs=None):
     """Determine libraries required do link C programs generated by lex.
 
     TODO: write documentation
@@ -1436,7 +1436,7 @@ def CheckLexLibs(context, text, selection=_auto, lexlibs=None):
     return out
 
 ###############################################################################
-def CheckLexYytextPtr(context, text, lexlibs, selection=_auto):
+def AcLexYytextPtr(context, text, lexlibs, selection=_auto):
     """TODO: write documentation"""
     from SCons.Conftest import _YesNoResult
     context.Display('Checking whether yytext is a pointer... ')
@@ -1458,7 +1458,7 @@ def CheckLexYytextPtr(context, text, lexlibs, selection=_auto):
     return (not ret)
 
 ###############################################################################
-def CheckProgLex(context, selection=_auto, programs=None, lexroots=None, lexlibs=None, script=None):
+def AcProgLex(context, selection=_auto, programs=None, lexroots=None, lexlibs=None, script=None):
     """Corresponds to AC_PROG_LEX_ autoconf macro
 
     :Parameters:
@@ -1474,7 +1474,7 @@ def CheckProgLex(context, selection=_auto, programs=None, lexroots=None, lexlibs
             When lex is invoked without ``-o`` option, it writes its output to
             default file named ``lex.yy.c`` or ``lexyy.c`` depending on
             implementation. In such case, the string ``lex.yy`` or ``lexyy`` is
-            called the lex file root. The `CheckProgLex` method determines this
+            called the lex file root. The `AcProgLex` method determines this
             root and returns it as ``lexroot``. The **lexroots** parameter
             lists possible choices to pickup from. If it is set to ``None`` the
             default list ``[ 'lex.yy.c', 'lexyy.c' ]`` is used.
@@ -1503,16 +1503,16 @@ def CheckProgLex(context, selection=_auto, programs=None, lexroots=None, lexlibs
     """
     context.did_show_result = 1
     sconf = context.sconf
-    lex = sconf.CheckLexExe(selection, programs)
-    lexroot = sconf.CheckLexFileRoot(lex, _auto, lexroots, script)
-    text = sconf.CheckLexOutput(lex, lexroot, script)
-    lexlibs = sconf.CheckLexLibs(text, _auto, lexlibs)
-    yytextptr = sconf.CheckLexYytextPtr(text, lexlibs)
+    lex = sconf.AcLexExe(selection, programs)
+    lexroot = sconf.AcLexFileRoot(lex, _auto, lexroots, script)
+    text = sconf.AcLexOutput(lex, lexroot, script)
+    lexlibs = sconf.AcLexLibs(text, _auto, lexlibs)
+    yytextptr = sconf.AcLexYytextPtr(text, lexlibs)
     return lex, lexroot, lexlibs, yytextptr
 
 
 ###############################################################################
-def CheckProgLnS(context, selection=_auto):
+def AcProgLnS(context, selection=_auto):
     """Corresponds to AC_PROG_LN_S_ autoconf macro
 
     :Parameters:
@@ -1540,7 +1540,7 @@ def CheckProgLnS(context, selection=_auto):
     return out
 
 ###############################################################################
-def CheckProgRanlib(context, selection=_auto):
+def AcProgRanlib(context, selection=_auto):
     """Corresponds to AC_PROG_RANLIB_ autoconf macro
 
     :Parameters:
@@ -1555,7 +1555,7 @@ def CheckProgRanlib(context, selection=_auto):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def CheckProgSed(context, selection=_auto, programs=None):
+def AcProgSed(context, selection=_auto, programs=None):
     """Corresponds to AC_PROG_SED_ autoconf macro
 
     :Parameters:
@@ -1584,7 +1584,7 @@ def CheckProgSed(context, selection=_auto, programs=None):
         return None
 
 ###############################################################################
-def CheckProgYacc(context, selection=_auto, programs=None, value_if_not_found='yacc'):
+def AcProgYacc(context, selection=_auto, programs=None, value_if_not_found='yacc'):
     """Corresponds to AC_PROG_YACC_ autoconf macro
 
     :Parameters:
@@ -1605,7 +1605,7 @@ def CheckProgYacc(context, selection=_auto, programs=None, value_if_not_found='y
     context.did_show_result = 1
     if programs is None:
         programs = ['bison -y', 'byacc']
-    prog = context.sconf.CheckProgs(programs, selection,
+    prog = context.sconf.AcCheckProgs(programs, selection,
                                     value_if_not_found = value_if_not_found)
     if prog:
         prog = CLVar(prog)
@@ -1615,32 +1615,32 @@ def CheckProgYacc(context, selection=_auto, programs=None, value_if_not_found='y
 def Tests():
     """Get the program checks as a dictionary.
     """
-    return { 'CheckProg': CheckProg
-           , 'CheckProgs': CheckProgs
-           , 'CheckTargetTool': CheckTargetTool
-           , 'CheckTool': CheckTool
-           , 'CheckTargetTools': CheckTargetTools
-           , 'CheckTools': CheckTools
-           , 'CheckPathProg': CheckPathProg
-           , 'CheckPathProgs': CheckPathProgs
-           , 'CheckPathTargetTool': CheckPathTargetTool
-           , 'CheckPathTool': CheckPathTool
-           , 'CheckProgAwk': CheckProgAwk
-           , 'CheckProgEgrep': CheckProgEgrep
-           , 'CheckProgFgrep': CheckProgFgrep
-           , 'CheckProgGrep': CheckProgGrep
-           , 'CheckProgInstall': CheckProgInstall
-           , 'CheckProgMkdirP': CheckProgMkdirP
-           , 'CheckProgLex': CheckProgLex
-           , 'CheckLexExe': CheckLexExe
-           , 'CheckLexFileRoot': CheckLexFileRoot
-           , 'CheckLexOutput': CheckLexOutput
-           , 'CheckLexLibs': CheckLexLibs
-           , 'CheckLexYytextPtr' : CheckLexYytextPtr
-           , 'CheckProgLnS': CheckProgLnS
-           , 'CheckProgRanlib': CheckProgRanlib
-           , 'CheckProgSed': CheckProgSed
-           , 'CheckProgYacc': CheckProgYacc }
+    return { 'AcCheckProg': AcCheckProg
+           , 'AcCheckProgs': AcCheckProgs
+           , 'AcCheckTargetTool': AcCheckTargetTool
+           , 'AcCheckTool': AcCheckTool
+           , 'AcCheckTargetTools': AcCheckTargetTools
+           , 'AcCheckTools': AcCheckTools
+           , 'AcPathProg': AcPathProg
+           , 'AcPathProgs': AcPathProgs
+           , 'AcPathTargetTool': AcPathTargetTool
+           , 'AcPathTool': AcPathTool
+           , 'AcProgAwk': AcProgAwk
+           , 'AcProgEgrep': AcProgEgrep
+           , 'AcProgFgrep': AcProgFgrep
+           , 'AcProgGrep': AcProgGrep
+           , 'AcProgInstall': AcProgInstall
+           , 'AcProgMkdirP': AcProgMkdirP
+           , 'AcProgLex': AcProgLex
+           , 'AcLexExe': AcLexExe
+           , 'AcLexFileRoot': AcLexFileRoot
+           , 'AcLexOutput': AcLexOutput
+           , 'AcLexLibs': AcLexLibs
+           , 'AcLexYytextPtr' : AcLexYytextPtr
+           , 'AcProgLnS': AcProgLnS
+           , 'AcProgRanlib': AcProgRanlib
+           , 'AcProgSed': AcProgSed
+           , 'AcProgYacc': AcProgYacc }
 
 
 
