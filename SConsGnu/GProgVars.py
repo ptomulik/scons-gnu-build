@@ -76,6 +76,7 @@ __docformat__ = 'restructuredText'
 
 from os import path
 from SConsGnu import Defaults
+from SCons.Util import is_Sequence
 
 #############################################################################
 class _auto(object): pass
@@ -188,6 +189,9 @@ def gvar_names(name_filter = lambda x : True):
     :Returns:
         the list of standard GNU directory variable names
     """
+    if is_Sequence(name_filter):
+        seq = name_filter
+        name_filter = lambda x : x in seq
     return filter(name_filter, zip(*__std_var_triples)[0])
 
 #############################################################################
@@ -206,6 +210,9 @@ def declare_gvars(name_filter=lambda x : False,
                  'metavar'  : 'PATH' }
         return name, decl
 
+    if is_Sequence(name_filter):
+        seq = name_filter
+        name_filter = lambda x : x in seq
     return GVarDeclsU(__map_std_var_triples(_callback, name_filter))
 
 ##############################################################################

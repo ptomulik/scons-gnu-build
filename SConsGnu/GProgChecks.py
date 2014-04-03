@@ -56,6 +56,22 @@ try:
 except ImportError:
     import pickle
 
+#################################################################################
+class _WriteTarget(object):
+    """TODO: write documentation"""
+    def __init__(self, value):
+        """TODO: write documentation"""
+        self.value = value
+    def __call__(self, target, source, env):
+        with open(env.subst("$TARGET", target = target), 'wt') as f:
+            f.write(pickle.dumps(self.value))
+        return 0
+    def strfunction(self, target, source, env):
+        objstr = "%s(%r)" % (self.__class__.__name__, self.value)
+        tgt = env.subst(target, target = target, source = source)
+        src = env.subst(source, target = target, source = source)
+        return "%s(%r, %r)" % (objstr, tgt, src)
+
 ###############################################################################
 class _PathProgsFeatureCheck(object):
     """Corresponds to `_AC_PATH_PROGS_FEATURE_CHECK`_
@@ -499,7 +515,7 @@ class _ProgSed(object):
         # /usr/ucb/sed.
         script = 128 * 's/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/\n'
         script_file = env.subst("${TARGET}.sed", target = target, source = source)
-        pograms = self.programs
+        programs = self.programs
         if programs is None:
             programs = ['sed', 'gsed']
         progargs = ['-f', script_file]
@@ -519,6 +535,216 @@ class _ProgSed(object):
         tgt = env.subst(target, target = target, source = source)
         src = env.subst(source, target = target, source = source)
         return "%s(%r, %r)" % (objstr, tgt, src)
+
+###############################################################################
+_lex_script = """
+%%
+a { ECHO; }
+b { REJECT; }
+c { yymore (); }
+d { yyless (1); }
+e { /* IRIX 6.5 flex 2.5.4 underquotes its yyless argument.  */
+    yyless ((input () != 0)); }
+f { unput (yytext[0]); }
+. { BEGIN INITIAL; }
+%%
+#ifdef YYTEXT_POINTER
+extern char *yytext;
+#endif
+int
+main (void)
+{
+  return ! yylex () + ! yywrap ();
+}
+"""
+
+###############################################################################
+class _LexExe(object):
+    """Look for the flex of lex.
+
+    This action object is to be used by `CheckLexExe` method.
+    """
+
+    def __init__(self, programs):
+        """Initialize _LexExe object.
+
+        :Parameters:
+            programs
+                list of program names to be checked, if ``None``, the default
+                list ``[ 'flex', 'lex' ]`` will be used,
+        """
+        self.programs = programs
+
+    def __call__(self, target, source, env):
+        programs = self.programs
+        if programs is None:
+            programs = ['flex', 'lex']
+        path = env['ENV'].get('PATH')
+        for prog in programs:
+            path = env.WhereIs(prog, path = path)
+            if path:
+                lex = CLVar(prog)
+                with open(env.subst('$TARGET', target = target), 'wt') as f:
+                    f.write(pickle.dumps(lex))
+                return 0
+        return 1
+
+    def strfunction(self, target, source, env):
+        objstr = "%s(%r)" % (self.__class__.__name__, self.programs)
+        tgt = env.subst(target, target = target, source = source)
+        src = env.subst(source, target = target, source = source)
+        return "%s(%r, %r)" % (objstr, tgt, src)
+
+###############################################################################
+class _LexFeatureCheck(object):
+    def __init__(self, lex, script):
+        self.lex = lex
+        self.script = script
+
+    def _check_lex_feature(self, target, source, env, **kw):
+        global _lex_script
+        lexdir = env.subst('${TARGET}.dir', target = target, source = source)
+        lexfile = env.subst("${TARGET.file}.l", target = target, source = source)
+        lexcmd = str(CLVar(self.lex) + CLVar(lexfile))
+
+        script = self.script
+        if script is None:
+            script = _lex_script
+
+        env.Execute(Mkdir(lexdir))
+        with open(os.path.join(lexdir, lexfile) ,'w') as f:
+            f.write(script)
+
+        try:
+            err = env.Execute(lexcmd, chdir = lexdir)
+            if not err:
+                kw2 = kw.copy()
+                kw2.update({ 'lexdir' : lexdir,
+                             'lexfile' : lexfile,
+                             'lexcmd' : lexcmd,
+                             'script' : script })
+                err = self._lex_feature(target, source, env, **kw2)
+        finally:
+            env.Execute(Delete(env.Glob(os.path.join(lexdir,'*'))))
+            env.Execute(Delete(lexdir))
+
+        return err
+
+###############################################################################
+class _LexFileRoot(_LexFeatureCheck):
+    """TODO: write documentation
+    """
+    def __init__(self, lex, lexroots, script):
+        """Initialize _LexFileRoot object.
+
+        TODO: write documentation
+        """
+        self.lexroots = lexroots
+        super(_LexFileRoot,self).__init__(lex, script)
+
+    def __call__(self, target, source, env):
+        lexroots = self.lexroots
+        if lexroots is None:
+            lexroots = [ 'lex.yy', 'lexyy' ]
+        return self._check_lex_feature(target, source, env, lexroots = lexroots)
+
+    def _lex_feature(self, target, source, env, lexroots, lexdir,  **kw):
+        for lexroot in lexroots:
+            lexcfile = os.path.join(lexdir, '%s.c' % lexroot)
+            if os.path.isfile(lexcfile):
+                with open(env.subst('$TARGET', target = target), 'wt') as f:
+                    f.write(pickle.dumps(lexroot))
+                return 0
+        return 1
+
+    def strfunction(self, target, source, env):
+        objstr = "%s(%r,%r,%r)" % (self.__class__.__name__, self.lex, self.lexroots, self.script)
+        tgt = env.subst(target, target = target, source = source)
+        src = env.subst(source, target = target, source = source)
+        return "%s(%r, %r)" % (objstr, tgt, src)
+
+###############################################################################
+class _LexOutput(_LexFeatureCheck):
+    """TODO: write documentation
+    """
+    def __init__(self, lex, lexroot, script):
+        """Initialize _LexLibs object.
+
+        TODO: write documentation
+        """
+        self.lexroot = lexroot
+        super(_LexOutput,self).__init__(lex, script)
+
+    def __call__(self, target, source, env):
+        return self._check_lex_feature(target, source, env)
+
+    def _lex_feature(self, target, source, env, lexdir, **kw):
+        lexcfile = os.path.join(lexdir, '%s.c' % self.lexroot)
+        with open(lexcfile, 'r') as f:
+            text = f.read()
+        with open(env.subst('$TARGET', target = target), 'wt') as f:
+            f.write(pickle.dumps(text))
+        return 0
+
+    def strfunction(self, target, source, env):
+        objstr = "%s(%r,%r,%r)" % (self.__class__.__name__, self.lex, self.lexroot, self.script)
+        tgt = env.subst(target, target = target, source = source)
+        src = env.subst(source, target = target, source = source)
+        return "%s(%r, %r)" % (objstr, tgt, src)
+
+###############################################################################
+class _ProgLnS(object):
+    """TODO: Write documentation"""
+    def __call__(self, target, source, env):
+        import SCons.Errors
+        import traceback
+        import sys
+
+        tmpdir = env.subst('${TARGET}.dir', target = target, source = source)
+        tmpconf = os.path.join(tmpdir, 'conf')
+        confdir = "%s.dir" % tmpconf
+        confile = "%s.file" % tmpconf
+
+        ln_s = CLVar(['cp','-pR'])
+        if not env.Execute(Mkdir(tmpdir)):
+            try:
+                with open(confile, 'w') as f:
+                    f.write('')
+                try:
+                    if not env.Execute('ln -s %s %s' %(confile, tmpconf)):
+                        try:
+                            if not env.Execute(Mkdir(confdir)):
+                                try:
+                                    if not env.Execute('ln -s %s %s' %(confile, confdir)):
+                                        try:
+                                            if not os.path.isfile('%s.exe' % tmpconf):
+                                                ln_s = CLVar(['ln','-s'])
+                                        finally:
+                                            glob = os.path.join(confdir,'*')
+                                            env.Execute(Delete(env.Glob(glob)))
+                                finally:
+                                    env.Execute(Delete(confdir))
+                        finally:
+                            env.Execute(Delete(tmpconf))
+                    else:
+                        if env.Execute('ln %s %s' % (confile, tmpconf)) == 0:
+                            ln_s = CLVar('ln')
+                            env.Execute(Delete(tmpconf))
+                finally:
+                    env.Execute(Delete(confile))
+            finally:
+                env.Execute(Delete(tmpdir))
+
+        with open(env.subst('$TARGET', target = target), 'w') as f:
+            f.write(pickle.dumps(ln_s))
+
+        return 0 
+    def strfunction(self, target, source, env):
+        objstr = "%s()" % (self.__class__.__name__)
+        tgt = env.subst(target, target = target, source = source)
+        src = env.subst(source, target = target, source = source)
+        return "%s(%r, %r)" % (objstr, tgt, src)
+
 
 ###############################################################################
 class _ActionWrapper(object):
@@ -546,6 +772,9 @@ class _ActionWrapper(object):
                 selection = CLVar(selection)
                 tf.write(pickle.dumps(selection))
             return 0
+
+    def __getattr__(self, name):
+        return getattr(self.check, name)
 
     def strfunction(self, target, source, env):
         if hasattr(self.check, 'strfunction'):
@@ -641,7 +870,8 @@ def CheckProg(context, program, selection=_auto, value_if_found=None,
         value_if_not_found
             Value to be returned, when the program is not found.
         path
-            Search path.
+            Search path. If ``None``, then ``context.env['ENV']['PATH']`` will
+            be used.
         pathext
             Extensions used for executable files.
         reject
@@ -651,24 +881,26 @@ def CheckProg(context, program, selection=_auto, value_if_found=None,
 
     .. _AC_CHECK_PROG: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fPROG-304
     """
-
-    if value_if_found is None:
-        value_if_found = program
+    # Extract the first word of program, so it can be a program name with args.
+    progname = CLVar(program)[0]
 
     if prog_str is None:
-        prog_str = program
+        prog_str = progname
 
     context.Display("Checking for %s... " % prog_str)
-
     if selection is _auto:
-        path = context.env.WhereIs(prog, path, pathext, reject)
+
+        if value_if_found is None:
+            value_if_found = program
+
+        path = context.env.WhereIs(progname, path, pathext, reject)
         if path:
-            context.Result(prog)
+            context.Result(program)
             return value_if_found
         if value_if_not_found:
             context.Result("not found, using '%s'" % value_if_not_found)
         else:
-            context.Result('not found')
+            context.Result('no')
         return value_if_not_found
     else:
         context.Result(str(selection))
@@ -676,7 +908,7 @@ def CheckProg(context, program, selection=_auto, value_if_found=None,
 
 ###############################################################################
 def CheckProgs(context, programs, selection=_auto, value_if_not_found=None,
-               path=None, pathext=None, reject=[], prog_str = None):
+               path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_PROGS_ autoconf macro.
 
     Check for each program in **programs** list existing in **path**. If one is
@@ -700,38 +932,25 @@ def CheckProgs(context, programs, selection=_auto, value_if_not_found=None,
             Extensions used for executable files.
         reject
             List of file names to be rejected if found.
-        prog_str
-            Used to display 'Checking for <prog_str>...' message.
 
     .. _AC_CHECK_PROGS: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fPROGS-307
     """
 
-    if prog_str is None:
-        if len(programs) > 1:
-            prog_str = ' or '.join([', '.join(programs[:-1]), programs[-1]])
-        elif len(programs) == 1:
-            prog_str = programs[0]
-
-    context.Display("Checking for %s... " % prog_str)
-
+    context.did_show_result = 1
+    result = None
     if selection is _auto:
-        for prog in programs:
-            path = context.env.WhereIs(prog, path, pathext, reject)
-            if path:
-                context.Result(prog)
-                return prog
-        if value_if_not_found:
-            context.Result("not found, using '%s'" % value_if_not_found)
-        else:
-            context.Result('not found')
+        sconf = context.sconf
+        for program in programs:
+            result = sconf.CheckProg(program, _auto, None, None, path, pathext, reject)
+            if result:
+                return result
         return value_if_not_found
     else:
-        context.Result(str(selection))
         return selection
 
 ###############################################################################
-def CheckTargetTool(context, prog, value_if_not_found=None,
-                    path=None, pathext=None, reject=[]):
+def CheckTargetTool(context, prog, value_if_not_found=None, path=None,
+                    pathext=None, reject=[]):
     """Corresponds to AC_CHECK_TARGET_TOOL_ autoconf macro.
 
     .. _AC_CHECK_TARGET_TOOL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fTARGET_005fTOOL-310
@@ -801,22 +1020,23 @@ def CheckPathProg(context, program, selection=_auto, value_if_not_found=None,
     context.Display("Checking for %s... " % prog_str)
 
     if selection is _auto:
-        path = context.env.WhereIs(program, path, pathext, reject)
-        if path:
-            context.Result(path)
-            return path
-        if value_if_not_found:
-            context.Result("not found, using '%s'" % value_if_not_found)
+        progpath = context.env.WhereIs(program, path, pathext, reject)
+        if progpath:
+            context.Result(progpath)
         else:
-            context.Result('not found')
-        return value_if_not_found
+            if value_if_not_found:
+                progpath = value_if_not_found
+                context.Result("not found, using '%s'" % progpath)
+            else:
+                context.Result('no')
+        return progpath
     else:
         context.Result(str(selection))
         return selection
 
 ###############################################################################
 def CheckPathProgs(context, programs, selection=_auto, value_if_not_found=None,
-                   path=None, pathext=None, reject=[], prog_str=None):
+                   path=None, pathext=None, reject=[]):
     """Corresponds to AC_PATH_PROGS_ autoconf macro.
 
     :Parameters:
@@ -835,33 +1055,19 @@ def CheckPathProgs(context, programs, selection=_auto, value_if_not_found=None,
             Extensions used for executable files.
         reject
             List of file names to be rejected if found.
-        prog_str
-            Used to display 'Checking for <prog_str>...' message.
 
     .. _AC_PATH_PROGS: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fPROGS-321
     """
-
-    if prog_str is None:
-        if len(programs) > 1:
-            prog_str = ' or '.join([', '.join(programs[:-1]), programs[-1]])
-        elif len(programs) == 1:
-            prog_str = programs[0]
-
-    context.Display("Checking for %s... " % prog_str)
-
+    context.did_show_result = 1
+    result = None
     if selection is _auto:
-        for prog in programs:
-            path = context.env.WhereIs(prog, path, pathext, reject)
-            if path:
-                context.Result(path)
-                return path
-        if value_if_not_found:
-            context.Result("not found, using '%s'" % value_if_not_found)
-        else:
-            context.Result('not found')
+        sconf = context.sconf
+        for program in programs:
+            result = sconf.CheckPathProg(program, _auto, None, path, pathext, reject)
+            if result:
+                return result
         return value_if_not_found
     else:
-        context.Result(str(selection))
         return selection
 
 ###############################################################################
@@ -893,7 +1099,7 @@ def CheckPathTool(context, program, selection=_auto, value_if_not_found=None,
 
 
 ###############################################################################
-def CheckProgAwk(context, selection=_auto):
+def CheckProgAwk(context, selection=_auto, programs=None):
     """Corresponds to AC_PROG_AWK_ autoconf macro
 
     :Parameters:
@@ -905,8 +1111,12 @@ def CheckProgAwk(context, selection=_auto):
 
     .. _AC_PROG_AWK: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fAWK-254
     """
-    programs = ['gawk', 'mawk', 'nawk', 'awk']
-    return CheckProgs(context, programs, selection, prog_str = 'awk')
+    if programs is None:
+        programs = ['gawk', 'mawk', 'nawk', 'awk']
+    prog = CheckProgs(context, programs, selection, prog_str = 'awk')
+    if prog:
+        prog = CLVar(prog)
+    return prog
 
 
 ###############################################################################
@@ -968,7 +1178,7 @@ def CheckProgFgrep(context, grep, selection=_auto):
         return None
 
 ###############################################################################
-def CheckProgGrep(context, selection=_auto):
+def CheckProgGrep(context, selection=_auto, programs = None):
     """Corresponds to AC_PROG_GREP_ autoconf macro
 
     :Parameters:
@@ -977,6 +1187,9 @@ def CheckProgGrep(context, selection=_auto):
         selection
             If `_auto` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
+        programs
+            List of program names to look for. If ``None`` (default), the
+            default list ``[ 'grep', 'ggrep' ]`` will be used.
 
     Check for a fully functional grep program that handles the longest lines
     possibla and which respoects multiple -e options.
@@ -986,7 +1199,9 @@ def CheckProgGrep(context, selection=_auto):
     context.Display("Checking for grep that handles long lines and -e... ")
     context.sconf.cached = 1
     args = ['-e', 'GREP$', '-e', '-(cannot match)-']
-    action = _ProgGrep(None, None, None, ['grep', 'ggrep'], args, 'GREP')
+    if programs is None:
+        programs = ['grep', 'ggrep']
+    action = _ProgGrep(None, None, None, programs, args, 'GREP')
     action = _ActionWrapper(action)
     args = pickle.dumps({'selection' : selection })
     stat, out = context.TryAction(action, args, '.arg')
@@ -1097,7 +1312,153 @@ def CheckProgMkdirP(context, selection=_auto, programs=None):
         return None
 
 ###############################################################################
-def CheckProgLex(context, selection=_auto):
+def CheckLexExe(context, selection=_auto, programs=None):
+    """Check for lex executable
+
+    :Parameters:
+        selection
+            List of program names to look for (in order). If None (default),
+            the default list[ 'flex', 'lex' ]will be used,
+        programs
+            List of program names to look for (in order). If None (default),
+            the default list ``[ 'flex', 'lex' ]`` will be used.
+    """
+    context.Display("Checking for flex... ")
+    context.sconf.cached = 1
+    action = _ActionWrapper(_LexExe(programs))
+    args = pickle.dumps({ 'selection' : selection, 'programs'  : programs })
+    stat, out = context.TryAction(action, args, '.arg')
+    if not stat or not out:
+        context.Result('not found')
+        return None
+    out = pickle.loads(out)
+    context.Result(str(out))
+    return out
+
+###############################################################################
+def CheckLexFileRoot(context, lex, selection=_auto, lexroots=None, script=None):
+    """Determine the root of the file name produced by lex by default.
+
+    :Parameters:
+        lexroots
+            List of known lex roots to choose from. If ``None`` (default) the
+            default list ``[ 'lex.yy', 'lexyy' ]`` is used.
+    """
+    context.Display("Checking for lex output file root... ")
+    context.sconf.cached = 1
+    action = _ActionWrapper(_LexFileRoot(lex, lexroots, script))
+    args = pickle.dumps({ 'lex'  : lex,
+                          'selection' : selection,
+                          'lexroots' : lexroots,
+                          'script' : script })
+    stat, out = context.TryAction(action, args, '.arg')
+    if not stat or not out:
+        context.Result('not found')
+        return None
+    out = pickle.loads(out)
+    context.Result(str(out))
+    return out
+
+#################################################################################
+def CheckLexOutput(context, lex, lexroot, script=None, silent=True):
+    """TODO: write documentation"""
+    if not silent:
+        context.Display("Checking for lex output... ")
+        context.sconf.cached = 1
+    else:
+        context.did_show_result = 1
+
+    action = _ActionWrapper(_LexOutput(lex, lexroot, script))
+    args = pickle.dumps({ 'lex' : lex,
+                          'lexroot' : lexroot,
+                          'script' : script })
+    stat, out = context.TryAction(action, args, '.arg')
+    if not stat or not out:
+        if not silent:
+            context.Result('failed')
+        return None
+    out = pickle.loads(out)
+
+    if not silent:
+        context.Result("done")
+    return out
+
+#################################################################################
+def CheckLexLibs(context, text, selection=_auto, lexlibs=None):
+    """Determine libraries required do link C programs generated by lex.
+
+    TODO: write documentation
+    """
+
+    from SCons.SConf import _ac_build_counter
+
+    context.Display("Checking for lex library... ")
+    context.sconf.cached = 1
+
+    if lexlibs is None:
+        lexlibs = [ None, 'fl', 'l' ]
+
+    out = None
+    for lexlib in lexlibs:
+        # note: we must perform all iterations to be "indempotent",
+        #       the number of times TryLink is invoked should depend only on
+        #       input arguments to function (the size of 'lexlibs' in fact) and
+        #       nothing else.
+        if lexlib is None:
+            libs = CLVar()
+        else:
+            libs = CLVar(lexlib)
+        env = context.sconf.env
+        context.sconf.env = env.Clone()
+        context.sconf.env['LIBS'] = libs
+        try:
+            if context.TryLink(text, '.c') and out is None:
+                out = libs
+                # Don't break here! even if you think you could actually...
+                # See note at the beginning of the loop, instead.
+        finally:
+            context.sconf.env = env
+
+    action = _ActionWrapper(_WriteTarget(out))
+    args = pickle.dumps({ 'text' : text, 'selection' : selection, 'lexlibs' : lexlibs })
+    stat, out = context.TryAction(action, args, '.arg')
+    if not stat or not out:
+        context.Result('failed')
+        return None
+    out = pickle.loads(out)
+    if out is None:
+        context.Result('failed')
+        return None
+    if len(out):
+        context.Result(' '.join(['-l%s' % p for p in out]))
+    else:
+        context.Result('none needed')
+    return out
+
+###############################################################################
+def CheckLexYytextPtr(context, text, lexlibs, selection=_auto):
+    """TODO: write documentation"""
+    from SCons.Conftest import _YesNoResult
+    context.Display('Checking whether yytext is a pointer... ')
+    context.sconf.cached = 1
+
+    env = context.sconf.env
+    context.sconf.env = env.Clone()
+    context.sconf.env['LIBS'] = lexlibs
+    text2 = '#define YYTEXT_POINTER 1\n' + text
+    ret = 1
+    try:
+        if context.TryLink(text2, '.c'):
+            ret = 0
+    finally:
+        context.sconf.env = env
+
+    _YesNoResult(context, ret, 'YYTEXT_POINTER', text)
+    context.did_show_result = 1
+    return (not ret)
+
+###############################################################################
+def CheckProgLex(context, selection=_auto, programs=None, lexroots=None, lexlibs=None, script=None):
     """Corresponds to AC_PROG_LEX_ autoconf macro
 
     :Parameters:
@@ -1106,10 +1467,49 @@ def CheckProgLex(context, selection=_auto):
         selection
             If `_auto` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
+        programs
+            List of program names to look for (in order). If None (default),
+            the default list ``[ 'flex', 'lex' ]`` will be used
+        lexroots
+            When lex is invoked without ``-o`` option, it writes its output to
+            default file named ``lex.yy.c`` or ``lexyy.c`` depending on
+            implementation. In such case, the string ``lex.yy`` or ``lexyy`` is
+            called the lex file root. The `CheckProgLex` method determines this
+            root and returns it as ``lexroot``. The **lexroots** parameter
+            lists possible choices to pickup from. If it is set to ``None`` the
+            default list ``[ 'lex.yy.c', 'lexyy.c' ]`` is used.
+        lexlibs
+            The function tries to link a ``*.c`` file generated by lex against
+            each of the libraries from **lexlibs** list. The first library, for
+            which the compilation succeeds, is returned as ``lexlibs``.
+    :Return:
+        lex
+            Name of the lex program detected.
+        lexroot
+            Root part of the ``*.c`` file name generated by lex when invoked
+            without ``-o`` option.
+        lexlibs
+            List of libraries needed to compile and link a program generated
+            with ``lex``.
+        yytextptr
+             True if ``yytext`` is defined as pointer. Lex can declare
+             ``yytext`` either as a pointer or an array. The default is
+             implementation-dependent. This return value allows to figure out
+             which it is, since not all implementations provide ``%pointer``
+             and ``%array`` declarations. 
+
 
     .. _AC_PROG_LEX: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLEX-281
     """
-    raise NotImplementedError("not implemented")
+    context.did_show_result = 1
+    sconf = context.sconf
+    lex = sconf.CheckLexExe(selection, programs)
+    lexroot = sconf.CheckLexFileRoot(lex, _auto, lexroots, script)
+    text = sconf.CheckLexOutput(lex, lexroot, script)
+    lexlibs = sconf.CheckLexLibs(text, _auto, lexlibs)
+    yytextptr = sconf.CheckLexYytextPtr(text, lexlibs)
+    return lex, lexroot, lexlibs, yytextptr
+
 
 ###############################################################################
 def CheckProgLnS(context, selection=_auto):
@@ -1121,11 +1521,23 @@ def CheckProgLnS(context, selection=_auto):
         selection
             If `_auto` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
-
+        
     .. _AC_PROG_LN_S: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288
     """
     context.Display("Checking whether ln -s works... ")
-    raise NotImplementedError("not implemented")
+    context.sconf.cached = 1
+    action = _ActionWrapper(_ProgLnS())
+    args = pickle.dumps({ 'selection' : selection })
+    stat, out = context.TryAction(action, args, '.arg')
+    if not out:
+        context.Result('failure')
+        return None
+    out = pickle.loads(out)
+    if out == ['ln', '-s']:
+        context.Result('yes')
+    else:
+        context.Result('no, using %s' % str(out))
+    return out
 
 ###############################################################################
 def CheckProgRanlib(context, selection=_auto):
@@ -1172,7 +1584,7 @@ def CheckProgSed(context, selection=_auto, programs=None):
         return None
 
 ###############################################################################
-def CheckProgYacc(context, selection=_auto):
+def CheckProgYacc(context, selection=_auto, programs=None):
     """Corresponds to AC_PROG_YACC_ autoconf macro
 
     :Parameters:
@@ -1184,9 +1596,13 @@ def CheckProgYacc(context, selection=_auto):
 
     .. _AC_PROG_YACC: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fYACC-298
     """
-    raise NotImplementedError("not implemented")
-    programs = ['bison', 'byacc', 'yacc']
-    return CheckProgs(programs, selection, prog_str = 'yacc')
+    context.did_show_result = 1
+    if programs is None:
+        programs = ['bison -y', 'byacc']
+    prog = context.sconf.CheckProgs(programs, selection, value_if_not_found = 'yacc')
+    if prog:
+        prog = CLVar(prog)
+    return prog
 
 ###############################################################################
 def Tests():
@@ -1209,6 +1625,11 @@ def Tests():
            , 'CheckProgInstall': CheckProgInstall
            , 'CheckProgMkdirP': CheckProgMkdirP
            , 'CheckProgLex': CheckProgLex
+           , 'CheckLexExe': CheckLexExe
+           , 'CheckLexFileRoot': CheckLexFileRoot
+           , 'CheckLexOutput': CheckLexOutput
+           , 'CheckLexLibs': CheckLexLibs
+           , 'CheckLexYytextPtr' : CheckLexYytextPtr
            , 'CheckProgLnS': CheckProgLnS
            , 'CheckProgRanlib': CheckProgRanlib
            , 'CheckProgSed': CheckProgSed
@@ -1220,4 +1641,4 @@ def Tests():
 # # tab-width:4
 # # indent-tabs-mode:nil
 # # End:
-# vim: set syntax=python expandtab tabstop=4 shiftwidth=4:
+# vim: set syntax=scons expandtab tabstop=4 shiftwidth=4:

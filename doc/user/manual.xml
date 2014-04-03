@@ -1662,9 +1662,9 @@ gv.UpdateEnvironment(env, var, True)
 proxy = gv.EnvProxy(env)
 
 # Print values.
-print proxy.subst(&apos;prefix:      $prefix&apos;)
+print proxy.subst(&apos;prefix: $prefix&apos;)
 print proxy.subst(&apos;exec_prefix: $exec_prefix&apos;)
-print proxy.subst(&apos;bindir:      $bindir&apos;)
+print proxy.subst(&apos;bindir: $bindir&apos;)
 </programlisting>
 			</example>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1672,9 +1672,9 @@ print proxy.subst(&apos;bindir:      $bindir&apos;)
 			<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="example-gvars-complete"/>
 			 . First we&apos;ll check the default values</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option>
-prefix:      /usr/local
+prefix: /usr/local
 exec_prefix: /usr/local
-bindir:      /usr/local/bin
+bindir: /usr/local/bin
 scons: `.&apos; is up to date.
 </screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1684,26 +1684,26 @@ scons: `.&apos; is up to date.
 				via comman line variable:
 			</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option> EXEC_PREFIX=&apos;$PREFIX/exec&apos;
-prefix:      /usr/local
+prefix: /usr/local
 exec_prefix: /usr/local/exec
-bindir:      /usr/local/exec/bin
+bindir: /usr/local/exec/bin
 scons: `.&apos; is up to date.
 </screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			And same thing with command line option:</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">--exec-prefix</option>=&apos;$opt_prefix/exec&apos;
-prefix:      /usr/local
+prefix: /usr/local
 exec_prefix: /usr/local/exec
-bindir:      /usr/local/exec/bin
+bindir: /usr/local/exec/bin
 scons: `.&apos; is up to date.
 </screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			If we specify both, the command line variable and the command line 
 			option, the option takes precedence</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">--exec-prefix</option>=&apos;$opt_prefix/exec_o&apos; EXEC_PREFIX=&apos;$PREFIX/exec_v&apos;
-prefix:      /usr/local
+prefix: /usr/local
 exec_prefix: /usr/local/exec_o
-bindir:      /usr/local/exec_o/bin
+bindir: /usr/local/exec_o/bin
 scons: `.&apos; is up to date.
 </screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2036,6 +2036,1524 @@ man1ext:
 				</tr>
 			</tbody>
 		</informaltable>
+	</section>
+	<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+          xml:id="sec-autoconf-like-tests">
+		<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+		Autoconf-like tests</title>
+		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+			Autoconf-like tests are implemented using the existing feature of 
+			scons - the 
+			<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-user.html#chap-sconf">
+			Multi-Platform Configuration (Autoconf Functionality)</link>
+			 . The scons-gnu-build defines several SConf tests corresponding to 
+			macros implemented by 
+			<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/">
+			autoconf</link>
+			 . These tests are scattered over few modules. Before using tests 
+			from a given module, one have to add them to a SConf object. The 
+			template code that uses autoconf-like tests is the following
+			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import XxxChecks, YyyChecks
+env = Environment()
+cfg = Configure(env)
+
+# Add tests from modules XxxChecks and YyyChecks
+cfg.AddTests(XxxChecks.Tests())
+cfg.AddTests(YyyChecks.Tests())
+
+# Perform tests implemented in XxxChecks and YyyChecks modules ...
+res1 = cfg.CheckFoo(...)
+
+# more tests if needed ...
+
+# Finish configuration
+env = cfg.Finish()</programlisting>
+			where
+			<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+			XxxChecks</code>
+			is a module implementing particular tests. From now on you may use
+			<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+			cfg</varname>
+			object to perform all the checks defined by
+			<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+			XxxChecks</code>
+			module.
+		</para>
+		<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="sec-alternative-programs">
+			Alternative programs</title>
+			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+			These tests check for the presence or behavior of particular 
+			programs. They are used to choose between several alternative 
+			programs and to decide what to do once one has been chosen. If there 
+			is no macro specifically defined to check for a program you need, 
+			and you don&apos;t need to check for any special properties of it, 
+			then you can use one of the general program-check tests.</para>
+			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				The tests for alternative programs are implemented in
+				<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				GProgChecks</code>
+				submodule. In addition to the tests, the module provides 
+				declaration of several 
+				<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars">
+				GVars</link>
+				 that may be used in conjuction with the tests. The variables for 
+				alternative programs are actually provided by
+				<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				GProgVars</code>
+				submodule but they are also available directly via GProgChecks for 
+				convenience.
+			</para>
+			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				The SCons script which checks for alternative programs will usually 
+				contain statements such as
+				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+
+env = Environment()               # create an environment
+cfg = Configure(env)              # create SConf object
+cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
+
+# Define GVars that will be used in conjuction with our test(s) later.
+decls = GProgChecks.DeclareGVars(name_filter = [&apos;AWK&apos;])
+var = Variables()
+gvs = decls.Commit(env, var, True)
+gvs.UpdateEnvironment(env, var, True)
+proxy = gvs.EnvProxy(env)
+
+# Now we can perform tests implemented by GProgChecks module, for example:
+proxy[&apos;AWK&apos;] = cfg.CheckProgAwk(proxy[&apos;AWK&apos;])
+
+# Finish configuration
+env = cfg.Finish()
+
+# Print the result
+print &quot;AWK: %r&quot; % proxy[&apos;AWK&apos;]</programlisting>
+			</para>
+			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				The above code snippet checks for AWK program. If user invokes it 
+				without additional command-line variables, the script will perform 
+				check and select the awk program automatically. The result will be 
+				stored in GVar variable named
+				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				AWK</varname>
+				. If, however, user will set the commandline variable
+				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				AWK</varname>
+				, the value of
+				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				AWK</varname>
+				commandline variable will be used instead. For example
+				<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for awk... gawk
+AWK: [&apos;gawk&apos;]
+&lt; ... &gt;</screen>
+				and
+				<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> AWK=myawk
+scons: Reading SConscript files ...
+Checking for awk... myawk
+AWK: [&apos;myawk&apos;]
+&lt; ... &gt;</screen>
+			</para>
+			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				Most of the test functions have a parameter named
+				<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				selection</parameter>
+				. If this parameter is provided and its value differ from default, 
+				then real test is not performed in fact and the function simply 
+				returns the value of
+				<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				selection</parameter>
+				parameter. This simplifies overriding the checks with values 
+				provided by user (usually via commandline).
+			</para>
+			<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				Particular program checks</title>
+				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				These tests check for particular programs, whether they exist, and 
+				in some cases whether they support certain features.</para>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgAwk</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fAWK-254">
+					AC_PROG_AWK</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Synopsis:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">awk = cfg.CheckProgAwk(selection=SConsGnu.GProgVars._auto, programs=None)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									programs</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									List of program names to look for (in order). If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 (default), the default list
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									[&apos;gawk&apos;, &apos;mawk&apos;, &apos;nawk&apos;, 
+									&apos;awk&apos;]</code>
+									will be used
+								</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The function returns an instance of 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
+					SCons.Util.CLVar</link> list with the name of awk program in the 
+					first place.</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgAwk</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()               # create an environment
+cfg = Configure(env)              # create SConf object
+cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
+prog = cfg.CheckProgAwk()         # perform the check
+env = cfg.Finish()                # finish configuration
+print &quot;awk: %r&quot; % prog            # print the returned value</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for awk... gawk
+awk: [&apos;gawk&apos;]
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgEgrep</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fEGREP-262">
+					AC_PROG_EGREP</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Synopsis:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">egrep = cfg.CheckProgEgrep(grep, selection=SConsGnu.GProgVars._auto)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									grep</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									Path to 
+									<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									grep</command>
+									 program as found by
+									<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									CheckProgGrep</methodname>
+									.
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The function returns an instance of 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
+					SCons.Util.CLVar</link> list with the absolute path to an 
+					appropriate grep program in the first place followed by necessary 
+					command line options.</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgEgrep</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()               # create an environment
+cfg = Configure(env)              # create SConf object
+cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
+grep = cfg.CheckProgGrep()
+prog = cfg.CheckProgEgrep(grep)   # perform the check
+env = cfg.Finish()                # finish configuration
+print &quot;egrep: %r&quot; % prog          # print the returned value</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for grep that handles long lines and -e... /bin/grep
+Checking for egrep... /bin/grep -E
+egrep: [&apos;/bin/grep&apos;, &apos;-E&apos;]
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgFgrep</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fFGREP-266">
+					AC_PROG_FGREP</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Synopsis:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">fgrep = cfg.CheckProgFgrep(grep, selection=SConsGnu.GProgVars._auto)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									grep</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									Path to 
+									<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									grep</command>
+									 program as found by
+									<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									CheckProgGrep</methodname>
+									.
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The function returns an instance of 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
+					SCons.Util.CLVar</link> list with the absolute path to an 
+					appropriate grep program in the first place followed by necessary 
+					command line options.</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgFgrep</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()               # create an environment
+cfg = Configure(env)              # create SConf object
+cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
+grep = cfg.CheckProgGrep()
+prog = cfg.CheckProgFgrep(grep)   # perform the check
+env = cfg.Finish()                # finish configuration
+print &quot;fgrep: %r&quot; % prog          # print the returned value</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for grep that handles long lines and -e... /bin/grep
+Checking for egrep... /bin/grep -F
+fgrep: [&apos;/bin/grep&apos;, &apos;-F&apos;]
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgGrep</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fGREP-258">
+					AC_PROG_GREP</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Synopsis:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">grep = cfg.CheckProgGrep(selection=SConsGnu.GProgVars._auto)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									programs</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									List of program names to look for (in order). If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 (default), the default list
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									[&apos;grep&apos;, ggrep&apos;]</code>
+									will be used
+								</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The function returns an instance of 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
+					SCons.Util.CLVar</link> list with the absolute path to grep 
+					program in the first place followed by necessary options.</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgGrep</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()               # create an environment
+cfg = Configure(env)              # create SConf object
+cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
+grep = cfg.CheckProgGrep()        # perform the check
+env = cfg.Finish()                # finish configuration
+print &quot;grep: %r&quot; % grep           # print the returned value</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for grep that handles long lines and -e... /bin/grep
+grep: [&apos;/bin/grep&apos;]
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgInstall</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fINSTALL-270">
+					AC_PROG_INSTALL</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Synopsis:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">install = cfg.CheckProgInstall(selection=SConsGnu.GProgVars._auto, programs=None, reject_paths=None)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									programs</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									List of program names to look for (in order). If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 (default), the default list
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									[ &apos;ginstall&apos;, &apos;scoinst&apos;, 
+									&apos;install&apos; ]</code>
+									will be used
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									reject_paths</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">List of paths to be 
+								rejected from search path. If 
+								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								None</literal>, a default list will be used which excludes all 
+								the broken versions described above.</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The function returns an instance of 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
+					SCons.Util.CLVar</link> list with the absolute path to install 
+					program in the first place.</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgInstall</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()               # create an environment
+cfg = Configure(env)              # create SConf object
+cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
+prog = cfg.CheckProgInstall()     # perform the check
+env = cfg.Finish()                # finish configuration
+print &quot;install: %r&quot; % prog        # print the returned value</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for a BSD-compatible install... /usr/bin/install -c
+install: [&apos;/usr/bin/install&apos;, &apos;-c&apos;]
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgMkdirP</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fMKDIR_005fP-277">
+					AC_PROG_MKDIR_P</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Synopsis:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">mkdir_p = cfg.CheckProgMkdirP(selection=SConsGnu.GProgVars._auto, programs=None)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									programs</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									List of program names to look for (in order). If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 (default), the default list
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									[ &apos;mkdir&apos;, &apos;gmkdir&apos; ]</code>
+									will be used
+								</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The function returns an instance of 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
+					SCons.Util.CLVar</link> list with the absolute path to mkdir 
+					program in the first place followed by necessary commandline 
+					options.</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgMkdirP</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()               # create an environment
+cfg = Configure(env)              # create SConf object
+cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
+prog = cfg.CheckProgMkdirP()      # perform the check
+env = cfg.Finish()                # finish configuration
+print &quot;mkdir_p: %r&quot; % prog        # print the returned value
+</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for a thread-safe mkdir -p... /bin/mkdir -p
+mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgLex</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLEX-281">
+					AC_PROG_LEX</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Synopsis:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">lex, lexroot, lexlibs, yytextptr = cfg.CheckProgLex(selection=SConsGnu.GProgVars._auto, programs=None, lexroots=None, lexlibs=None)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									A value of
+									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lex</varname>
+									to be returned by the function. If left default, the function 
+									will perform check, select the program automatically, and 
+									return the result of the check as
+									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lex</varname>
+									. In this case the function returns tuple
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									(lex, None, None)</code>
+									as it&apos;s not possible to determine lexroot and lexlibs 
+									without running real tests.
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									programs</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									List of program names to look for (in order). If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 (default), the default list
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									[ &apos;flex&apos;, &apos;lex&apos; ]</code>
+									will be used
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lexroots</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									When 
+									<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lex</command>
+									 is invoked without 
+									<option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									-o</option>
+									 option, it writes its output to default file named 
+									<filename xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lex.yy.c</filename>
+									 or 
+									<filename xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lexyy.c</filename>
+									 depending on version. In such case, the string 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lex.yy</literal>
+									 or 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lexyy</literal>
+									 is called the lex file root. The
+									<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									CheckProgLex</methodname>
+									method determines the lex file root and returns it as
+									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lexroot</varname>
+									. The
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lexroots</parameter>
+									parameter lists possible choices to pickup from. If it is set 
+									to 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 the default list
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									[ &apos;lex.yy.c&apos;, &apos;lexyy.c&apos; ]</code>
+									is used.
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lexlibs</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									List of lex library names to be checked. The function tries to 
+									link a 
+									<filename xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									*.c</filename>
+									 file generated by 
+									<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lex</command>
+									 against each of the libraries from list. The first library, 
+									for which the compilation succeeds is returned as output
+									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lexlibs</varname>
+									value.
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									script</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Source code of a lex 
+								script to be used when performing checks. If not 
+								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								None</literal> (default) a default script will be used.</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Return values:</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Return value</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lex</varname>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Name of the 
+								<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								lex</command> program detected.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									lexroot</varname>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Root part of the 
+								<filename xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								*.c</filename> file name generated by lex when invoked without 
+								<option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								-o</option> option.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">lexlibs</td>
+								<td xmlns="http://docbook.org/ns/docbook">List of libraries 
+								needed to compile a program generated with 
+								<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								lex</command>.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">yytextptr</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									True if
+									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									yytext</varname>
+									is defined as pointer. Lex can declare
+									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									yytext</varname>
+									either as a pointer or an array. The default is 
+									implementation-dependent. This return value allows to figure 
+									out which it is, since not all implementations provide
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									%pointer</code>
+									and
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									%array</code>
+									declarations.
+								</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgLex</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()               # create an environment
+cfg = Configure(env)              # create SConf object
+cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
+lex, lexroot, lexlibs, yytextptr = cfg.CheckProgLex()      # perform the check
+env = cfg.Finish()                # finish configuration
+# print the returned values
+print &quot;lex:       %r&quot; % lex 
+print &quot;lexroot:   %r&quot; % lexroot
+print &quot;lexlibs:   %r&quot; % lexlibs
+print &quot;yytextptr: %r&quot; % yytextptr
+</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt><command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for flex... flex
+Checking for lex output file root... lex.yy
+Checking for lex library... -lfl
+Checking whether yytext is a pointer... yes
+lex:       [&apos;flex&apos;]
+lexroot:   &apos;lex.yy&apos;
+lexlibs:   [&apos;fl&apos;]
+yytextptr: True
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgLnS</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288">
+					AC_PROG_LN_S</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Synopsis:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ln_s = cfg.CheckProgLnS(selection=SConsGnu.GProgVars._auto)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						The function returns list
+						<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						[ &apos;ln&apos;, &apos;-s&apos; ]</code>
+						if
+						<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						ln -s</code>
+						works or other list (with the replacement command) otherwise. The 
+						alternatives are
+						<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						[ &apos;cp&apos;, &apos;-pR&apos; ]</code>
+						and
+						<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						[ &apos;ln&apos; ]</code>
+						.
+					</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgLnS</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()                 # create an environment
+cfg = Configure(env)                # create SConf object
+cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
+ln_s = cfg.CheckProgLnS()           # perform the check
+env = cfg.Finish()                  # finish configuration
+print &quot;ln_s: %r&quot; % ln_s             # print returned value
+</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt><command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking whether ln -s works... yes
+ln_s: [&apos;ln&apos;, &apos;-s&apos;]
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgRanlib</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Corresponds to 
+						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288">
+						AC_PROG_RANLIB</link>
+						 autoconf macro. The prototype of this test is:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">cfg.CheckProgRanlib(selection=SConsGnu.GProgVars._auto)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+						</tbody>
+					</informaltable>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgSed</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Corresponds to 
+						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fSED-294">
+						AC_PROG_SED</link>
+						 autoconf macro. The prototype of this test is:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">sed = cfg.CheckProgSed(selection=SConsGnu.GProgVars._auto, programs=None)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									programs</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									List of program names to look for (in order). If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 (default), the default list
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									[ &apos;sed&apos;, &apos;gsed&apos; ]</code>
+									will be used
+								</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgSed</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()                 # create an environment
+cfg = Configure(env)                # create SConf object
+cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
+sed = cfg.CheckProgSed()            # perform the check
+env = cfg.Finish()                  # finish configuration
+print &quot;sed: %r&quot; % sed               # print returned value
+</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt><command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for a sed that does not truncate output... /bin/sed
+sed: [&apos;/bin/sed&apos;]
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgYacc</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Corresponds to 
+						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fYACC-298">
+						AC_PROG_YACC</link>
+						 autoconf macro. The prototype of this test is:
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">cfg.CheckProgYacc(selection=SConsGnu.GProgVars._auto)</programlisting>
+					</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+						</tbody>
+					</informaltable>
+				</section>
+			</section>
+			<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="sec-generic-program-and-file-checks">
+				Generic Program and File Checks</title>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProg</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fPROG-304">
+					AC_CHECK_PROG_</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Synopsis:</para>
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.CheckProg(program, selection=SConsGnu.GProgVars._auto, value_if_found=None, value_if_not_found=None, path=None, pathext=None, reject=[], prog_str=None)</programlisting>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									program</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Program name of the 
+								program to be detected.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									value_if_found</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									Value to be returned, when the program is found. If set to 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 (default) then the value of
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									program</parameter>
+									parameter is returned if program is found.
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									value_if_not_found</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Value to be returned, 
+								when the program is not found.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">path</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									Search path. If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 , then
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									context.env[&apos;ENV&apos;][&apos;PATH&apos;]</code>
+									will be used.
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									pathext</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes) 
+								used for executable files. If 
+								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								None</literal>, the default list of extensions for current 
+								platform will be used.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									reject</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">List of file names 
+								(paths to programs) to be rejected from search.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									prog_str</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									To be displayed as program name instead of the
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									program</parameter>
+									. Used do display a 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									&apos;Checking for &lt;prog_str&gt;... &apos;</literal>
+									 message.
+								</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						If
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						program</parameter>
+						is found, then the value of
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						program</parameter>
+						parameter is returned (if
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						value_if_found</parameter>
+						is defined, then it is returned instead of
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						program</parameter>
+						). Otherwise, the value of
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						value_if_not_found</parameter>
+						parameter is returned.
+					</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProg</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()                 # create an environment
+cfg = Configure(env)                # create SConf object
+cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
+curl = cfg.CheckProg(&apos;curl&apos;)        # perform the check
+env = cfg.Finish()                  # finish configuration
+print &quot;curl: %r&quot; % curl             # print returned value
+</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt><command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for curl... curl
+curl: &apos;curl&apos;
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckProgs</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fPROGS-307">
+					AC_CHECK_PROGS_</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Synopsis:</para>
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.CheckProgs(programs, selection=SConsGnu.GProgVars._auto, value_if_not_found=None, path=None, pathext=None, reject=[])</programlisting>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									programs</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Program names of the 
+								programs to be inspected.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									value_if_not_found</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Value to be returned, 
+								when the program is not found.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">path</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									Search path. If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 , then
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									context.env[&apos;ENV&apos;][&apos;PATH&apos;]</code>
+									will be used.
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									pathext</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes) 
+								used for executable files. If 
+								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								None</literal>, the default list of extensions for current 
+								platform will be used.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									reject</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">List of file names 
+								(paths to programs) to be rejected from search.</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						The function invokes
+						<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						CheckProg</methodname>
+						for each program from
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						programs</parameter>
+						list. The first program that is found is returned. If none of the 
+						programs is found, the
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						value_if_not_found</parameter>
+						is returned.
+					</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgs</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()                 # create an environment
+cfg = Configure(env)                # create SConf object
+cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
+curl = cfg.CheckProgs([&apos;gcurl&apos;, &apos;curl&apos;])     # perform the check
+env = cfg.Finish()                  # finish configuration
+print &quot;curl: %r&quot; % curl             # print returned value
+</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt><command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for gcurl... no
+Checking for curl... curl
+curl: &apos;curl&apos;
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckPathProg</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fPROG-318">
+					AC_PATH_PROG_</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Synopsis:</para>
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.CheckPathProg(program, selection=SConsGnu.GProgVars._auto, value_if_not_found=None, path=None, pathext=None, reject=[], prog_str=None)</programlisting>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									program</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Program name of the 
+								program to be detected.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									value_if_not_found</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Value to be returned, 
+								when the program is not found.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">path</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									Search path. If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 , then
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									context.env[&apos;ENV&apos;][&apos;PATH&apos;]</code>
+									will be used.
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									pathext</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes) 
+								used for executable files. If 
+								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								None</literal>, the default list of extensions for current 
+								platform will be used.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									reject</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">List of file names 
+								(paths to programs) to be rejected from search.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									prog_str</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									To be displayed as program name instead of the
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									program</parameter>
+									. Used do display a 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									&apos;Checking for &lt;prog_str&gt;... &apos;</literal>
+									 message.
+								</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						If
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						program</parameter>
+						is found, then absolute path to the program is returned. 
+						Otherwise, 
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						value_if_not_found</parameter>
+						is returned.
+					</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckPathProg</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()                 # create an environment
+cfg = Configure(env)                # create SConf object
+cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
+curl = cfg.CheckPathProg(&apos;curl&apos;)    # perform the check
+env = cfg.Finish()                  # finish configuration
+print &quot;curl: %r&quot; % curl             # print returned value
+</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt><command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for curl... /usr/bin/curl
+curl: &apos;/usr/bin/curl&apos;
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					CheckPathProgs</title>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Corresponds to 
+					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fPROGS-321">
+					AC_PATH_PROGS_</link> autoconf macro.</para>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					Synopsis:</para>
+					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">prog = cfg.CheckPathProgs(programs, selection=SConsGnu.GProgVars._auto, value_if_not_found=None, path=None, pathext=None, reject=[])</programlisting>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+					The parameters are summarized in the following table</para>
+					<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<th xmlns="http://docbook.org/ns/docbook">Parameter</th>
+								<th xmlns="http://docbook.org/ns/docbook">Description</th>
+							</tr>
+						</thead>
+						<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									programs</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Program names of the 
+								programs to be inspected.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									selection</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
+								result of the check.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									value_if_not_found</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Value to be returned, 
+								when the program is not found.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">path</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									Search path. If 
+									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									None</literal>
+									 , then
+									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									context.env[&apos;ENV&apos;][&apos;PATH&apos;]</code>
+									will be used.
+								</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									pathext</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes) 
+								used for executable files. If 
+								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+								None</literal>, the default list of extensions for current 
+								platform will be used.</td>
+							</tr>
+							<tr xmlns="http://docbook.org/ns/docbook">
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									reject</parameter>
+								</td>
+								<td xmlns="http://docbook.org/ns/docbook">List of file names 
+								(paths to programs) to be rejected from search.</td>
+							</tr>
+						</tbody>
+					</informaltable>
+					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						The function invokes
+						<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						CheckPathProg</methodname>
+						for each program from
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						programs</parameter>
+						list. Absolute path to the first program found is returned. If 
+						none of the programs is found, the
+						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						value_if_not_found</parameter>
+						is returned.
+					</para>
+					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+						Usage example for CheckProgs</title>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
+from SConsGnu import GProgChecks
+env = Environment()                 # create an environment
+cfg = Configure(env)                # create SConf object
+cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
+curl = cfg.CheckPathProgs([&apos;gcurl&apos;, &apos;curl&apos;])    # perform the check
+env = cfg.Finish()                  # finish configuration
+print &quot;curl: %r&quot; % curl             # print returned value
+</programlisting>
+						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt><command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
+scons: Reading SConscript files ...
+Checking for gcurl... no
+Checking for curl... /usr/bin/curl
+curl: &apos;/usr/bin/curl&apos;
+
+&lt; ... &gt;</screen>
+					</example>
+				</section>
+			</section>
+		</section>
 	</section>
 	<!--
 		We stick to xi:include, as SCons dependency scanner recognizes them 

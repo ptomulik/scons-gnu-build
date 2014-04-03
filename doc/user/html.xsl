@@ -38,6 +38,7 @@
 <xsl:param name="make.clean.html" select="1"/>
 <!-- <xsl:param name="html.stylesheet" select="'docbook.css'"/> -->
 <xsl:param name="html.stylesheet" select="'scons-gnu-build.css'"/>
+<xsl:param name="toc.section.depth" select="3"/>
 <xsl:param name="generate.toc">
 /appendix toc,title
 article/appendix  nop
