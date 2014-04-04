@@ -1,55 +1,7 @@
-"""`SConsGnu.AcProgVars`
+"""`SConsGnu.CCompilerVars`
 
-Variables for `Alternative Programs`_.
-
-**General Description**
-
-This module provides standard `autoconf output variables`_  which define paths
-to `Alternative Programs`_. Each variable may be accessed via:
-
-    - SCons environment, as construction variables (``env.subst('$variable')``),
-    - SCons command line variables (``scons variable=value``),
-
-Supported variables:
-====================
-
-    AWK
-        TODO: write short description
-    EGREP
-        TODO: write short description
-    FGREP
-        TODO: write short description
-    GREP
-        TODO: write short description
-    INSTALL
-        TODO: write short description
-    INSTALL_DATA
-        TODO: write short description
-    INSTALL_PROGRAM
-        TODO: write short description
-    INSTALL_SCRIPT
-        TODO: write short description
-    LEX
-        TODO: write short description
-    LEX_OUTPUT_ROOT
-        TODO: write short description
-    LEXLIB
-        TODO: write short description
-    LN_S
-        TODO: write short description
-    MKDIR_P
-        TODO: write short description
-    RANLIB
-        TODO: write short description
-    SED
-        TODO: write short description
-    YACC
-        TODO: write short description
-
-.. _autoconf output variables: http://www.gnu.org/software/autoconf/manual/autoconf.html#Output-Variable-Index
-.. _Alternative Programs: http://www.gnu.org/software/autoconf/manual/autoconf.html#Alternative-Programs
+TODO: Write docs for XXX
 """
-
 
 #
 # Copyright (c) 2012-2014 by Pawel Tomulik
@@ -72,7 +24,7 @@ Supported variables:
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE
 
-__docformat__ = 'restructuredText'
+__docformat__ = "restructuredText"
 
 from SConsGnu import Defaults
 from SCons.Util import is_Sequence
@@ -84,55 +36,13 @@ class _auto(object): pass
 # NOTE: variable substitutions must be in curly brackets, so use ${prefix}
 #       and not $prefix. This is required for proper prefixing/suffixing and
 #       transforming in certain parts of library
-__std_var_triples = [
-    ( 'AWK',
+__var_triples = [
+    ( 'CCVERSION',
       'TODO: write help',
-      _auto ),
-    ( 'EGREP',
+      None ),
+    ( 'CXXVERSION',
       'TODO: write help',
-      _auto ),
-    ( 'FGREP',
-      'TODO: write help',
-      _auto ),
-    ( 'GREP',
-      'TODO: write help',
-      _auto ),
-    ( 'INSTALL',
-      'TODO: write help',
-      _auto ),
-    ( 'INSTALL_DATA',
-      'TODO: write help',
-      _auto ),
-    ( 'INSTALL_PROGRAM',
-      'TODO: write help',
-      _auto ),
-    ( 'INSTALL_SCRIPT',
-      'TODO: write help',
-      _auto ),
-    ( 'LEX',
-      'TODO: write help',
-      _auto ),
-    ( 'LEX_OUTPUT_ROOT',
-      'TODO: write help',
-      _auto ),
-    ( 'LEXLIB',
-      'TODO: write help',
-      _auto ),
-    ( 'LN_S',
-      'TODO: write help',
-      _auto ),
-    ( 'MKDIR_P',
-      'TODO: write help',
-      _auto ),
-    ( 'RANLIB',
-      'TODO: write help',
-      _auto ),
-    ( 'SED',
-      'TODO: write help',
-      _auto ),
-    ( 'YACC',
-      'TODO: write help',
-      _auto ),
+      None ),
 ]
 
 default_env_key_prefix      = Defaults.gvar_env_key_prefix
@@ -150,8 +60,8 @@ def __init_module_vars():
 __init_module_vars()
 
 #############################################################################
-def __map_std_var_triples(callback, name_filter = lambda x : True):
-    """Map all predefined GNU variable triples (name, desc, default) via
+def __map_var_triples(callback, name_filter = lambda x : True):
+    """Map all predefined variable triples (name, desc, default) via
     `callback`.
 
     :Parameters:
@@ -169,7 +79,7 @@ def __map_std_var_triples(callback, name_filter = lambda x : True):
     :Returns:
         returns result of mapping through `callback`
     """
-    triples = filter(lambda t : name_filter(t[0]), __std_var_triples)
+    triples = filter(lambda t : name_filter(t[0]), __var_triples)
     return map(lambda x : callback(*x), triples)
 
 #############################################################################
@@ -191,7 +101,7 @@ def gvar_names(name_filter = lambda x : True):
     if is_Sequence(name_filter):
         seq = name_filter
         name_filter = lambda x : x in seq
-    return filter(name_filter, zip(*__std_var_triples)[0])
+    return filter(name_filter, zip(*__var_triples)[0])
 
 #############################################################################
 def declare_gvars(name_filter=lambda x : False,
@@ -212,7 +122,7 @@ def declare_gvars(name_filter=lambda x : False,
     if is_Sequence(name_filter):
         seq = name_filter
         name_filter = lambda x : x in seq
-    return GVarDeclsU(__map_std_var_triples(_callback, name_filter))
+    return GVarDeclsU(__map_var_triples(_callback, name_filter))
 
 ##############################################################################
 def GVarNames(**kw):
@@ -252,3 +162,9 @@ def DeclareGVars(**kw):
     args = ['name_filter', 'env_key_transform', 'var_key_transform']
     kw2 = { key : kw[key] for key in args if key in kw }
     return declare_gvars(**kw2)
+
+# Local Variables:
+# # tab-width:4
+# # indent-tabs-mode:nil
+# # End:
+# vim: set syntax=scons expandtab tabstop=4 shiftwidth=4:

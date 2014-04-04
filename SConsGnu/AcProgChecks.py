@@ -1613,8 +1613,7 @@ def AcProgYacc(context, selection=_auto, programs=None, value_if_not_found='yacc
 
 ###############################################################################
 def Tests():
-    """Get the program checks as a dictionary.
-    """
+    """Returns all the checks implemented in AcProgChecks as a dictionary."""
     return { 'AcCheckProg': AcCheckProg
            , 'AcCheckProgs': AcCheckProgs
            , 'AcCheckTargetTool': AcCheckTargetTool
