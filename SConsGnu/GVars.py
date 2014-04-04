@@ -793,7 +793,7 @@ class _GVars(object):
         proxy = self.VarEnvProxy(env)
         variables.Save(filename, proxy)
 
-    def GenerateVariablesHelpText(self, variables, env, *args):
+    def GenerateVariablesHelpText(self, variables, env, *args, **kw):
         #--------------------------------------------------------------------
         """Save help text for `variables` using
         ``variables.GenerateHelpText()``.
@@ -817,7 +817,7 @@ class _GVars(object):
         """
         #--------------------------------------------------------------------
         proxy = self.VarEnvProxy(env)
-        return variables.GenerateHelpText(proxy, *args)
+        return variables.GenerateHelpText(proxy, *args, **kw)
 
 #############################################################################
 class _GVarDecl(object):
