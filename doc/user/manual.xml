@@ -1473,7 +1473,7 @@ vars = GVars._GVars(decls)</programlisting>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				We may use 
 				<emphasis xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				proxies</emphasis>
+				proxy</emphasis>
 				 to access GVar values using their original names. A proxy object 
 				is a thin wrapper around SCons environment which internally 
 				transforms GVar names to the names of their associated construction 
@@ -1499,11 +1499,11 @@ vars = GVars._GVars(decls)</programlisting>
 					and construction variable
 					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					env_foo</varname>
-					. We&apos;ll then create a proxy object to access the value of 
-					variable using the
+					. We then create a proxy object to access the value of variable 
+					using its original name
 					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					foo</varname>
-					name.
+					.
 				</para>
 				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDeclsU
 
@@ -2063,7 +2063,7 @@ cfg.AddTests(XxxChecks.Tests())
 cfg.AddTests(YyyChecks.Tests())
 
 # Perform tests implemented in XxxChecks and YyyChecks modules ...
-res1 = cfg.CheckFoo(...)
+res1 = cfg.AcFoo(...)
 
 # more tests if needed ...
 
@@ -2392,7 +2392,7 @@ print &quot;fgrep: %r&quot; % prog          # print the returned value</programl
 						<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command>
 scons: Reading SConscript files ...
 Checking for grep that handles long lines and -e... /bin/grep
-Checking for egrep... /bin/grep -F
+Checking for fgrep... /bin/grep -F
 fgrep: [&apos;/bin/grep&apos;, &apos;-F&apos;]
 
 &lt; ... &gt;</screen>
@@ -3170,7 +3170,9 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 								when the program is not found.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
-								<td xmlns="http://docbook.org/ns/docbook">path</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter>path</parameter>
+								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
 									Search path. If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3302,7 +3304,9 @@ curl: &apos;curl&apos;
 								when the program is not found.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
-								<td xmlns="http://docbook.org/ns/docbook">path</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter>path</parameter>
+								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
 									Search path. If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3415,7 +3419,9 @@ curl: &apos;curl&apos;
 								when the program is not found.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
-								<td xmlns="http://docbook.org/ns/docbook">path</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter>path</parameter>
+								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
 									Search path. If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3539,7 +3545,9 @@ curl: &apos;/usr/bin/curl&apos;
 								when the program is not found.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
-								<td xmlns="http://docbook.org/ns/docbook">path</td>
+								<td xmlns="http://docbook.org/ns/docbook">
+									<parameter>path</parameter>
+								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
 									Search path. If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">

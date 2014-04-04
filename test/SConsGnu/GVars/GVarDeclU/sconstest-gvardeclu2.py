@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012 by Pawel Tomulik
+# Copyright (c) 2012-2014 by Pawel Tomulik
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,52 @@
 __docformat__ = "restructuredText"
 
 """
-Tests declaring variables with SConsGnu.GVar.GVarDecl() factory method.
+Tests declaring variables with SConsGnu.GVar.GVarDeclU() factory method.
 """
 
 import TestSCons
 
 ##############################################################################
-# GVarDecl(): Test 1 - declare GVar that is not bound to anything.
+# GVarDeclU(): Test 2 - declare GVar that is bound to ENV only.
 ##############################################################################
 test = TestSCons.TestSCons()
-test.subdir(['t1'])
-test.dir_fixture('../../../../SConsGnu', 't1/site_scons/SConsGnu')
-test.write(['t1', 'SConstruct'],
+test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')
+test.write('SConstruct',
 """
 # SConstruct
-from SConsGnu.GVars import GVarDecl
+from SConsGnu.GVars import GVarDeclU, ENV, VAR, OPT
+list = []
+list.append( GVarDeclU('env_x', None, None, 'env x default') )
+list.append( GVarDeclU(env_key = 'env_x', default = 'env x default') )
+
+i = 0
+for v in list:
+    print "GVAR[%d].has_xxx_decl(ENV): %r" % (i, v.has_xxx_decl(ENV))
+    print "GVAR[%d].has_xxx_decl(VAR): %r" % (i, v.has_xxx_decl(VAR))
+    print "GVAR[%d].has_xxx_decl(OPT): %r" % (i, v.has_xxx_decl(OPT))
+    print "GVAR[%d].get_xxx_key(ENV): %r" % (i, v.get_xxx_key(ENV))
+    print "GVAR[%d].get_xxx_default(ENV): %r" % (i, v.get_xxx_default(ENV))
+    i += 1
 """)
-test.run(chdir = 't1')
+test.run()
+
+lines = [
+  "GVAR[0].has_xxx_decl(ENV): True",
+  "GVAR[0].has_xxx_decl(VAR): False",
+  "GVAR[0].has_xxx_decl(OPT): False",
+  "GVAR[0].get_xxx_key(ENV): 'env_x'",
+  "GVAR[0].get_xxx_default(ENV): 'env x default'",
+
+  "GVAR[1].has_xxx_decl(ENV): True",
+  "GVAR[1].has_xxx_decl(VAR): False",
+  "GVAR[1].has_xxx_decl(OPT): False",
+  "GVAR[1].get_xxx_key(ENV): 'env_x'",
+  "GVAR[1].get_xxx_default(ENV): 'env x default'",
+]
+
+test.must_contain_all_lines(test.stdout(), lines)
+
+test.pass_test()
 
 # Local Variables:
 # # tab-width:4

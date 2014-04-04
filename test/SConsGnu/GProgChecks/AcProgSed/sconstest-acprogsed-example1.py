@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012 by Pawel Tomulik
+# Copyright (c) 2012-2014 by Pawel Tomulik
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,34 @@
 __docformat__ = "restructuredText"
 
 """
-Tests declaring variables with SConsGnu.GVar.GVarDecl() factory method.
+TODO: write description
 """
 
 import TestSCons
 
 ##############################################################################
-# GVarDecl(): Test 1 - declare GVar that is not bound to anything.
+# 
 ##############################################################################
 test = TestSCons.TestSCons()
-test.subdir(['t1'])
-test.dir_fixture('../../../../SConsGnu', 't1/site_scons/SConsGnu')
-test.write(['t1', 'SConstruct'],
+test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')
+test.write('SConstruct',
 """
 # SConstruct
-from SConsGnu.GVars import GVarDecl
+from SConsGnu import GProgChecks
+env = Environment()                 # create an environment
+cfg = Configure(env)                # create SConf object
+cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
+sed = cfg.AcProgSed()               # perform the check
+env = cfg.Finish()                  # finish configuration
+print "sed: %r" % sed               # print returned value
 """)
-test.run(chdir = 't1')
+
+test.run()
+test.must_contain_all_lines(test.stdout(), [
+    'Checking for a sed that does not truncate output... ',
+    'sed: '
+])
+test.pass_test()
 
 # Local Variables:
 # # tab-width:4

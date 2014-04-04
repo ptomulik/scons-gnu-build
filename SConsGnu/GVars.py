@@ -226,7 +226,7 @@ For more details we refer you to the documentation of `GVarDecls()`,
 """
 
 #
-# Copyright (c) 2012 by Pawel Tomulik
+# Copyright (c) 2012-2014 by Pawel Tomulik
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -844,26 +844,21 @@ class _GVarDecl(object):
 
 
     #========================================================================
-    def __init__(self, *args):
+    def __init__(self, env_decl=None, var_decl=None, opt_decl=None):
         #--------------------------------------------------------------------
         """Constructor for _GVarDecl object
 
         :Parameters:
-            args
-                a tuple ``(env_decl, var_decl, opt_decl)``, where:
-
-                - ``env_decl`` - parameters used later to create related
-                  construction variable in `SCons environment`_, same as
-                  ``decl`` argument to `_set_env_decl()`,
-                - ``var_decl`` - parameters used later to create related
-                  `SCons command-line variable`_, same as ``decl``
-                  argument to `_set_var_decl()`,
-                - ``opt_decl`` - parameters used later to create related
-                  `SCons command-line option`_, same as  ``decl``
-                  argument to `_set_opt_decl()`.
-
-                all arguments are optional, missing argument is represented by
-                ``None``.
+            env_decl
+                parameters used later to create related construction variable
+                in `SCons environment`_, same as ``decl`` argument to
+                `_set_env_decl()`,
+            var_decl
+                parameters used later to create related `SCons command-line
+                variable`_, same as ``decl`` argument to `_set_var_decl()`,
+            opt_decl
+                parameters used later to create related `SCons command-line
+                option`_, same as  ``decl`` argument to `_set_opt_decl()`.
 
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
         .. _SCons command-line option: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-options
@@ -871,8 +866,9 @@ class _GVarDecl(object):
         """
         #--------------------------------------------------------------------
         self.__xxx_args = [None,None,None]
-        for xxx in range(0,min(ALL,len(args))):
-            if args[xxx] is not None: self.set_xxx_decl(xxx, args[xxx])
+        if env_decl: self._set_env_decl(env_decl)
+        if var_decl: self._set_var_decl(var_decl)
+        if opt_decl: self._set_opt_decl(opt_decl)
 
     #========================================================================
     def set_xxx_decl(self, xxx, decl):
@@ -1018,6 +1014,13 @@ class _GVarDecl(object):
                       'type'           : "string",
                       'dest'           : "file_name", ... }
 
+                or
+
+                    { 'names'          : ("-f", "--file-name")
+                      'kw' : { 'action'         : "store",
+                               'type'           : "string",
+                               'dest'           : "file_name", ... } }
+
                 the parameters enclosed in ``decl`` dictionary are later
                 passed verbatim to `SCons.Script.Main.AddOption()`_.
                 Note, that we require the ``dest`` parameter.
@@ -1048,7 +1051,8 @@ class _GVarDecl(object):
             try:
                 kw = decl['kw']
             except KeyError:
-                kw = {}
+                kw = decl.copy()
+                del(kw['names'])
         else:
             raise TypeError("'decl' must be a tuple list or dictionary, %r " \
                             "is not allowed" % type(decl).__name__)
