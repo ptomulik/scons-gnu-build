@@ -28,14 +28,14 @@
 			<productname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org">
 			SCons</link></productname>
-			which makes it behaving more like a GNU build system. We aim at
-			achieving better interoperability between external development
-			utilities (such as packaging tools, e.g.
+			which makes it behaving more like a GNU build system. We aim at 
+			achieving better interoperability between external development 
+			utilities (such as packaging tools, e.g. 
 			<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.debian.org/doc/manuals/maint-guide/index.en.html">
 			debian ones&apos;</link>
-			 ) and scons scripts. The goal is to reduce the amount of work
-			needed to integrate scons-based projects with this external world
-			and simplify some rather common tasks (such as installation or
+			 ) and scons scripts. The goal is to reduce the amount of work 
+			needed to integrate scons-based projects with this external world 
+			and simplify some rather common tasks (such as installation or 
 			packaging).
 		</para>
 	</section>
@@ -48,13 +48,13 @@
 			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			GVars basics</title>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			GVars are &quot;special variables&quot; accessible from outside of
-			scons script. In general, GVar is an object which associates up to
+			GVars are &quot;special variables&quot; accessible from outside of 
+			scons script. In general, GVar is an object which associates up to 
 			three entities:</para>
 			<itemizedlist xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				<listitem xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						a SCons
+						a SCons 
 						<emphasis xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						construction variable</emphasis>
 						 (
@@ -65,7 +65,7 @@
 				</listitem>
 				<listitem xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						a SCons
+						a SCons 
 						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-variables">
 						command line variable</link>
 						 (
@@ -76,7 +76,7 @@
 				</listitem>
 				<listitem xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						a SCons
+						a SCons 
 						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-options">
 						command line option</link>
 						 (
@@ -87,11 +87,11 @@
 				</listitem>
 			</itemizedlist>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				With GVars we maintain abstract variables whose values are settable
-				via scons command line and are passed to scons environment
-				automagically. Command line variables or options act as inputs for
-				GVars whereas construction variables are their destination points.
-				The situation is depicted on
+				With GVars we maintain abstract variables whose values are settable 
+				via scons command line and are passed to scons environment 
+				automagically. Command line variables or options act as inputs for 
+				GVars whereas construction variables are their destination points. 
+				The situation is depicted on 
 				<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="img0000"/>
 				 where two GVars
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -111,10 +111,10 @@
 				</imageobject></mediaobject>
 			</figure>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			Some modules use GVars to implement standard GNU variables such as
-			the variables for installation directories (see
+			Some modules use GVars to implement standard GNU variables such as 
+			the variables for installation directories (see 
 			<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-variables-for-installation-directories"/>
-			 ). In this section we focus on the general GVar concept and explain
+			 ). In this section we focus on the general GVar concept and explain 
 			the way of defining your own GVars.</para>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				GVars are implemented in
@@ -127,26 +127,26 @@
 			<orderedlist xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				<listitem xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Declare variables, see
+					Declare variables, see 
 					<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-declaring-gvars"/>
 					 .</para>
 				</listitem>
 				<listitem xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Commit declarations to create actual variables, see
+					Commit declarations to create actual variables, see 
 					<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-committing-gvars"/>
 					 .</para>
 				</listitem>
 				<listitem xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Update SCons environment with variable values,
+					Update SCons environment with variable values, 
 					<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-updating-env-with-gvars"/>
 					 .</para>
 				</listitem>
 			</orderedlist>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			You may further access (read and modify) the values of GVars in your
-			SCons environment via so-called proxy objects. In the following
+			You may further access (read and modify) the values of GVars in your 
+			SCons environment via so-called proxy objects. In the following 
 			subsections we will explain all these steps and techniques.</para>
 		</section>
 		<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -154,26 +154,26 @@
 			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Declaring GVars</title>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				The first step of the procedure outlined in previous subsection is
-				to declare GVars. The goal is to prepare the whole collection of
-				GVar declarations for further processing. Four factory methods are
+				The first step of the procedure outlined in previous subsection is 
+				to declare GVars. The goal is to prepare the whole collection of 
+				GVar declarations for further processing. Four factory methods are 
 				provided for this purpose. The first two named
 				<function xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				GVarDecl</function>
 				and
 				<function xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				GVarDeclU</function>
-				create an object representing a single GVar declaration. The other
+				create an object representing a single GVar declaration. The other 
 				two named
 				<function xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				GVarDecls</function>
 				and
 				<function xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				GVarDeclsU</function>
-				create multiple declarations at once returning dict-like collection
-				where GVar names are mapped onto their declarations. The dictionary
-				is a kind of flat namespace which encloses multiple GVar
-				declarations. In steps 2. and 3. of the previously outlined
+				create multiple declarations at once returning dict-like collection 
+				where GVar names are mapped onto their declarations. The dictionary 
+				is a kind of flat namespace which encloses multiple GVar 
+				declarations. In steps 2. and 3. of the previously outlined 
 				procedure we will actually need this dict object.
 			</para>
 			<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -193,7 +193,7 @@
 				</para>
 				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">_GVarDecl GVarDecl([env_decl[, var_decl[, opt_decl]]])</programlisting>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					The function creates GVar declaration according to three
+					The function creates GVar declaration according to three 
 					parameters:
 					<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					env_decl</parameter>
@@ -203,7 +203,7 @@
 					, and
 					<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					opt_decl</parameter>
-					. All the parameters are optional and if you wish to skip any of
+					. All the parameters are optional and if you wish to skip any of 
 					them, just set it to
 					<constant xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					None</constant>
@@ -217,8 +217,8 @@
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Declaring single GVar</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						Let&apos;s create a string-valued variable which obtains
-						it&apos;s value from option
+						Let&apos;s create a string-valued variable which obtains 
+						it&apos;s value from option 
 						<option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						--xvar</option>
 						 and stores in construction variable named
@@ -229,11 +229,11 @@
 					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu.GVars import GVarDecl
     decl = GVarDecl( {&apos;xvar&apos; : None}, None, (&apos;--xvar&apos;, {&apos;dest&apos; : &apos;xvar&apos;, &apos;type&apos; : &apos;string&apos;}) )</programlisting>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						The above code creates a new GVar declaration which associates
+						The above code creates a new GVar declaration which associates 
 						scons environment variable named
 						<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						xvar</varname>
-						with a CLI option
+						with a CLI option 
 						<option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						--xvar</option>
 						 . The default value for environment variable is
@@ -242,9 +242,9 @@
 						(it&apos;s indicated by
 						<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						{&apos;xvar&apos; : None}</code>
-						in the above snippet). The command line variable is skipped, i.e.
-						we do not associate our GVar with command-line variable. The
-						command line option is named
+						in the above snippet). The command line variable is skipped, i.e. 
+						we do not associate our GVar with command-line variable. The 
+						command line option is named 
 						<option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						--xvar</option>
 						 and holds its value in an internal attribute named
@@ -294,7 +294,7 @@
 									tuple or one-entry dict
 									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									{name : default}</code>
-									. This data is used to initialize associated construction
+									. This data is used to initialize associated construction 
 									variable. The variable is initialized with
 									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									env.SetDefault(name = default)</code>
@@ -319,13 +319,13 @@
 							</td>
 							<td xmlns="http://docbook.org/ns/docbook">
 								<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-									Declaration parameters used when adding the corresponding
+									Declaration parameters used when adding the corresponding 
 									command-line variable. If
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									var_decl</parameter>
-									is a tuple, it must have the form: ( key [, help, default,
-									validator, converter, kw ] ), where entries in square brackets
-									are optional. The consecutive elements are interpreted in
+									is a tuple, it must have the form: ( key [, help, default, 
+									validator, converter, kw ] ), where entries in square brackets 
+									are optional. The consecutive elements are interpreted in 
 									order shown above as
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									key</parameter>
@@ -344,7 +344,7 @@
 									,
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									kw</parameter>
-									. The meaning of these arguments is same as for
+									. The meaning of these arguments is same as for 
 									<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html#Add">
 									SCons.Variables.Variables.Add()</link>
 									 . The
@@ -358,13 +358,13 @@
 									var_decl</parameter>
 									is a dictionary it should have the form
 									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-									{ &apos;key&apos; : &apos;foo&apos;, &apos;help&apos; :
+									{ &apos;key&apos; : &apos;foo&apos;, &apos;help&apos; : 
 									&apos;Help for foo&apos;, ... }</code>
-									. The
+									. The 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									&apos;kw&apos;</literal>
-									 , if present, must be a dictionary. The arguments enclosed in
-									the dictionary are later passed verbatim to
+									 , if present, must be a dictionary. The arguments enclosed in 
+									the dictionary are later passed verbatim to 
 									<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html#Add">
 									SCons.Variables.Variables.Add()</link>
 									 as keyword arguments.
@@ -388,7 +388,7 @@
 							</td>
 							<td xmlns="http://docbook.org/ns/docbook">
 								<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-									Declaration parameters used when adding the associated
+									Declaration parameters used when adding the associated 
 									<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-options">
 									SCons command-line option</link>
 									 . If
@@ -412,7 +412,7 @@
 									) and
 									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									args</varname>
-									is a dictionary defining the remaining
+									is a dictionary defining the remaining 
 									<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
 									option attributes</link>
 									 . The entire
@@ -420,8 +420,8 @@
 									opt_decl</parameter>
 									may be for example
 									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-									tuple( (&apos;-f&apos;,&apos;--file-name&apos;), {
-									&apos;action&apos; : &quot;store&quot;, &apos;dest&apos; :
+									tuple( (&apos;-f&apos;,&apos;--file-name&apos;), { 
+									&apos;action&apos; : &quot;store&quot;, &apos;dest&apos; : 
 									&quot;file_name&quot; } )</code>
 									.
 								</para>
@@ -429,20 +429,20 @@
 									If
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									opt_decl</parameter>
-									is a dictionary, it should have following form (keys are
+									is a dictionary, it should have following form (keys are 
 									relevant, values are just examples):
 									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-									{ &apos;names&apos; : (&quot;-f&quot;,
-									&quot;--file-name&quot;), &apos;action&apos; :
-									&apos;store&apos;, &apos;type&apos; : &apos;string&apos;,
+									{ &apos;names&apos; : (&quot;-f&quot;, 
+									&quot;--file-name&quot;), &apos;action&apos; : 
+									&apos;store&apos;, &apos;type&apos; : &apos;string&apos;, 
 									&apos;dest&apos; : &apos;file_name&apos;, ... }</code>
 									. The parameters enclosed in
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									opt_decl</parameter>
-									dictionary are passed verbatim to
+									dictionary are passed verbatim to 
 									<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Script.Main-module.html#AddOption">
 									SCons.Script.Main.AddOption()</link>
-									 . Note, that the
+									 . Note, that the 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									dest</literal>
 									 parameter is required.
@@ -455,16 +455,16 @@
 					Sometimes, when using
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					GVarDecl</methodname>
-					we have to repeat some data. For example, default values for
-					construction variable and command line variable are usually same.
+					we have to repeat some data. For example, default values for 
+					construction variable and command line variable are usually same. 
 					The same applies to
 					<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					help</parameter>
-					strings which in most cases are identical for both, the command
-					line variable and option. Because we use different parametrs to
-					describe command line variable and environment variable we have to
-					type the default value or help string twice. To avoid such a code
-					duplication one may use functions with a &quot;unified&quot;
+					strings which in most cases are identical for both, the command 
+					line variable and option. Because we use different parametrs to 
+					describe command line variable and environment variable we have to 
+					type the default value or help string twice. To avoid such a code 
+					duplication one may use functions with a &quot;unified&quot; 
 					interface, in this case the
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					GVarDeclU</methodname>
@@ -482,11 +482,11 @@
         const = None, callback = None, callback_args = None, callback_kwargs = None)
     </programlisting>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				Each of its parameters is mapped to an appropriate parameters in
-				associated variables. If we denote by ENV the corresponding
-				construction variable, by VAR the corresponding command line
-				variable, and by OPT the corresponding command line option, then
-				all the above parameters are mapped to their counterparts in ENV,
+				Each of its parameters is mapped to an appropriate parameters in 
+				associated variables. If we denote by ENV the corresponding 
+				construction variable, by VAR the corresponding command line 
+				variable, and by OPT the corresponding command line option, then 
+				all the above parameters are mapped to their counterparts in ENV, 
 				VAR and OPT as shown in the following table</para>
 				<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -511,7 +511,7 @@
 							<td xmlns="http://docbook.org/ns/docbook">-</td>
 							<td xmlns="http://docbook.org/ns/docbook">-</td>
 							<td xmlns="http://docbook.org/ns/docbook">
-								Key used to identify corresponding construction variable (ENV).
+								Key used to identify corresponding construction variable (ENV). 
 								If
 								<constant xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								None</constant>
@@ -530,11 +530,11 @@
 							</td>
 							<td xmlns="http://docbook.org/ns/docbook">-</td>
 							<td xmlns="http://docbook.org/ns/docbook">
-								Key used to identify corresponding command-line variable (VAR).
+								Key used to identify corresponding command-line variable (VAR). 
 								If
 								<constant xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								None</constant>
-								, the GVar variable is not associated with command line
+								, the GVar variable is not associated with command line 
 								variable.
 							</td>
 						</tr>
@@ -571,8 +571,8 @@
 							</td>
 							<td xmlns="http://docbook.org/ns/docbook">-</td>
 							<td xmlns="http://docbook.org/ns/docbook">
-								Default value used to initialize corresponding construction
-								variable (ENV) and command-line variable (VAR). Note that there
+								Default value used to initialize corresponding construction 
+								variable (ENV) and command-line variable (VAR). Note that there 
 								is separate
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								opt_default</parameter>
@@ -593,8 +593,8 @@
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								help</parameter>
 							</td>
-							<td xmlns="http://docbook.org/ns/docbook">Message used to
-							initialize help for associated command-line variable (VAR) and
+							<td xmlns="http://docbook.org/ns/docbook">Message used to 
+							initialize help for associated command-line variable (VAR) and 
 							command-line option (OPT).</td>
 						</tr>
 						<tr xmlns="http://docbook.org/ns/docbook">
@@ -608,7 +608,7 @@
 								validator</parameter>
 							</td>
 							<td xmlns="http://docbook.org/ns/docbook">-</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as for
+							<td xmlns="http://docbook.org/ns/docbook">Same as for 
 							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html#Add">
 							SCons.Variables.Variables.Add()</link>.</td>
 						</tr>
@@ -623,7 +623,7 @@
 								converter</parameter>
 							</td>
 							<td xmlns="http://docbook.org/ns/docbook">-</td>
-							<td xmlns="http://docbook.org/ns/docbook">Same as for
+							<td xmlns="http://docbook.org/ns/docbook">Same as for 
 							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html#Add">
 							SCons.Variables.Variables.Add()</link></td>
 						</tr>
@@ -663,7 +663,7 @@
 								Same as
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								type</parameter>
-								in
+								in 
 								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
 								optparse option attributes</link>
 								 .
@@ -684,7 +684,7 @@
 								Same as
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								default</parameter>
-								in
+								in 
 								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
 								optparse option attributes</link>
 							</td>
@@ -704,7 +704,7 @@
 								Same as
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								metavar</parameter>
-								in
+								in 
 								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
 								optparse option attributes</link>
 							</td>
@@ -724,7 +724,7 @@
 								Same as
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								nargs</parameter>
-								in
+								in 
 								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
 								optparse option attributes</link>
 							</td>
@@ -744,7 +744,7 @@
 								Same as
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								choices</parameter>
-								in
+								in 
 								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
 								optparse option attributes</link>
 							</td>
@@ -764,7 +764,7 @@
 								Same as
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								action</parameter>
-								in
+								in 
 								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
 								optparse option attributes</link>
 							</td>
@@ -784,7 +784,7 @@
 								Same as
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								const</parameter>
-								in
+								in 
 								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
 								optparse option attributes</link>
 							</td>
@@ -804,7 +804,7 @@
 								Same as
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								callback</parameter>
-								in
+								in 
 								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
 								optparse option attributes</link>
 							</td>
@@ -824,7 +824,7 @@
 								Same as
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								callback_args</parameter>
-								in
+								in 
 								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://docs.python.org/2/library/optparse.html#option-attributes">
 								optparse option attributes</link>
 							</td>
@@ -844,7 +844,7 @@
 								Same as
 								<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								callback_kwargs</parameter>
-								in
+								in 
 								<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								optparse option attributes</link>
 							</td>
@@ -856,7 +856,7 @@
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Declaring single GVar with GVarDeclU</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						In the following example, we declare same GVar as in
+						In the following example, we declare same GVar as in 
 						<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="example-declaring-single-gvar"/>
 						 , this time using
 						<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -867,37 +867,37 @@
 decl = GVarDeclU(env_key = &apos;xvar&apos;, opt_key = &apos;xvar&apos;, option = &apos;--xvar&apos;, type = &apos;string&apos;)
     </programlisting>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					As you may see, this notation is a little bit more compact than
+					As you may see, this notation is a little bit more compact than 
 					the previous one.</para>
 				</example>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				To this end we have created an object which represents single GVar
-				declaration. It&apos;s kind an isolated and we can&apos;t do with
-				it much more than determine the associated objects (ENV, VAR, OPT)
-				and their properties. More useful things can be done once we
-				collect all our GVars together. This is the matter of next
+				To this end we have created an object which represents single GVar 
+				declaration. It&apos;s kind an isolated and we can&apos;t do with 
+				it much more than determine the associated objects (ENV, VAR, OPT) 
+				and their properties. More useful things can be done once we 
+				collect all our GVars together. This is the matter of next 
 				subsections.</para>
 			</section>
 			<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Declaring multiple GVars</title>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				The GVar workflow assumes that there is a point when all GVar
-				declarationss get collected together. At this point we have a
-				complete information for the next step in the three-step procedure
-				outlined in
+				The GVar workflow assumes that there is a point when all GVar 
+				declarationss get collected together. At this point we have a 
+				complete information for the next step in the three-step procedure 
+				outlined in 
 				<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars-basics"/>
-				 . Having all GVars in a single dictionary we may commit them to
+				 . Having all GVars in a single dictionary we may commit them to 
 				create actual variables.</para>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					There is a special class named
 					<classname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					_GVarDecls</classname>
-					which represents a collection of GVar declarations. It&apos;s a
+					which represents a collection of GVar declarations. It&apos;s a 
 					kind of dict, but it also adds few methods on its own. The
 					<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					SConsGnu.GVars</code>
-					module provides two factory methods to create such collections,
+					module provides two factory methods to create such collections, 
 					these are
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					GVarDecls</methodname>
@@ -910,8 +910,8 @@ decl = GVarDeclU(env_key = &apos;xvar&apos;, opt_key = &apos;xvar&apos;, option 
 					The
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					GVarDecl</methodname>
-					function supports several forms of invocation. Here we give just a
-					couple of examples, the complete reference may be found in API
+					function supports several forms of invocation. Here we give just a 
+					couple of examples, the complete reference may be found in API 
 					documentation.
 				</para>
 				<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -938,9 +938,9 @@ bardecl = GVarDecl( {&apos;ENV_BAR&apos; : None},                         # ENV
 # put them all together
 decls = GVarDecls({ &apos;foo&apos; : foodecl, &apos;bar&apos; : bardecl })</programlisting>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						The keys in the above hash are GVar names. Values are objects
-						representing GVar declarations. Note, that in this example we use
-						different names for ENV, VAR and OPT. For example, the
+						The keys in the above hash are GVar names. Values are objects 
+						representing GVar declarations. Note, that in this example we use 
+						different names for ENV, VAR and OPT. For example, the 
 						construction variable (ENV) for GVar
 						<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						foo</varname>
@@ -957,13 +957,13 @@ decls = GVarDecls({ &apos;foo&apos; : foodecl, &apos;bar&apos; : bardecl })</pro
 					</para>
 				</example>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					You don&apos;t have to create each GVar declaration separatelly
-					before putting all your GVars to a collection. Instead, you may
-					simply put declaration arguments as parameters to GVarDecls and
+					You don&apos;t have to create each GVar declaration separatelly 
+					before putting all your GVars to a collection. Instead, you may 
+					simply put declaration arguments as parameters to GVarDecls and 
 					they will be passed to
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					GVarDecl</methodname>
-					for you. With this, the
+					for you. With this, the 
 					<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="example-using-gvardecls-with-a-dict-as-argument"/>
 					 may be refactored to the following form.
 				</para>
@@ -1006,8 +1006,8 @@ decls = GVarDecls([
 </programlisting>
 				</example>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				The third &quot;cannonical&quot; form of invocation is to use
-				keyword arguments, that is our variables foo and bar may be
+				The third &quot;cannonical&quot; form of invocation is to use 
+				keyword arguments, that is our variables foo and bar may be 
 				declared as follows</para>
 				<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
              xml:id="example-using-gvardecls-with-keyword-arguments">
@@ -1026,8 +1026,8 @@ decls = GVarDecls(
 )</programlisting>
 				</example>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				Of course the keyword arguments may be appended to normal
-				arguments, so the syntaxes of dict, list and keyword arguments may
+				Of course the keyword arguments may be appended to normal 
+				arguments, so the syntaxes of dict, list and keyword arguments may 
 				be mixed.</para>
 				<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1048,12 +1048,12 @@ decls = GVarDecls(
 					Because
 					<classname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					_GVarDecls</classname>
-					collection is a dict, it has this nice feature that we can remove,
+					collection is a dict, it has this nice feature that we can remove, 
 					add declarations or merge multiple
 					<classname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					_GVarDecls</classname>
-					collections. That means, we don&apos;t have to declare all the
-					variables in a single call, but may spread out this task among
+					collections. That means, we don&apos;t have to declare all the 
+					variables in a single call, but may spread out this task among 
 					multiple SConscripts.
 				</para>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1062,7 +1062,7 @@ decls = GVarDecls(
 					inherits from
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					GVarDecl</methodname>
-					the feature that some data may have to be repeated. For those, who
+					the feature that some data may have to be repeated. For those, who 
 					want a more compact notation, we provide the
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					GVarDeclsU</methodname>
@@ -1072,7 +1072,7 @@ decls = GVarDecls(
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Using GVarDeclsU</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						In this example we create variables foo and bar similar to
+						In this example we create variables foo and bar similar to 
 						<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="example-using-gvardecls-with-keyword-arguments"/>
 						 this time using
 						<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1090,11 +1090,11 @@ decls = GVarDeclsU(
 )</programlisting>
 				</example>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					In the above example we&apos;ve used keyword arguments, but all
+					In the above example we&apos;ve used keyword arguments, but all 
 					the calling conventions of
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					GVarDecls</methodname>
-					(that is passing list or dict, or mixing them with keyword
+					(that is passing list or dict, or mixing them with keyword 
 					arguments) apply also to
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					GVarDeclsU</methodname>
@@ -1105,11 +1105,11 @@ decls = GVarDeclsU(
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Default values and substitutions</title>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					When declaring a GVar variable one may define default values for
-					the associated construction variable, command line variable and
-					command line option. One feature of GVars is that they support
-					substitutions similarly as the construction variables do. Taking
-					construction variables as an example, if you have two construction
+					When declaring a GVar variable one may define default values for 
+					the associated construction variable, command line variable and 
+					command line option. One feature of GVars is that they support 
+					substitutions similarly as the construction variables do. Taking 
+					construction variables as an example, if you have two construction 
 					variables
 					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					foo</varname>
@@ -1130,7 +1130,7 @@ bar: BAR
 scons: `.&apos; is up to date.</screen>
 				</para>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				Substitutions may also be used in default values of command line
+				Substitutions may also be used in default values of command line 
 				variables and comand line options.</para>
 				<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1154,17 +1154,17 @@ decls = GVarDecls(
 						and updating the scons environment
 						<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						env</varname>
-						you should expect the following construction variables in
+						you should expect the following construction variables in 
 						environment
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">env[&apos;ENV_FOO&apos;] == &apos;${ENV_BAR}&apos; # True
 env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 					</para>
 				</example>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					The substitution machinery leaves the core job to SCons
-					Environment. What GVars do by their own is to just catch and
-					forward appropriatelly to the scons environment the variable
-					substitutions found in command line variables or options. In the
+					The substitution machinery leaves the core job to SCons 
+					Environment. What GVars do by their own is to just catch and 
+					forward appropriatelly to the scons environment the variable 
+					substitutions found in command line variables or options. In the 
 					above example the
 					<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					VAR_FOO=&apos;$VAR_BAR&apos;</code>
@@ -1192,16 +1192,16 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 				Once created, GVar declarations shall be committed with
 				<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				_GVarDecls.Commit()</code>
-				method. By committing declarations you create their associatted
-				commandline options and variables, construction variables, fill
-				them with default values and freeze the declarations such that
+				method. By committing declarations you create their associatted 
+				commandline options and variables, construction variables, fill 
+				them with default values and freeze the declarations such that 
 				it&apos;s guaranteed that they will not change. The
 				<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Commit</methodname>
-				method optionally spawns the actual GVar variables (to this end we
-				talked about variable &quot;declarations&quot;, not the variables)
-				which may be used to pass values between commandline
-				options/variables and scons environment. The result of commit is a
+				method optionally spawns the actual GVar variables (to this end we 
+				talked about variable &quot;declarations&quot;, not the variables) 
+				which may be used to pass values between commandline 
+				options/variables and scons environment. The result of commit is a 
 				new collection of GVar variables - an object of type
 				<classname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				_GVars</classname>
@@ -1222,10 +1222,10 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 					decls</varname>
 					of GVar declarations, we may commit them as follows
 					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">vars = decls.Commit(env,vars)</programlisting>
-					where env is an instance of
+					where env is an instance of 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="www.scons.org/doc/latest/HTML/scons-api/SCons.Environment.Base-class.html">
 					SCons Environment</link>
-					 object and vars is an instance of
+					 object and vars is an instance of 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html">
 					SCons Variables</link>
 					 . The
@@ -1234,7 +1234,7 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 					and
 					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					vars</varname>
-					, if given, will be populated with default values of construction
+					, if given, will be populated with default values of construction 
 					variables and command line variables provided with
 					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					decls</varname>
@@ -1263,10 +1263,10 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 							<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							env</parameter>
 						</td>
-						<td xmlns="http://docbook.org/ns/docbook">A
+						<td xmlns="http://docbook.org/ns/docbook">A 
 						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="www.scons.org/doc/latest/HTML/scons-api/SCons.Environment.Base-class.html">
-						SCons Environment</link> object to be populated with default
-						values of construction variables defined by GVar variables
+						SCons Environment</link> object to be populated with default 
+						values of construction variables defined by GVar variables 
 						declared here.</td>
 					</tr>
 					<tr xmlns="http://docbook.org/ns/docbook">
@@ -1274,9 +1274,9 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 							<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							variables</parameter>
 						</td>
-						<td xmlns="http://docbook.org/ns/docbook">A
+						<td xmlns="http://docbook.org/ns/docbook">A 
 						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html">
-						SCons Variables</link> object to be populated with new variables
+						SCons Variables</link> object to be populated with new variables 
 						defined by GVar variables.</td>
 					</tr>
 					<tr xmlns="http://docbook.org/ns/docbook">
@@ -1284,9 +1284,9 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 							<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							options</parameter>
 						</td>
-						<td xmlns="http://docbook.org/ns/docbook">If
+						<td xmlns="http://docbook.org/ns/docbook">If 
 						<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						True</literal>, the command-line options declared by GVar
+						True</literal>, the command-line options declared by GVar 
 						variables are created.</td>
 					</tr>
 					<tr xmlns="http://docbook.org/ns/docbook">
@@ -1295,16 +1295,16 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 							gvars</parameter>
 						</td>
 						<td xmlns="http://docbook.org/ns/docbook">
-							If
+							If 
 							<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							True</literal>
 							 (default) create and return a
 							<classname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							_GVars</classname>
-							object for further operation on variables and their values. If
+							object for further operation on variables and their values. If 
 							<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							False</literal>
-							 ,
+							 , 
 							<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							None</literal>
 							 is returned.
@@ -1319,10 +1319,10 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 				object if
 				<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				gvars</parameter>
-				parameter was
+				parameter was 
 				<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				True</literal>
-				 (default). Otherwise it returns
+				 (default). Otherwise it returns 
 				<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				None</literal>
 				 .
@@ -1331,7 +1331,7 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 				If you decide to not spawn
 				<classname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				_GVars</classname>
-				when Committing, the committed declarations may always be converted
+				when Committing, the committed declarations may always be converted 
 				to
 				<classname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				_GVars</classname>
@@ -1345,9 +1345,9 @@ vars = GVars._GVars(decls)</programlisting>
 			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Updating scons environment</title>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				The final step of the three-step procedure outlined at the end of
+				The final step of the three-step procedure outlined at the end of 
 				<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars-basics"/>
-				 is to update scons environment with GVar values. This is achieved
+				 is to update scons environment with GVar values. This is achieved 
 				with the
 				<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				_GVars.UpdateEnvironment</code>
@@ -1360,16 +1360,16 @@ vars = GVars._GVars(decls)</programlisting>
 				,
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				env</varname>
-				be an instance of
+				be an instance of 
 				<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="www.scons.org/doc/latest/HTML/scons-api/SCons.Environment.Base-class.html">
 				SCons Environment</link>
 				 , and
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				variables</varname>
-				be an instance of
+				be an instance of 
 				<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html">
 				SCons Variables</link>
-				 . We may pump values from command line variables and options to
+				 . We may pump values from command line variables and options to 
 				their associated construction variables in
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				env</varname>
@@ -1398,7 +1398,7 @@ vars = GVars._GVars(decls)</programlisting>
 							<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							env</parameter>
 						</td>
-						<td xmlns="http://docbook.org/ns/docbook">A
+						<td xmlns="http://docbook.org/ns/docbook">A 
 						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="www.scons.org/doc/latest/HTML/scons-api/SCons.Environment.Base-class.html">
 						SCons Environment</link> object to be updated.</td>
 					</tr>
@@ -1407,13 +1407,13 @@ vars = GVars._GVars(decls)</programlisting>
 							<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							variables</parameter>
 						</td>
-						<td xmlns="http://docbook.org/ns/docbook">A
+						<td xmlns="http://docbook.org/ns/docbook">A 
 						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html">
-						SCons Variables</link> object with
+						SCons Variables</link> object with 
 						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-variables">
-						SCons variables</link> to retrieve values from. If
+						SCons variables</link> to retrieve values from. If 
 						<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						None</literal>, then
+						None</literal>, then 
 						<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html">
 						SCons Variables</link> are not taken into account.</td>
 					</tr>
@@ -1423,10 +1423,10 @@ vars = GVars._GVars(decls)</programlisting>
 							options</parameter>
 						</td>
 						<td xmlns="http://docbook.org/ns/docbook">
-							If
+							If 
 							<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							True</literal>
-							 ,
+							 , 
 							<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-options">
 							command-line options</link>
 							 are taken into account when updating
@@ -1454,7 +1454,7 @@ vars = GVars._GVars(decls)</programlisting>
 			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Accessing GVar values</title>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				Values assigned to GVars get stored in their associated variables
+				Values assigned to GVars get stored in their associated variables 
 				in a SCons environment. For example, a value of GVar
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				foo</varname>
@@ -1464,20 +1464,20 @@ vars = GVars._GVars(decls)</programlisting>
 				. The name of the associatted construction variable (
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				xyz</varname>
-				) may be other than the name of its GVar and the mapping from GVars
-				to SCon environment does not have to be obvious. If we have a
-				number of such variables and we keep track of GVar names only, then
-				accessing their values directly in SCons environment may be
+				) may be other than the name of its GVar and the mapping from GVars 
+				to SCon environment does not have to be obvious. If we have a 
+				number of such variables and we keep track of GVar names only, then 
+				accessing their values directly in SCons environment may be 
 				cumbersome.
 			</para>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				We may use
+				We may use 
 				<emphasis xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				proxy</emphasis>
-				 to access GVar values using their original names. A proxy object
-				is a thin wrapper around SCons environment which internally
-				transforms GVar names to the names of their associated construction
-				variables. In the previous example you would query such a proxy for
+				 to access GVar values using their original names. A proxy object 
+				is a thin wrapper around SCons environment which internally 
+				transforms GVar names to the names of their associated construction 
+				variables. In the previous example you would query such a proxy for 
 				the value of
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				foo</varname>
@@ -1499,7 +1499,7 @@ vars = GVars._GVars(decls)</programlisting>
 					and construction variable
 					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					env_foo</varname>
-					. We then create a proxy object to access the value of variable
+					. We then create a proxy object to access the value of variable 
 					using its original name
 					<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					foo</varname>
@@ -1527,19 +1527,19 @@ scons: `.&apos; is up to date.</screen>
 				</para>
 			</example>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				The proxy object provides dict-like access to GVars as well as
+				The proxy object provides dict-like access to GVars as well as 
 				substitutions. In the above example, you may freely replace the line
 				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">print &quot;foo: %s&quot; % proxy[&apos;foo&apos;]</programlisting>
 				with
 				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">print proxy.subst(&quot;foo: $foo&quot;)</programlisting>
 			</para>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				Note, that the proxy object does not wrap all the functionality of
-				the environment, so most functions are not available. It just wraps
+				Note, that the proxy object does not wrap all the functionality of 
+				the environment, so most functions are not available. It just wraps 
 				dict access and the
 				<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				subst</methodname>
-				method. So other methods, including builders, pseudobuilders etc.
+				method. So other methods, including builders, pseudobuilders etc. 
 				are not available via proxy.
 			</para>
 		</section>
@@ -1547,7 +1547,7 @@ scons: `.&apos; is up to date.</screen>
 			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Putting it all together</title>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				In this section we&apos;ll walk through a complete example.
+				In this section we&apos;ll walk through a complete example. 
 				We&apos;ll define three GVar variables:
 				<itemizedlist xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<listitem xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1568,15 +1568,15 @@ scons: `.&apos; is up to date.</screen>
 						<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							bindir</varname>
-							- directory for installing executable programs that users can
+							- directory for installing executable programs that users can 
 							run.
 						</para>
 					</listitem>
 				</itemizedlist>
 			</para>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			To make our live a little bit more complicated, we&apos;ll associate
-			the following construction variables (ENV), command line variables
+			To make our live a little bit more complicated, we&apos;ll associate 
+			the following construction variables (ENV), command line variables 
 			(VAR) and command line options (OPT) with our GVars</para>
 			<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1634,7 +1634,7 @@ scons: `.&apos; is up to date.</screen>
 				</tbody>
 			</informaltable>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			The complete code of a SConstruct file using these variables is
+			The complete code of a SConstruct file using these variables is 
 			shown in the following example</para>
 			<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
             xml:id="example-gvars-complete">
@@ -1668,7 +1668,7 @@ print proxy.subst(&apos;bindir: $bindir&apos;)
 </programlisting>
 			</example>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			Let&apos;s play for a while with the
+			Let&apos;s play for a while with the 
 			<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="example-gvars-complete"/>
 			 . First we&apos;ll check the default values</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option>
@@ -1698,7 +1698,7 @@ bindir: /usr/local/exec/bin
 scons: `.&apos; is up to date.
 </screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			If we specify both, the command line variable and the command line
+			If we specify both, the command line variable and the command line 
 			option, the option takes precedence</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">--exec-prefix</option>=&apos;$opt_prefix/exec_o&apos; EXEC_PREFIX=&apos;$PREFIX/exec_v&apos;
 prefix: /usr/local
@@ -1707,8 +1707,8 @@ bindir: /usr/local/exec_o/bin
 scons: `.&apos; is up to date.
 </screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				Help strings for options are added automatically, we may see them
-				under
+				Help strings for options are added automatically, we may see them 
+				under 
 				<emphasis xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Local Options</emphasis>
 				 section when running
@@ -1732,8 +1732,8 @@ Local Options:
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Documenting Command Line variables</title>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Command line variables, as opposed to command line options, have
-					no help strings generated by default. To generate help for command
+					Command line variables, as opposed to command line options, have 
+					no help strings generated by default. To generate help for command 
 					line variables, one may invoke
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					GenerateVariablesHelpText</methodname>
@@ -1744,11 +1744,11 @@ Local Options:
 				</para>
 				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">Help( gv.GenerageVariablesHelpText(var, env) )</programlisting>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				Note, that the above declaration shadows local options (our
+				Note, that the above declaration shadows local options (our 
 				<option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				--prefix</option> for example), such that they&apos;re not
-				available anymore at help screen. To circumvent this problem, we
-				may dedicate separate option to print help for command line
+				--prefix</option> for example), such that they&apos;re not 
+				available anymore at help screen. To circumvent this problem, we 
+				may dedicate separate option to print help for command line 
 				variables.</para>
 				<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1760,7 +1760,7 @@ if GetOption(&apos;help_variables&apos;):
     Exit(0)</programlisting>
 				</example>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					If we integrate this snippet into SConscript from
+					If we integrate this snippet into SConscript from 
 					<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="example-gvars-complete"/>
 					 , then running
 					<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1786,7 +1786,7 @@ BINDIR: directory for installing executable programs that users can run
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Saving command line variables to a file</title>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Command line variables associatted with our GVars may be saved to
+					Command line variables associatted with our GVars may be saved to 
 					a file with
 					<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					SaveVariables</methodname>
@@ -1794,17 +1794,17 @@ BINDIR: directory for installing executable programs that users can run
 				</para>
 				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">gv.SaveVariables(var, &quot;.scons_variables&quot;, env)</programlisting>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				Note, that this saves only values changed via command line
-				(defaults are not saved). This takes into account input from a
-				command line variable and a command line option associated with a
-				given GVar. In any case, however, the value is saved as it was set
+				Note, that this saves only values changed via command line 
+				(defaults are not saved). This takes into account input from a 
+				command line variable and a command line option associated with a 
+				given GVar. In any case, however, the value is saved as it was set 
 				to a command line variable.</para>
 				<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Saving GVars to file</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-						If you integrate the following code snippet to the SConscript
-						file from
+						If you integrate the following code snippet to the SConscript 
+						file from 
 						<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="example-gvars-complete"/>
 						 ,
 						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">gv.SaveVariables(var, &apos;.scons_variables&apos;, env)</programlisting>
@@ -1821,7 +1821,7 @@ PREFIX = &apos;/opt&apos;
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Loading command line variables from file</title>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					This is done in standard way, that is by using the feature of
+					This is done in standard way, that is by using the feature of 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="www.scons.org/doc/HTML/scons-api/SCons.Variables.Variables-class.html">
 					SCons Variables</link>
 					 . The only thing that has to be done is to provide
@@ -1840,15 +1840,15 @@ PREFIX = &apos;/opt&apos;
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/prep/standards/standards.html">
 			GNU coding standards</link>
-			 introduce special automake variables which abstract installation
-			directories for certain categories of files (binaries,
-			documentation, etc.), see
+			 introduce special automake variables which abstract installation 
+			directories for certain categories of files (binaries, 
+			documentation, etc.), see 
 			<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#Installation-Directory-Variables">
 			Installation Directory Variables</link>
 			 section of the official documentation. The
 			<package xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			scons-gnu-build</package>
-			has a predefined set of GVar variables (see
+			has a predefined set of GVar variables (see 
 			<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars"/>
 			 ) with similar purpose.
 		</para>
@@ -1860,8 +1860,8 @@ PREFIX = &apos;/opt&apos;
 		</para>
 		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu import GDirVars</programlisting>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-		In order to have Installation Directory Variables activated you need
-		to append predefined directory variable declarations to your current
+		In order to have Installation Directory Variables activated you need 
+		to append predefined directory variable declarations to your current 
 		set of GVars declarations:</para>
 		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu import GDirVars
 # ...
@@ -1869,14 +1869,14 @@ PREFIX = &apos;/opt&apos;
 decls.update(GDirVars.DeclareGVars())
 # ...</programlisting>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-		The remaining steps are identical to those described in
+		The remaining steps are identical to those described in 
 		<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars"/>
 		 . Let&apos;s take a look at complete example.</para>
 		<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Using Installation Directory Variables</title>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				In this complete example we activate all the standard directory
+				In this complete example we activate all the standard directory 
 				variables. We store them in
 				<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				&apos;.scons_variables&apos;</code>
@@ -1901,7 +1901,7 @@ if GetOption(&apos;help_variables&apos;):
 gv.UpdateEnvironment(env, var, True)
 gv.SaveVariables(var, &apos;.scons_variables&apos;, env)</programlisting>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			Let&apos;s print a help message to see new options generated by our
+			Let&apos;s print a help message to see new options generated by our 
 			Directory Variables</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@barakus:$ scons -Q --help
 usage: scons [OPTION] [TARGET] ...
@@ -1917,8 +1917,8 @@ Local Options:
                                 programs modify while they run.
  &lt; .. and plenty of the other local options .. &gt;</screen>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			The Local Options above are the CLI options corresponding to our
-			Installation Directory variables. We can print the corresponding
+			The Local Options above are the CLI options corresponding to our 
+			Installation Directory variables. We can print the corresponding 
 			command line variables as well</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@barakus:$ scons -Q --help-variables
 
@@ -1932,44 +1932,34 @@ man1ext:
 &lt; .. a lot of other variables .. &gt;</screen>
 		</example>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			The values of directory variables may be accessed in SCons scripts
+			The values of directory variables may be accessed in SCons scripts 
 			via environment object
 			<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			env</varname>
-			. A directory variable named
-			<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			prefix</varname>
-			, for example, may be accessed as SCons environment variable named
-			<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			GNUBLD_prefix</varname>
-			.
+			. .
 		</para>
-		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">print env.subst(&apos;prefix: $GNUBLD_prefix&apos;)</programlisting>
+		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">print env.subst(&apos;prefix: $prefix&apos;)</programlisting>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			By default, environment variables associated with the Directory
-			Variables are prefixed with
-			<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			&apos;GNUBLD_&apos;</literal>
-			 prefix. This may be changed when declaring the Directory Variables.
-			The
+			By default, environment variables and their Directory Variables have 
+			same names. This may be changed when declaring the Directory 
+			Variables. The
 			<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			DeclareGVars</methodname>
 			function has an argument named
 			<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			env_key_transform</parameter>
-			which specifies how the GVar name should be converted to the name of
-			associated environment variable. For example, to use original GVar
-			name (without any prefixing) one has to provide identity
-			transformation as
+			which specifies how the GVar name should be converted to the name of 
+			associated environment variable. For example, to use original 
+			prefixed GVar name one has to provide the following expression as
 			<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			env_key_transform</parameter>
 			.
-			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">GDirVars.DeclareGVars(env_key_transform = lambda x : x)</programlisting>
+			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">GDirVars.DeclareGVars(env_key_transform = lambda x : &apos;PFX_%s&apos; % x)</programlisting>
 		</para>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-		The function has also parameters which control transformation of CLI
-		variable names, CLI options keys and names, and filtering which of
-		all the standard Directory Variables should be declared. This is
+		The function has also parameters which control transformation of CLI 
+		variable names, CLI options keys and names, and filtering which of 
+		all the standard Directory Variables should be declared. This is 
 		summarized in the following table</para>
 		<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			<thead xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1988,14 +1978,14 @@ man1ext:
 						Function or lambda (
 						<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						name_filter(name) -&gt; boolean</code>
-						) used to filter-out unwanted variables. Only these variables are
+						) used to filter-out unwanted variables. Only these variables are 
 						processed, for which
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						name_filter</parameter>
-						returns
+						returns 
 						<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						True</literal>
-						 . May be used to select only some of the standard directory
+						 . May be used to select only some of the standard directory 
 						variables to be activated.
 					</td>
 				</tr>
@@ -2004,8 +1994,8 @@ man1ext:
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						env_key_transform</parameter>
 					</td>
-					<td xmlns="http://docbook.org/ns/docbook">Function or lambda used
-					to transform canonical GVar names to keys used for corresponding
+					<td xmlns="http://docbook.org/ns/docbook">Function or lambda used 
+					to transform canonical GVar names to keys used for corresponding 
 					construction variables in a SCons environment</td>
 				</tr>
 				<tr xmlns="http://docbook.org/ns/docbook">
@@ -2013,8 +2003,8 @@ man1ext:
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						var_key_transform</parameter>
 					</td>
-					<td xmlns="http://docbook.org/ns/docbook">Function or lambda used
-					to transform canonical GVar names to keys used for corresponding
+					<td xmlns="http://docbook.org/ns/docbook">Function or lambda used 
+					to transform canonical GVar names to keys used for corresponding 
 					SCons command-line variables variable=value</td>
 				</tr>
 				<tr xmlns="http://docbook.org/ns/docbook">
@@ -2022,8 +2012,8 @@ man1ext:
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						opt_key_transform</parameter>
 					</td>
-					<td xmlns="http://docbook.org/ns/docbook">Function or lambda used
-					to transform canonical GVar names to keys used for corresponding
+					<td xmlns="http://docbook.org/ns/docbook">Function or lambda used 
+					to transform canonical GVar names to keys used for corresponding 
 					SCons command-line options --option=value</td>
 				</tr>
 				<tr xmlns="http://docbook.org/ns/docbook">
@@ -2031,7 +2021,7 @@ man1ext:
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						opt_name_transform</parameter>
 					</td>
-					<td xmlns="http://docbook.org/ns/docbook">Function or lambda used
+					<td xmlns="http://docbook.org/ns/docbook">Function or lambda used 
 					to transform canonical GVar names to option names</td>
 				</tr>
 			</tbody>
@@ -2042,16 +2032,16 @@ man1ext:
 		<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 		Autoconf-like tests</title>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			Autoconf-like tests are implemented using the existing feature of
-			scons - the
+			Autoconf-like tests are implemented using the existing feature of 
+			scons - the 
 			<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-user.html#chap-sconf">
 			Multi-Platform Configuration (Autoconf Functionality)</link>
-			 . The scons-gnu-build defines several SConf tests corresponding to
-			macros implemented by
+			 . The scons-gnu-build defines several SConf tests corresponding to 
+			macros implemented by 
 			<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/">
 			autoconf</link>
-			 . These tests are scattered over few modules. Before using tests
-			from a given module, one have to add them to a SConf object. The
+			 . These tests are scattered over few modules. Before using tests 
+			from a given module, one have to add them to a SConf object. The 
 			template code that uses autoconf-like tests is the following
 			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import XxxChecks, YyyChecks
@@ -2084,29 +2074,29 @@ env = cfg.Finish()</programlisting>
 			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="sec-alternative-programs">
 			Alternative programs</title>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			These tests check for the presence or behavior of particular
-			programs. They are used to choose between several alternative
-			programs and to decide what to do once one has been chosen. If there
-			is no macro specifically defined to check for a program you need,
-			and you don&apos;t need to check for any special properties of it,
+			These tests check for the presence or behavior of particular 
+			programs. They are used to choose between several alternative 
+			programs and to decide what to do once one has been chosen. If there 
+			is no macro specifically defined to check for a program you need, 
+			and you don&apos;t need to check for any special properties of it, 
 			then you can use one of the general program-check tests.</para>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				The tests for alternative programs are implemented in
 				<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				AcProgChecks</code>
-				submodule. In addition to the tests, the module provides
-				declaration of several
+				submodule. In addition to the tests, the module provides 
+				declaration of several 
 				<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars">
 				GVars</link>
-				 that may be used in conjuction with the tests. The variables for
+				 that may be used in conjuction with the tests. The variables for 
 				alternative programs are actually provided by
 				<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				AcProgVars</code>
-				submodule but they are also available directly via AcProgChecks for
+				submodule but they are also available directly via AcProgChecks for 
 				convenience.
 			</para>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				The SCons script which checks for alternative programs will usually
+				The SCons script which checks for alternative programs will usually 
 				contain statements such as
 				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
 from SConsGnu import AcProgChecks
@@ -2132,9 +2122,9 @@ env = cfg.Finish()
 print &quot;AWK: %r&quot; % proxy[&apos;AWK&apos;]</programlisting>
 			</para>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				The above code snippet checks for AWK program. If user invokes it
-				without additional command-line variables, the script will perform
-				check and select the awk program automatically. The result will be
+				The above code snippet checks for AWK program. If user invokes it 
+				without additional command-line variables, the script will perform 
+				check and select the awk program automatically. The result will be 
 				stored in GVar variable named
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				AWK</varname>
@@ -2161,25 +2151,25 @@ AWK: [&apos;myawk&apos;]
 				Most of the test functions have a parameter named
 				<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				selection</parameter>
-				. If this parameter is provided and its value differ from default,
-				then real test is not performed in fact and the function simply
+				. If this parameter is provided and its value differ from default, 
+				then real test is not performed in fact and the function simply 
 				returns the value of
 				<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				selection</parameter>
-				parameter. This simplifies overriding the checks with values
+				parameter. This simplifies overriding the checks with values 
 				provided by user (usually via commandline).
 			</para>
 			<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Particular program checks</title>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				These tests check for particular programs, whether they exist, and
+				These tests check for particular programs, whether they exist, and 
 				in some cases whether they support certain features.</para>
 				<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcProgAwk</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fAWK-254">
 					AC_PROG_AWK</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2201,9 +2191,9 @@ AWK: [&apos;myawk&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -2212,12 +2202,12 @@ AWK: [&apos;myawk&apos;]
 									programs</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									List of program names to look for (in order). If
+									List of program names to look for (in order). If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 (default), the default list
 									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-									[&apos;gawk&apos;, &apos;mawk&apos;, &apos;nawk&apos;,
+									[&apos;gawk&apos;, &apos;mawk&apos;, &apos;nawk&apos;, 
 									&apos;awk&apos;]</code>
 									will be used
 								</td>
@@ -2225,9 +2215,9 @@ AWK: [&apos;myawk&apos;]
 						</tbody>
 					</informaltable>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					The function returns an instance of
+					The function returns an instance of 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
-					SCons.Util.CLVar</link> list with the name of awk program in the
+					SCons.Util.CLVar</link> list with the name of awk program in the 
 					first place.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2252,7 +2242,7 @@ awk: [&apos;gawk&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcProgEgrep</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fEGREP-262">
 					AC_PROG_EGREP</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2275,7 +2265,7 @@ awk: [&apos;gawk&apos;]
 									grep</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									Path to
+									Path to 
 									<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									grep</command>
 									 program as found by
@@ -2289,18 +2279,18 @@ awk: [&apos;gawk&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 						</tbody>
 					</informaltable>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					The function returns an instance of
+					The function returns an instance of 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
-					SCons.Util.CLVar</link> list with the absolute path to an
-					appropriate grep program in the first place followed by necessary
+					SCons.Util.CLVar</link> list with the absolute path to an 
+					appropriate grep program in the first place followed by necessary 
 					command line options.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2327,7 +2317,7 @@ egrep: [&apos;/bin/grep&apos;, &apos;-E&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcProgFgrep</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fFGREP-266">
 					AC_PROG_FGREP</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2350,7 +2340,7 @@ egrep: [&apos;/bin/grep&apos;, &apos;-E&apos;]
 									grep</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									Path to
+									Path to 
 									<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									grep</command>
 									 program as found by
@@ -2364,18 +2354,18 @@ egrep: [&apos;/bin/grep&apos;, &apos;-E&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 						</tbody>
 					</informaltable>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					The function returns an instance of
+					The function returns an instance of 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
-					SCons.Util.CLVar</link> list with the absolute path to an
-					appropriate grep program in the first place followed by necessary
+					SCons.Util.CLVar</link> list with the absolute path to an 
+					appropriate grep program in the first place followed by necessary 
 					command line options.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2402,7 +2392,7 @@ fgrep: [&apos;/bin/grep&apos;, &apos;-F&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcProgGrep</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fGREP-258">
 					AC_PROG_GREP</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2424,9 +2414,9 @@ fgrep: [&apos;/bin/grep&apos;, &apos;-F&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -2435,7 +2425,7 @@ fgrep: [&apos;/bin/grep&apos;, &apos;-F&apos;]
 									programs</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									List of program names to look for (in order). If
+									List of program names to look for (in order). If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 (default), the default list
@@ -2447,9 +2437,9 @@ fgrep: [&apos;/bin/grep&apos;, &apos;-F&apos;]
 						</tbody>
 					</informaltable>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					The function returns an instance of
+					The function returns an instance of 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
-					SCons.Util.CLVar</link> list with the absolute path to grep
+					SCons.Util.CLVar</link> list with the absolute path to grep 
 					program in the first place followed by necessary options.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2474,7 +2464,7 @@ grep: [&apos;/bin/grep&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcProgInstall</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fINSTALL-270">
 					AC_PROG_INSTALL</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2496,9 +2486,9 @@ grep: [&apos;/bin/grep&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -2507,12 +2497,12 @@ grep: [&apos;/bin/grep&apos;]
 									programs</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									List of program names to look for (in order). If
+									List of program names to look for (in order). If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 (default), the default list
 									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-									[ &apos;ginstall&apos;, &apos;scoinst&apos;,
+									[ &apos;ginstall&apos;, &apos;scoinst&apos;, 
 									&apos;install&apos; ]</code>
 									will be used
 								</td>
@@ -2522,18 +2512,18 @@ grep: [&apos;/bin/grep&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									reject_paths</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">List of paths to be
-								rejected from search path. If
+								<td xmlns="http://docbook.org/ns/docbook">List of paths to be 
+								rejected from search path. If 
 								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-								None</literal>, a default list will be used which excludes all
+								None</literal>, a default list will be used which excludes all 
 								the broken versions described above.</td>
 							</tr>
 						</tbody>
 					</informaltable>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					The function returns an instance of
+					The function returns an instance of 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
-					SCons.Util.CLVar</link> list with the absolute path to install
+					SCons.Util.CLVar</link> list with the absolute path to install 
 					program in the first place.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2558,7 +2548,7 @@ install: [&apos;/usr/bin/install&apos;, &apos;-c&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcProgMkdirP</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fMKDIR_005fP-277">
 					AC_PROG_MKDIR_P</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2580,9 +2570,9 @@ install: [&apos;/usr/bin/install&apos;, &apos;-c&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -2591,7 +2581,7 @@ install: [&apos;/usr/bin/install&apos;, &apos;-c&apos;]
 									programs</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									List of program names to look for (in order). If
+									List of program names to look for (in order). If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 (default), the default list
@@ -2603,10 +2593,10 @@ install: [&apos;/usr/bin/install&apos;, &apos;-c&apos;]
 						</tbody>
 					</informaltable>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					The function returns an instance of
+					The function returns an instance of 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://scons.org/doc/production/HTML/scons-api/SCons.Util.CLVar-class.html">
-					SCons.Util.CLVar</link> list with the absolute path to mkdir
-					program in the first place followed by necessary commandline
+					SCons.Util.CLVar</link> list with the absolute path to mkdir 
+					program in the first place followed by necessary commandline 
 					options.</para>
 					<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2632,7 +2622,7 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcProgLex</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLEX-281">
 					AC_PROG_LEX</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2658,15 +2648,15 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 									A value of
 									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lex</varname>
-									to be returned by the function. If left default, the function
-									will perform check, select the program automatically, and
+									to be returned by the function. If left default, the function 
+									will perform check, select the program automatically, and 
 									return the result of the check as
 									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lex</varname>
 									. In this case the function returns tuple
 									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									(lex, None, None)</code>
-									as it&apos;s not possible to determine lexroot and lexlibs
+									as it&apos;s not possible to determine lexroot and lexlibs 
 									without running real tests.
 								</td>
 							</tr>
@@ -2676,7 +2666,7 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 									programs</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									List of program names to look for (in order). If
+									List of program names to look for (in order). If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 (default), the default list
@@ -2691,22 +2681,22 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 									lexroots</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									When
+									When 
 									<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lex</command>
-									 is invoked without
+									 is invoked without 
 									<option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									-o</option>
-									 option, it writes its output to default file named
+									 option, it writes its output to default file named 
 									<filename xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lex.yy.c</filename>
-									 or
+									 or 
 									<filename xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lexyy.c</filename>
-									 depending on version. In such case, the string
+									 depending on version. In such case, the string 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lex.yy</literal>
-									 or
+									 or 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lexyy</literal>
 									 is called the lex file root. The
@@ -2718,8 +2708,8 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 									. The
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lexroots</parameter>
-									parameter lists possible choices to pickup from. If it is set
-									to
+									parameter lists possible choices to pickup from. If it is set 
+									to 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 the default list
@@ -2734,14 +2724,14 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 									lexlibs</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									List of lex library names to be checked. The function tries to
-									link a
+									List of lex library names to be checked. The function tries to 
+									link a 
 									<filename xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									*.c</filename>
-									 file generated by
+									 file generated by 
 									<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lex</command>
-									 against each of the libraries from list. The first library,
+									 against each of the libraries from list. The first library, 
 									for which the compilation succeeds is returned as output
 									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lexlibs</varname>
@@ -2753,8 +2743,8 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									script</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Source code of a lex
-								script to be used when performing checks. If not
+								<td xmlns="http://docbook.org/ns/docbook">Source code of a lex 
+								script to be used when performing checks. If not 
 								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								None</literal> (default) a default script will be used.</td>
 							</tr>
@@ -2775,7 +2765,7 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lex</varname>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Name of the
+								<td xmlns="http://docbook.org/ns/docbook">Name of the 
 								<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								lex</command> program detected.</td>
 							</tr>
@@ -2784,16 +2774,16 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									lexroot</varname>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Root part of the
+								<td xmlns="http://docbook.org/ns/docbook">Root part of the 
 								<filename xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-								*.c</filename> file name generated by lex when invoked without
+								*.c</filename> file name generated by lex when invoked without 
 								<option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								-o</option> option.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
 								<td xmlns="http://docbook.org/ns/docbook">lexlibs</td>
-								<td xmlns="http://docbook.org/ns/docbook">List of libraries
-								needed to compile a program generated with
+								<td xmlns="http://docbook.org/ns/docbook">List of libraries 
+								needed to compile a program generated with 
 								<command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 								lex</command>.</td>
 							</tr>
@@ -2806,8 +2796,8 @@ mkdir_p: [&apos;/bin/mkdir&apos;, &apos;-p&apos;]
 									is defined as pointer. Lex can declare
 									<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									yytext</varname>
-									either as a pointer or an array. The default is
-									implementation-dependent. This return value allows to figure
+									either as a pointer or an array. The default is 
+									implementation-dependent. This return value allows to figure 
 									out which it is, since not all implementations provide
 									<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									%pointer</code>
@@ -2853,7 +2843,7 @@ yytextptr: True
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcProgLnS</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288">
 					AC_PROG_LN_S</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2875,9 +2865,9 @@ yytextptr: True
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 						</tbody>
@@ -2889,7 +2879,7 @@ yytextptr: True
 						if
 						<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						ln -s</code>
-						works or other list (with the replacement command) otherwise. The
+						works or other list (with the replacement command) otherwise. The 
 						alternatives are
 						<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						[ &apos;cp&apos;, &apos;-pR&apos; ]</code>
@@ -2926,7 +2916,7 @@ ln_s: [&apos;ln&apos;, &apos;-s&apos;]
 						Not implemented yet!</remark>
 					</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288">
 					AC_PROG_RANLIB</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2948,9 +2938,9 @@ ln_s: [&apos;ln&apos;, &apos;-s&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 						</tbody>
@@ -2960,7 +2950,7 @@ ln_s: [&apos;ln&apos;, &apos;-s&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcProgSed</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fSED-294">
 					AC_PROG_SED</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2982,9 +2972,9 @@ ln_s: [&apos;ln&apos;, &apos;-s&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -2993,7 +2983,7 @@ ln_s: [&apos;ln&apos;, &apos;-s&apos;]
 									programs</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									List of program names to look for (in order). If
+									List of program names to look for (in order). If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 (default), the default list
@@ -3028,7 +3018,7 @@ sed: [&apos;/bin/sed&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcProgYacc</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fYACC-298">
 					AC_PROG_YACC</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3050,9 +3040,9 @@ sed: [&apos;/bin/sed&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3061,7 +3051,7 @@ sed: [&apos;/bin/sed&apos;]
 									programs</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									List of program names to look for (in order). If
+									List of program names to look for (in order). If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 (default), the default list
@@ -3112,7 +3102,7 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcCheckProg</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fPROG-304">
 					AC_CHECK_PROG_</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3133,7 +3123,7 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									program</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Program name of the
+								<td xmlns="http://docbook.org/ns/docbook">Program name of the 
 								program to be detected.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3141,9 +3131,9 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3152,7 +3142,7 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 									value_if_found</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									Value to be returned, when the program is found. If set to
+									Value to be returned, when the program is found. If set to 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 (default) then the value of
@@ -3166,15 +3156,16 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									value_if_not_found</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Value to be returned,
+								<td xmlns="http://docbook.org/ns/docbook">Value to be returned, 
 								when the program is not found.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
 								<td xmlns="http://docbook.org/ns/docbook">
-									<parameter>path</parameter>
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									path</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									Search path. If
+									Search path. If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 , then
@@ -3188,10 +3179,10 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									pathext</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes)
-								used for executable files. If
+								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes) 
+								used for executable files. If 
 								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-								None</literal>, the default list of extensions for current
+								None</literal>, the default list of extensions for current 
 								platform will be used.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3199,7 +3190,7 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									reject</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">List of file names
+								<td xmlns="http://docbook.org/ns/docbook">List of file names 
 								(paths to programs) to be rejected from search.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3211,7 +3202,7 @@ yacc: [&apos;bison&apos;, &apos;-y&apos;]
 									To be displayed as program name instead of the
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									program</parameter>
-									. Used do display a
+									. Used do display a 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									&apos;Checking for &lt;prog_str&gt;... &apos;</literal>
 									 message.
@@ -3261,7 +3252,7 @@ curl: &apos;curl&apos;
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcCheckProgs</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fPROGS-307">
 					AC_CHECK_PROGS_</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3282,7 +3273,7 @@ curl: &apos;curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									programs</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Program names of the
+								<td xmlns="http://docbook.org/ns/docbook">Program names of the 
 								programs to be inspected.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3290,9 +3281,9 @@ curl: &apos;curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3300,15 +3291,16 @@ curl: &apos;curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									value_if_not_found</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Value to be returned,
+								<td xmlns="http://docbook.org/ns/docbook">Value to be returned, 
 								when the program is not found.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
 								<td xmlns="http://docbook.org/ns/docbook">
-									<parameter>path</parameter>
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									path</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									Search path. If
+									Search path. If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 , then
@@ -3322,10 +3314,10 @@ curl: &apos;curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									pathext</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes)
-								used for executable files. If
+								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes) 
+								used for executable files. If 
 								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-								None</literal>, the default list of extensions for current
+								None</literal>, the default list of extensions for current 
 								platform will be used.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3333,7 +3325,7 @@ curl: &apos;curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									reject</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">List of file names
+								<td xmlns="http://docbook.org/ns/docbook">List of file names 
 								(paths to programs) to be rejected from search.</td>
 							</tr>
 						</tbody>
@@ -3345,7 +3337,7 @@ curl: &apos;curl&apos;
 						for each program from
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						programs</parameter>
-						list. The first program that is found is returned. If none of the
+						list. The first program that is found is returned. If none of the 
 						programs is found, the
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						value_if_not_found</parameter>
@@ -3376,7 +3368,7 @@ curl: &apos;curl&apos;
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcPathProg</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fPROG-318">
 					AC_PATH_PROG_</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3397,7 +3389,7 @@ curl: &apos;curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									program</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Program name of the
+								<td xmlns="http://docbook.org/ns/docbook">Program name of the 
 								program to be detected.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3405,9 +3397,9 @@ curl: &apos;curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3415,15 +3407,16 @@ curl: &apos;curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									value_if_not_found</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Value to be returned,
+								<td xmlns="http://docbook.org/ns/docbook">Value to be returned, 
 								when the program is not found.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
 								<td xmlns="http://docbook.org/ns/docbook">
-									<parameter>path</parameter>
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									path</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									Search path. If
+									Search path. If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 , then
@@ -3437,10 +3430,10 @@ curl: &apos;curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									pathext</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes)
-								used for executable files. If
+								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes) 
+								used for executable files. If 
 								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-								None</literal>, the default list of extensions for current
+								None</literal>, the default list of extensions for current 
 								platform will be used.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3448,7 +3441,7 @@ curl: &apos;curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									reject</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">List of file names
+								<td xmlns="http://docbook.org/ns/docbook">List of file names 
 								(paths to programs) to be rejected from search.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3460,7 +3453,7 @@ curl: &apos;curl&apos;
 									To be displayed as program name instead of the
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									program</parameter>
-									. Used do display a
+									. Used do display a 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									&apos;Checking for &lt;prog_str&gt;... &apos;</literal>
 									 message.
@@ -3472,7 +3465,7 @@ curl: &apos;curl&apos;
 						If
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						program</parameter>
-						is found, then absolute path to the program is returned.
+						is found, then absolute path to the program is returned. 
 						Otherwise,
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						value_if_not_found</parameter>
@@ -3502,7 +3495,7 @@ curl: &apos;/usr/bin/curl&apos;
 					<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					AcPathProgs</title>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Corresponds to
+					Corresponds to 
 					<link xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fPROGS-321">
 					AC_PATH_PROGS_</link> autoconf macro.</para>
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -3523,7 +3516,7 @@ curl: &apos;/usr/bin/curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									programs</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Program names of the
+								<td xmlns="http://docbook.org/ns/docbook">Program names of the 
 								programs to be inspected.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3531,9 +3524,9 @@ curl: &apos;/usr/bin/curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									selection</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">A value to be
-								returned by the function. If left default, the function will
-								perform check, select the program automatically, and return the
+								<td xmlns="http://docbook.org/ns/docbook">A value to be 
+								returned by the function. If left default, the function will 
+								perform check, select the program automatically, and return the 
 								result of the check.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3541,15 +3534,16 @@ curl: &apos;/usr/bin/curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									value_if_not_found</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Value to be returned,
+								<td xmlns="http://docbook.org/ns/docbook">Value to be returned, 
 								when the program is not found.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
 								<td xmlns="http://docbook.org/ns/docbook">
-									<parameter>path</parameter>
+									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+									path</parameter>
 								</td>
 								<td xmlns="http://docbook.org/ns/docbook">
-									Search path. If
+									Search path. If 
 									<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									None</literal>
 									 , then
@@ -3563,10 +3557,10 @@ curl: &apos;/usr/bin/curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									pathext</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes)
-								used for executable files. If
+								<td xmlns="http://docbook.org/ns/docbook">Extensions (suffixes) 
+								used for executable files. If 
 								<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-								None</literal>, the default list of extensions for current
+								None</literal>, the default list of extensions for current 
 								platform will be used.</td>
 							</tr>
 							<tr xmlns="http://docbook.org/ns/docbook">
@@ -3574,7 +3568,7 @@ curl: &apos;/usr/bin/curl&apos;
 									<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 									reject</parameter>
 								</td>
-								<td xmlns="http://docbook.org/ns/docbook">List of file names
+								<td xmlns="http://docbook.org/ns/docbook">List of file names 
 								(paths to programs) to be rejected from search.</td>
 							</tr>
 						</tbody>
@@ -3586,7 +3580,7 @@ curl: &apos;/usr/bin/curl&apos;
 						for each program from
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						programs</parameter>
-						list. Absolute path to the first program found is returned. If
+						list. Absolute path to the first program found is returned. If 
 						none of the programs is found, the
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 						value_if_not_found</parameter>
@@ -3617,7 +3611,7 @@ curl: &apos;/usr/bin/curl&apos;
 		</section>
 	</section>
 	<!--
-		We stick to xi:include, as SCons dependency scanner recognizes them
+		We stick to xi:include, as SCons dependency scanner recognizes them 
 		automatically
 	-->
 </article>
