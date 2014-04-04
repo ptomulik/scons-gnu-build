@@ -32,11 +32,11 @@ from SConsGnu import Defaults
 
 class Test_gvar_env_key(unittest.TestCase):
     def test_gvar_env_key_prefix(self):
-        self.assertEqual(Defaults.gvar_env_key_prefix, 'GNUBLD_')
+        self.assertEqual(Defaults.gvar_env_key_prefix, '')
     def test_gvar_env_key_suffix(self):
         self.assertEqual(Defaults.gvar_env_key_suffix, '')
     def test_gvar_env_key_transform(self):
-        self.assertEqual(Defaults.gvar_env_key_transform('Key'), 'GNUBLD_Key')
+        self.assertEqual(Defaults.gvar_env_key_transform('Key'), 'Key')
 
 class Test_gvar_var_key(unittest.TestCase):
     def test_gvar_var_key_prefix(self):
@@ -48,11 +48,11 @@ class Test_gvar_var_key(unittest.TestCase):
 
 class Test_gvar_opt_key(unittest.TestCase):
     def test_gvar_opt_key_prefix(self):
-        self.assertEqual(Defaults.gvar_opt_key_prefix, 'gnubld_')
+        self.assertEqual(Defaults.gvar_opt_key_prefix, '')
     def test_gvar_opt_key_suffix(self):
         self.assertEqual(Defaults.gvar_opt_key_suffix, '')
     def test_gvar_opt_key_transform(self):
-        self.assertEqual(Defaults.gvar_opt_key_transform('Key'), 'gnubld_key')
+        self.assertEqual(Defaults.gvar_opt_key_transform('Key'), 'key')
 
 class Test_gvar_opt(unittest.TestCase):
     def test_gvar_opt_prefix(self):
@@ -66,7 +66,7 @@ class Test_gvar_opt(unittest.TestCase):
 
 class Test_gvar_declarations_var(unittest.TestCase):
     def test_gvar_declarations_var(self):
-        self.assertEqual(Defaults.gvar_declarations_var, 'GVAR_DECLARATIONS')
+        self.assertEqual(Defaults.gvar_declarations_var, 'GDECLS')
 
 if __name__ == "__main__":
     ldr = unittest.TestLoader()

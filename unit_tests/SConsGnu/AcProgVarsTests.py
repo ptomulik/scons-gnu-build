@@ -103,7 +103,7 @@ class Test_declare_gvars(unittest.TestCase):
     def check_decl(self, name, val):
         gdecl = AcProgVars.declare_gvars(lambda x : True)[name]
         self.assertEqual(gdecl.get_xxx_default(GVars.VAR), val)
-        self.assertEqual(gdecl.get_xxx_key(GVars.ENV), 'GNUBLD_%s' % name)
+        self.assertEqual(gdecl.get_xxx_key(GVars.ENV), name)
         self.assertEqual(gdecl.get_xxx_key(GVars.VAR), name)
     def test_AWK(self):
         """test AcProgVars.declare_gvars(lambda x : True)['AWK']"""
