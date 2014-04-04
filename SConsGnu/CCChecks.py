@@ -76,19 +76,67 @@ def _check_cc_version(context, cc):
     return ver
 
 def CheckCCVersion(context, cc = None):
+    """TODO: write documentation"""
     if cc is None:
         cc = context.env['CC']
     return _check_cc_version(context, cc)
 
 def CheckCXXVersion(context, cxx = None):
+    """TODO: write documentation"""
     if cxx is None:
         cxx = context.env['CXX']
     return _check_cc_version(context, cxx)
 
+_empty_prog = "int main() { return 0; }"
+def TryCompileWO(context, text=None, extension='.c', **overrides):
+    """TODO: write documentation"""
+    global _empty_prog
+    context.did_show_result = 1
+    env = context.sconf.env
+    context.sconf.env = env.Clone(**overrides)
+    if text is None:
+        text = _empty_prog
+    try:
+        out = context.sconf.TryCompile(text, extension)
+    finally:
+        context.sconf.env = env
+    return out
+
+def TryLinkWO(context, text=None, extension='.c', **overrides):
+    """TODO: write documentation"""
+    global _empty_prog
+    context.did_show_result = 1
+    env = context.sconf.env
+    context.sconf.env = env.Clone(**overrides)
+    if text is None:
+        text = _empty_prog
+    try:
+        out = context.sconf.TryLink(text, extension)
+    finally:
+        context.sconf.env = env
+    return out
+
+def TryRunWO(context, text=None, extension='.c', **overrides):
+    """TODO: write documentation"""
+    global _empty_prog
+    context.did_show_result = 1
+    env = context.sconf.env
+    context.sconf.env = env.Clone(**overrides)
+    if text is None:
+        text = _empty_prog
+    try:
+        out = context.sconf.TryRun(text, extension)
+    finally:
+        context.sconf.env = env
+    return out
+
 def Tests():
     """Returns all the checks implemented in CCompilerChecks as a dictionary."""
     return { 'CheckCCVersion'  : CheckCCVersion
-           , 'CheckCXXVersion' : CheckCXXVersion }
+           , 'CheckCXXVersion' : CheckCXXVersion
+           , 'TryCompileWO'    : TryCompileWO
+           , 'TryLinkWO'       : TryLinkWO
+           , 'TryRunWO'        : TryRunWO }
 
 # Local Variables:
 # # tab-width:4
