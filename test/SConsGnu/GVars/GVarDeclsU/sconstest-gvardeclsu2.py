@@ -28,7 +28,7 @@ Tests declaring variables with SConsGnu.GVar.GVarDecls() factory method.
 import TestSCons
 
 ##############################################################################
-# GVarDeclsU(): Test 2 
+# GVarDeclsU(): Test 2
 ##############################################################################
 test = TestSCons.TestSCons()
 test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')

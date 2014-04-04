@@ -32,7 +32,7 @@ manual_html_tgt = ['manual.html']
 
 html_xsl = env.arg2nodes('html.xsl')
 manual_html = env.DocbookHtml(manual_html_tgt, manual_html_src, xsl = html_xsl)
-css = env.Command('scons-gnu-build.css', 
+css = env.Command('scons-gnu-build.css',
                   env.File('scons-gnu-build.css').srcnode(),
                   Copy("$TARGET","$SOURCE"))
 env.Depends(manual_html,css)

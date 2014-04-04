@@ -28,17 +28,17 @@ TODO: write description
 import TestSCons
 
 ##############################################################################
-# 
+#
 ##############################################################################
 test = TestSCons.TestSCons()
 test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')
 test.write('SConstruct',
 """
 # SConstruct
-from SConsGnu import GProgChecks
+from SConsGnu import AcProgChecks
 env = Environment()               # create an environment
 cfg = Configure(env)              # create SConf object
-cfg.AddTests(GProgChecks.Tests()) # add tests for alternative programs
+cfg.AddTests(AcProgChecks.Tests()) # add tests for alternative programs
 grep = cfg.AcProgGrep()
 prog = cfg.AcProgEgrep(grep)      # perform the check
 env = cfg.Finish()                # finish configuration
@@ -47,8 +47,8 @@ print "egrep: %r" % prog          # print the returned value
 
 test.run()
 test.must_contain_all_lines(test.stdout(), [
-    'Checking for grep that handles long lines and -e... ', 
-    'Checking for egrep... ', 
+    'Checking for grep that handles long lines and -e... ',
+    'Checking for egrep... ',
     'egrep: '
 ])
 

@@ -1,15 +1,15 @@
-"""`SConsGnu.GProgChecks`
+"""`SConsGnu.AcProgChecks`
 
 Autoconf-like checks for `Alternative Programs`_. Check whether they exist, and
 in some cases whether they support certain features.
 
 **Example**::
 
-    from SConsGnu import GProgChecks
+    from SConsGnu import AcProgChecks
 
     env = Environment()
     cfg = Configure(env, config_h = 'config.h')
-    cfg.AddTests(GProgChecks.Tests())
+    cfg.AddTests(AcProgChecks.Tests())
 
     install = cfg.AcProgInstall()
 
@@ -48,8 +48,8 @@ from SCons.Util import CLVar, AppendPath, PrependPath, is_Sequence, is_String
 from subprocess import PIPE
 import re, os, fnmatch
 
-from SConsGnu.GProgVars import _auto, gvar_names, declare_gvars
-from SConsGnu.GProgVars import GVarNames, DeclareGVars
+from SConsGnu.AcProgVars import _auto, gvar_names, declare_gvars
+from SConsGnu.AcProgVars import GVarNames, DeclareGVars
 
 try:
     import cPickle as pickle
@@ -738,7 +738,7 @@ class _ProgLnS(object):
         with open(env.subst('$TARGET', target = target), 'w') as f:
             f.write(pickle.dumps(ln_s))
 
-        return 0 
+        return 0
     def strfunction(self, target, source, env):
         objstr = "%s()" % (self.__class__.__name__)
         tgt = env.subst(target, target = target, source = source)
@@ -1496,7 +1496,7 @@ def AcProgLex(context, selection=_auto, programs=None, lexroots=None, lexlibs=No
              ``yytext`` either as a pointer or an array. The default is
              implementation-dependent. This return value allows to figure out
              which it is, since not all implementations provide ``%pointer``
-             and ``%array`` declarations. 
+             and ``%array`` declarations.
 
 
     .. _AC_PROG_LEX: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLEX-281
@@ -1521,7 +1521,7 @@ def AcProgLnS(context, selection=_auto):
         selection
             If `_auto` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
-        
+
     .. _AC_PROG_LN_S: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288
     """
     context.Display("Checking whether ln -s works... ")

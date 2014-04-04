@@ -28,7 +28,7 @@ Tests SConsGnu.GVars.EnvProxy
 import TestSCons
 
 ##############################################################################
-# EnvProxy(): Test 1 
+# EnvProxy(): Test 1
 ##############################################################################
 test = TestSCons.TestSCons()
 test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')

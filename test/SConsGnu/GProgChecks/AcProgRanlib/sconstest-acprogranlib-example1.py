@@ -28,7 +28,7 @@ TODO: write description
 import TestSCons
 
 ##############################################################################
-# 
+#
 ##############################################################################
 test = TestSCons.TestSCons()
 test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')

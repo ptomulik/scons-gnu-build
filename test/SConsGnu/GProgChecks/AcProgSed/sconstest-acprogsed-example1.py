@@ -28,17 +28,17 @@ TODO: write description
 import TestSCons
 
 ##############################################################################
-# 
+#
 ##############################################################################
 test = TestSCons.TestSCons()
 test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')
 test.write('SConstruct',
 """
 # SConstruct
-from SConsGnu import GProgChecks
+from SConsGnu import AcProgChecks
 env = Environment()                 # create an environment
 cfg = Configure(env)                # create SConf object
-cfg.AddTests(GProgChecks.Tests())   # add tets for alternative programs
+cfg.AddTests(AcProgChecks.Tests())   # add tets for alternative programs
 sed = cfg.AcProgSed()               # perform the check
 env = cfg.Finish()                  # finish configuration
 print "sed: %r" % sed               # print returned value

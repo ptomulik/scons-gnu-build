@@ -28,7 +28,7 @@ Complete example involving GVars
 import TestSCons
 
 ##############################################################################
-# 
+#
 ##############################################################################
 test = TestSCons.TestSCons()
 test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')

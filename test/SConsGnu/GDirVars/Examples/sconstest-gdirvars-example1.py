@@ -28,7 +28,7 @@ Using Installation Directory Variables
 import TestSCons
 
 ##############################################################################
-# 
+#
 ##############################################################################
 test = TestSCons.TestSCons()
 test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')

@@ -1,4 +1,4 @@
-"""`SConsGnu.GProgVars`
+"""`SConsGnu.AcProgVars`
 
 Variables for `Alternative Programs`_.
 
