@@ -35,10 +35,10 @@ test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')
 test.write('SConstruct',
 """
 # SConstruct
-from SConsGnu import CCChecks
+from SConsGnu import CcChecks
 env = Environment()
 cfg = Configure(env)
-cfg.AddTests(CCChecks.Tests())
+cfg.AddTests(CcChecks.Tests())
 result = cfg.TryLinkWO(CXXFLAGS='-Wall -Wextra -pedantic')
 env = cfg.Finish()
 print "result: %r" % result

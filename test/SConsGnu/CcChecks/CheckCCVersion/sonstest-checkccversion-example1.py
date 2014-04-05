@@ -22,7 +22,7 @@
 __docformat__ = "restructuredText"
 
 """
-TryRunWO() example.
+Complete example involving GVars
 """
 
 import TestSCons
@@ -35,18 +35,19 @@ test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')
 test.write('SConstruct',
 """
 # SConstruct
-from SConsGnu import CCChecks
+from SConsGnu import CcChecks
 env = Environment()
 cfg = Configure(env)
-cfg.AddTests(CCChecks.Tests())
-result = cfg.TryRunWO(CXXFLAGS='-Wall -Wextra -pedantic')
+cfg.AddTests(CcChecks.Tests())
+ver = cfg.CheckCCVersion(CC="dummycompiler")
 env = cfg.Finish()
-print "result: (%r,%r)" % result
+print "version: %r" % ver
 """)
 
 test.run()
 test.must_contain_all_lines(test.stdout(), [
-    'result: '
+    'Checking for dummycompiler version... ',
+    'version: '
 ])
 
 test.pass_test()

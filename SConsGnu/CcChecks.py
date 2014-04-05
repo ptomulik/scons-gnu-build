@@ -1,4 +1,4 @@
-"""`SConsGnu.CCChecks`
+"""`SConsGnu.CcChecks`
 
 Configure checks for several features of C compilers. They're not covered by
 autoconf.
@@ -28,9 +28,9 @@ autoconf.
 __docformat__ = "restructuredText"
 
 from SCons.Util import CLVar
-from SConsGnu.CCVars import gvar_names, declare_gvars
-from SConsGnu.CCVars import GVarNames, DeclareGVars
-from SConsGnu.CC import _query_cc_version
+from SConsGnu.CcVars import gvar_names, declare_gvars
+from SConsGnu.CcVars import GVarNames, DeclareGVars
+from SConsGnu.Cc import _query_cc_version
 
 _empty_prog = """
 int main() { return 0; }
@@ -229,7 +229,7 @@ def CheckCXXFlag(context, flag, text=None,extension='.cpp', **overrides):
     return check_cc_flag(context, cc, flag, text, extension, **overrides)
 
 def Tests():
-    """Returns all the checks implemented in CCChecks as a dictionary."""
+    """Returns all the checks implemented in CcChecks as a dictionary."""
     return { 'CheckCCVersion'  : CheckCCVersion
            , 'CheckCXXVersion' : CheckCXXVersion
            , 'TryCompileWO'    : TryCompileWO

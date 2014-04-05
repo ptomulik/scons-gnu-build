@@ -22,7 +22,7 @@
 __docformat__ = "restructuredText"
 
 """
-CheckCXXVersion() example.
+TryRunWO() example.
 """
 
 import TestSCons
@@ -35,19 +35,18 @@ test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')
 test.write('SConstruct',
 """
 # SConstruct
-from SConsGnu import CCChecks
+from SConsGnu import CcChecks
 env = Environment()
 cfg = Configure(env)
-cfg.AddTests(CCChecks.Tests())
-ver = cfg.CheckCXXVersion(CXX='dummycompiler')
+cfg.AddTests(CcChecks.Tests())
+result = cfg.TryRunWO(CXXFLAGS='-Wall -Wextra -pedantic')
 env = cfg.Finish()
-print "version: %r" % ver
+print "result: (%r,%r)" % result
 """)
 
 test.run()
 test.must_contain_all_lines(test.stdout(), [
-    'Checking for dummycompiler version... ',
-    'version: '
+    'result: '
 ])
 
 test.pass_test()

@@ -1,4 +1,4 @@
-"""`SConsGnu.CCVars`
+"""`SConsGnu.CcVars`
 
 TODO: Write docs for XXX
 """

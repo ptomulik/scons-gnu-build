@@ -22,7 +22,7 @@
 __docformat__ = "restructuredText"
 
 """
-Complete example involving GVars
+CheckCCFlag() example.
 """
 
 import TestSCons
@@ -35,19 +35,19 @@ test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')
 test.write('SConstruct',
 """
 # SConstruct
-from SConsGnu import CCChecks
+from SConsGnu import CcChecks
 env = Environment()
 cfg = Configure(env)
-cfg.AddTests(CCChecks.Tests())
-ver = cfg.CheckCCVersion(CC="dummycompiler")
+cfg.AddTests(CcChecks.Tests())
+result = cfg.CheckCCFlag('-foobar', CFLAGS=['-Werror'], CC='dummycompiler')
 env = cfg.Finish()
-print "version: %r" % ver
+print "result: %r" % result
 """)
 
 test.run()
 test.must_contain_all_lines(test.stdout(), [
-    'Checking for dummycompiler version... ',
-    'version: '
+    'Checking whether dummycompiler supports -foobar... ',
+    'result: '
 ])
 
 test.pass_test()
