@@ -42,7 +42,7 @@ _cc_re_dict = {
 for key, expr in _cc_re_dict.items():
     _cc_re_dict[key] = re.compile(expr)
 
-def _canon_cc(env, ccpath):
+def _canon_cc(ccpath):
     ccname = os.path.basename(ccpath) 
     for cc, expr in _cc_re_dict.items():
         if expr.match(ccname):
@@ -97,7 +97,7 @@ def _run_cc_version_cmd(env, cmd):
     return stat, out, err
 
 def _query_cc_version(env, ccpath):
-    cc = _canon_cc(env, ccpath)
+    cc = _canon_cc(ccpath)
     cmd = _get_cc_version_cmd(env, cc, ccpath)
     if not cmd:
         return (None, 'unsupported compiler %s' % cc)
@@ -128,8 +128,7 @@ def CanonCC(env, **overrides):
         compilers** list . Otherwise, returns the basename of the original
         compiler (e.g. ``xyz-foo` for ``/opt/bin/xyz-foo``).
     """
-    env = env.Override(overrides)
-    return _canon_cc(env, env['CC'])
+    return _canon_cc(overrides.get('CC', env['CC']))
 
 def CanonCXX(env, **overrides):
     """Return "canonical name" of the C++ compiler used.
@@ -152,8 +151,7 @@ def CanonCXX(env, **overrides):
         compilers** list . Otherwise, returns the basename of the original
         compiler (e.g. ``xyz-foo++` for ``/opt/bin/xyz-foo++``).
     """
-    env = env.Override(overrides)
-    return _canon_cc(env, env['CXX'])
+    return _canon_cc(overrides.get('CXX', env['CXX']))
 
 def QueryCCVersion(env, **overrides):
     """Retrieve version of C compiler.
