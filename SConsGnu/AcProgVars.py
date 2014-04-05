@@ -173,7 +173,7 @@ def __map_std_var_triples(callback, name_filter = lambda x : True):
     return map(lambda x : callback(*x), triples)
 
 #############################################################################
-def gvar_names(name_filter = lambda x : True):
+def gvar_names(name_filter = lambda x : False):
     """Return list of standard GNU directory variable names
 
     By default this function returns empty list, you should provide custom
@@ -203,10 +203,7 @@ def declare_gvars(name_filter=lambda x : False,
         decl = { 'env_key'  : env_key_transform(name),
                  'var_key'  : var_key_transform(name),
                  'default'  : default,
-                 'help'     : desc,
-                 'type'     : 'string',
-                 'nargs'    : 1,
-                 'metavar'  : 'PATH' }
+                 'help'     : desc }
         return name, decl
 
     if is_Sequence(name_filter):

@@ -1,4 +1,4 @@
-"""`SConsGnu.CC`
+"""`SConsGnu.Cc`
 
 Several utility methods related to C compilers.
 """

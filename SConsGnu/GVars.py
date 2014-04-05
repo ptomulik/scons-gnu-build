@@ -819,6 +819,287 @@ class _GVars(object):
         proxy = self.VarEnvProxy(env)
         return variables.GenerateHelpText(proxy, *args, **kw)
 
+    def GetCurrentValues(self, env):
+        #--------------------------------------------------------------------
+        """Get current values of GVars stored in environment
+
+        :Parameters:
+            env
+                `SCons environment`_ object to update,
+        :Return:
+            Dict containing current values.
+
+        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
+        """
+        #--------------------------------------------------------------------
+        res = {}
+        proxy1 = self.EnvProxy(env, strict = True)
+        proxy2 = self.EnvProxy(res, strict = True)
+        for k in self.__keys:
+            try:
+                v = proxy1[k]
+            except KeyError:
+                # note: KeyError can be triggered by env.
+                pass
+            else:
+                proxy2[k] = v
+        return res
+
+    @staticmethod
+    def _is_unaltered(cur, org, v):
+        #--------------------------------------------------------------------
+        """Whether variable ``cur[v]`` has changed its value w.r.t. ``org[v]``.
+        
+        :Parameters:
+            cur
+                GVar proxy to `SCons Environment`_ or simply to a dictionary
+                which holds current values of variables. A `_GVarsEnvProxy`
+                object.
+            org
+                GVar proxy to a dictionary containig original values of GVars.
+            v
+                GVar name to be verified.
+
+        :Return:
+            ``True`` or ``False``
+
+        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
+        """
+        #--------------------------------------------------------------------
+        result = False
+        try:
+            curval = cur[v]
+        except KeyError:
+            try:
+                org[v]
+            except KeyError:
+                result = True
+        else:
+            try:
+                orgval = org[v]
+            except KeyError:
+                # cur[v] has been created in the meantime
+                pass
+            else:
+                if curval is orgval:
+                    result = True
+        return result
+
+    def GetUnaltered(self, env, org):
+        #--------------------------------------------------------------------
+        """Return GVars which have not changed since **org**.
+
+        :Parameters:
+            env
+                `SCons environment`_ object or simply a dictionary which holds
+                current values of GVars.
+            org
+                Dict containing orginal (default) values of variables.
+
+        :Return:
+            Dictionary with GVars that didn't change their value. The keys are
+            in ENV namespace (i.e. they're same as keys in **env**).
+
+        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
+        """
+        #--------------------------------------------------------------------
+        res = {}
+        envp = self.EnvProxy(env, strict = True)
+        orgp = self.EnvProxy(org, strict = True)
+        resp = self.EnvProxy(res, strict = True)
+        for k in self.__keys:
+            if _GVars._is_unaltered(envp, orgp, k):
+                resp[k] = envp[k]
+        return res
+
+    def GetAltered(self, env, org):
+        #--------------------------------------------------------------------
+        """Return GVars which have changed since orig.
+
+        :Parameters:
+            env
+                `SCons environment`_ object or simply a dictionary which holds
+                current values of GVars.
+            org
+                Dict containing original (default) values of variables.
+
+        :Return:
+            Dictionary with GVars that changed their value. The keys are in ENV
+            namespace (i.e. they're same as keys in **env**).
+
+        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
+        """
+        #--------------------------------------------------------------------
+        res = {}
+        envp = self.EnvProxy(env, strict = True)
+        orgp = self.EnvProxy(org, strict = True)
+        resp = self.EnvProxy(res, strict = True)
+        for k in self.__keys:
+            if not _GVars._is_unaltered(envp, orgp, k):
+                resp[k] = envp[k]
+        return res
+
+    def ReplaceUnaltered(self, env, org, new):
+        #--------------------------------------------------------------------
+        """Replace values of unaltered GVars in **env** with corresponding
+        values from **new**.
+        
+        For every GVar stored in **env**, if its value is same as corresponding
+        value in **org** the value in **env** gets replaced with corresponding
+        value in **new**.
+
+        :Parameters:
+            env
+                `SCons environment`_ object or simply a dict which holds
+                curreng values of GVars. It's also being updated with new
+                values,
+            org
+                Dict containing orginal (default) values of variables
+            new
+                Dict with new values to be used to update entries in **env**.
+
+        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
+        """
+        #--------------------------------------------------------------------
+        envp = self.EnvProxy(env, strict = True)
+        orgp = self.EnvProxy(org, strict = True)
+        for k in self.__keys:
+            if _GVars._is_unaltered(envp, orgp, k):
+                try:
+                    envp[k] = new[k] 
+                except KeyError:
+                    pass
+
+    def WithUnalteredReplaced(self, env, org, new):
+        #--------------------------------------------------------------------
+        """Return result of replacing GVars stored in **env** with
+        corresponding values from **new**, replacing only unaltered values.
+
+        :Parameters:
+            env
+                `SCons environment`_ object or simply a dict which holds
+                current values of GVars. 
+            org
+                Dict containing orginal (default) values of variables
+            new
+                Dict with new values to be used instead of those from **env**.
+
+        :Return:
+            New dictionary with values taken from **env** with some of them
+            overwriten by corresponding values from **new**.
+
+        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
+        """
+        #--------------------------------------------------------------------
+        res = {}
+        envp = self.EnvProxy(env, strict = True)
+        orgp = self.EnvProxy(org, strict = True)
+        resp = self.EnvProxy(res, strict = True)
+        for k in self.__keys:
+            if _GVars._is_unaltered(envp, orgp, k):
+                try:
+                    resp[k] = new[k] 
+                except KeyError:
+                    resp[k] = envp[k]
+            else:
+                resp[k] = envp[k]
+        return res
+
+    def PostprocessInplace(self, env, variables=None, options=False, ose={}, args=None):
+        #--------------------------------------------------------------------
+        """Gather values from **variables**, **options** and additional source
+        **ose** (usually ``os.environ``) and transfer them to **env**.
+
+        :Parameters:
+            env
+                `SCons environment`_ object or simply a dict which holds
+                current values of GVars. 
+            variables : ``SCons.Variables.Variables`` | None
+                if not ``None``, it should be a `SCons.Variables.Variables`_
+                object with `SCons variables`_ to retrieve values from,
+            options : boolean
+                if ``True``, `command-line options`_ are taken into account
+                when updating `env`.
+            ose
+                third source of data, usually ``os.environ``
+            args
+                passed as **args** to `UpdateEnvironment()`.
+
+        :Return:
+            New dictionary with only entries updated by either of the data
+            sources (variables, options or ose).
+
+        .. _SCons.Variables.Variables: http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html
+        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
+        .. _SCons variables: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-variables
+        .. _command-line options: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-options
+        """
+        #--------------------------------------------------------------------
+        org = self.GetCurrentValues(env)
+        self.UpdateEnvironment(env, variables, options, args)
+        self.ReplaceUnaltered(env, org, ose)
+
+    def GetPostprocessed(self, env, variables=None, options=False, ose={}, args=None):
+        #--------------------------------------------------------------------
+        """Return only those values, which changed due to **variables**,
+        **options** (CLI options) or **ose** (other source with lower
+        priority, usually ``os.environ``).
+
+        :Parameters:
+            env
+                `SCons environment`_ object or simply a dict which holds
+                current values of GVars. 
+            variables : ``SCons.Variables.Variables`` | None
+                if not ``None``, it should be a `SCons.Variables.Variables`_
+                object with `SCons variables`_ to retrieve values from,
+            options : boolean
+                if ``True``, `command-line options`_ are taken into account
+                when updating `env`.
+            ose
+                third source of data, usually ``os.environ``
+            args
+                passed as **args** to `UpdateEnvironment()`.
+
+        :Return:
+            New dictionary with only entries updated by either of the data
+            sources (variables, options or ose).
+
+        .. _SCons.Variables.Variables: http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html
+        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
+        .. _SCons variables: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-variables
+        .. _command-line options: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-options
+        """
+        #--------------------------------------------------------------------
+        org = self.GetCurrentValues(env)
+        self.UpdateEnvironment(env, variables, options, args)
+        wur = self.WithUnalteredReplaced(env, org, ose)
+        return self.GetAltered(wur, org)
+
+    def Unmangle(self, env):
+        #--------------------------------------------------------------------
+        """Unmangle dictionary **env** that holds GVar values. The resultant
+        dictionary has GVar keys (untransformed from ENV namespace).
+
+        :Parameters:
+            env
+                `SCons environment`_ object or simply a dict which holds
+                current values of GVars. 
+
+        :Return:
+            New dictionary with keys transformed back to GVar namespace.
+
+        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
+        """
+        #--------------------------------------------------------------------
+        proxy = self.EnvProxy(env, strict=True)
+        res = {}
+        for k in self.__keys:
+            try:
+                res[k] = proxy[k]
+            except KeyError:
+                pass
+        return res
+
 #############################################################################
 class _GVarDecl(object):
     #========================================================================

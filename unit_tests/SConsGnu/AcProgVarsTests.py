@@ -52,52 +52,52 @@ class Test_default_var_key_transform(unittest.TestCase):
 class Test_gvar_names(unittest.TestCase):
     def test_AWK_in_names(self):
         """AcProgVars.gvar_names() should contain 'AWK'"""
-        self.assertIn('AWK', AcProgVars.gvar_names())
+        self.assertIn('AWK', AcProgVars.gvar_names(lambda x : True))
     def test_EGREP_in_names(self):
         """AcProgVars.gvar_names() should contain 'EGREP'"""
-        self.assertIn('EGREP', AcProgVars.gvar_names())
+        self.assertIn('EGREP', AcProgVars.gvar_names(lambda x : True))
     def test_FGREP_in_names(self):
         """AcProgVars.gvar_names() should contain 'FGREP'"""
-        self.assertIn('FGREP', AcProgVars.gvar_names())
+        self.assertIn('FGREP', AcProgVars.gvar_names(lambda x : True))
     def test_GREP_in_names(self):
         """AcProgVars.gvar_names() should contain 'GREP'"""
-        self.assertIn('GREP', AcProgVars.gvar_names())
+        self.assertIn('GREP', AcProgVars.gvar_names(lambda x : True))
     def test_INSTALL_in_names(self):
         """AcProgVars.gvar_names() should contain 'INSTALL'"""
-        self.assertIn('INSTALL', AcProgVars.gvar_names())
+        self.assertIn('INSTALL', AcProgVars.gvar_names(lambda x : True))
     def test_INSTALL_DATA_in_names(self):
         """AcProgVars.gvar_names() should contain 'INSTALL_DATA'"""
-        self.assertIn('INSTALL_DATA', AcProgVars.gvar_names())
+        self.assertIn('INSTALL_DATA', AcProgVars.gvar_names(lambda x : True))
     def test_INSTALL_PROGRAM_in_names(self):
         """AcProgVars.gvar_names() should contain 'INSTALL_PROGRAM'"""
-        self.assertIn('INSTALL_PROGRAM', AcProgVars.gvar_names())
+        self.assertIn('INSTALL_PROGRAM', AcProgVars.gvar_names(lambda x : True))
     def test_INSTALL_SCRIPT_in_names(self):
         """AcProgVars.gvar_names() should contain 'INSTALL_SCRIPT'"""
-        self.assertIn('INSTALL_SCRIPT', AcProgVars.gvar_names())
+        self.assertIn('INSTALL_SCRIPT', AcProgVars.gvar_names(lambda x : True))
     def test_LEX_in_names(self):
         """AcProgVars.gvar_names() should contain 'LEX'"""
-        self.assertIn('LEX', AcProgVars.gvar_names())
+        self.assertIn('LEX', AcProgVars.gvar_names(lambda x : True))
     def test_LEX_OUTPUT_ROOT_in_names(self):
         """AcProgVars.gvar_names() should contain 'LEX_OUTPUT_ROOT'"""
-        self.assertIn('LEX_OUTPUT_ROOT', AcProgVars.gvar_names())
+        self.assertIn('LEX_OUTPUT_ROOT', AcProgVars.gvar_names(lambda x : True))
     def test_LEXLIB_in_names(self):
         """AcProgVars.gvar_names() should contain 'LEXLIB'"""
-        self.assertIn('LEXLIB', AcProgVars.gvar_names())
+        self.assertIn('LEXLIB', AcProgVars.gvar_names(lambda x : True))
     def test_LN_S_in_names(self):
         """AcProgVars.gvar_names() should contain 'LN_S'"""
-        self.assertIn('LN_S', AcProgVars.gvar_names())
+        self.assertIn('LN_S', AcProgVars.gvar_names(lambda x : True))
     def test_MKDIR_P_in_names(self):
         """AcProgVars.gvar_names() should contain 'MKDIR_P'"""
-        self.assertIn('MKDIR_P', AcProgVars.gvar_names())
+        self.assertIn('MKDIR_P', AcProgVars.gvar_names(lambda x : True))
     def test_RANLIB_in_names(self):
         """AcProgVars.gvar_names() should contain 'RANLIB'"""
-        self.assertIn('RANLIB', AcProgVars.gvar_names())
+        self.assertIn('RANLIB', AcProgVars.gvar_names(lambda x : True))
     def test_SED_in_names(self):
         """AcProgVars.gvar_names() should contain 'SED'"""
-        self.assertIn('SED', AcProgVars.gvar_names())
+        self.assertIn('SED', AcProgVars.gvar_names(lambda x : True))
     def test_YACC_in_names(self):
         """AcProgVars.gvar_names() should contain 'YACC'"""
-        self.assertIn('YACC', AcProgVars.gvar_names())
+        self.assertIn('YACC', AcProgVars.gvar_names(lambda x : True))
 
 class Test_declare_gvars(unittest.TestCase):
     def check_decl(self, name, val):

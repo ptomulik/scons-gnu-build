@@ -1,6 +1,31 @@
 """`SConsGnu.CcVars`
 
-TODO: Write docs for XXX
+Defines GVar variables related to C and C++ compilers.
+
+**General Description**
+
+Supported Variables:
+====================
+
+Programs:
+
+    CC
+        A C compiler to use
+    CXX
+        A C++ compiler to use
+    LINK
+        A linker to use
+
+Flags for programs:
+
+    CFLAGS
+        Flags for C compiler
+    CXXFLAGS
+        Flags for C++ compiler
+    CCFLAGS
+        Flags for both C and C++ compilers
+    LINKFLAGS
+        Flags for linker
 """
 
 #
@@ -27,7 +52,7 @@ TODO: Write docs for XXX
 __docformat__ = "restructuredText"
 
 from SConsGnu import Defaults
-from SCons.Util import is_Sequence
+from SCons.Util import is_Sequence, CLVar
 
 #############################################################################
 class _auto(object): pass
@@ -36,12 +61,32 @@ class _auto(object): pass
 # NOTE: variable substitutions must be in curly brackets, so use ${prefix}
 #       and not $prefix. This is required for proper prefixing/suffixing and
 #       transforming in certain parts of library
-__var_triples = [
-    ( 'CCVERSION',
-      'TODO: write help',
+__prog_var_triples = [
+    # Programs
+    ( 'CC',
+      'A C compiler to use',
+      _auto ),
+    ( 'CXX',
+      'A C++ compiler to use',
+      _auto ),
+    ( 'LINK',
+      'A linker to use',
+      _auto ),
+]
+
+__flag_var_triples = [
+    # Program flags
+    ( 'CFLAGS',
+      'Flags for C compiler',
       None ),
-    ( 'CXXVERSION',
-      'TODO: write help',
+    ( 'CXXFLAGS',
+      'Flags for C++ compiler',
+      None ),
+    ( 'CCFLAGS',
+      'Flags for both C and C++ compilers',
+      None ),
+    ( 'LINKFLAGS',
+      'Flags for linker',
       None ),
 ]
 
@@ -60,8 +105,8 @@ def __init_module_vars():
 __init_module_vars()
 
 #############################################################################
-def __map_var_triples(callback, name_filter = lambda x : True):
-    """Map all predefined variable triples (name, desc, default) via
+def __map_prog_var_triples(callback, name_filter = lambda x : True):
+    """Map all predefined GNU variable triples (name, desc, default) via
     `callback`.
 
     :Parameters:
@@ -79,7 +124,30 @@ def __map_var_triples(callback, name_filter = lambda x : True):
     :Returns:
         returns result of mapping through `callback`
     """
-    triples = filter(lambda t : name_filter(t[0]), __var_triples)
+    triples = filter(lambda t : name_filter(t[0]), __prog_var_triples)
+    return map(lambda x : callback(*x), triples)
+
+#############################################################################
+def __map_flag_var_triples(callback, name_filter = lambda x : True):
+    """Map all predefined GNU variable triples (name, desc, default) via
+    `callback`.
+
+    :Parameters:
+        callback : callable
+            function of type ``callback(name, desc, default)``, where
+
+                - ``name:`` is the name of variable being processed,
+                - ``desc:`` is short description,
+                - ``default:`` is the default value for the variable.
+        name_filter : callable
+            callable object (e.g. lambda) of type ``name_filter(name) ->
+            boolean`` used to filter-out unwanted variables; only these
+            variables are processed, for which name_filter returns ``True``
+
+    :Returns:
+        returns result of mapping through `callback`
+    """
+    triples = filter(lambda t : name_filter(t[0]), __flag_var_triples)
     return map(lambda x : callback(*x), triples)
 
 #############################################################################
@@ -101,28 +169,33 @@ def gvar_names(name_filter = lambda x : True):
     if is_Sequence(name_filter):
         seq = name_filter
         name_filter = lambda x : x in seq
-    return filter(name_filter, zip(*__var_triples)[0])
+    return filter(name_filter, zip(*[__prog_var_triples + _flag_var_triples])[0])
 
 #############################################################################
-def declare_gvars(name_filter=lambda x : False,
+def declare_gvars(name_filter=lambda x : True,
                   env_key_transform=default_env_key_transform,
                   var_key_transform=default_var_key_transform):
     from SCons.Variables.PathVariable import PathVariable
     from SConsGnu.GVars import GVarDeclsU
-    def _callback(name, desc, default):
+    def _prog_callback(name, desc, default):
         decl = { 'env_key'  : env_key_transform(name),
                  'var_key'  : var_key_transform(name),
                  'default'  : default,
-                 'help'     : desc,
-                 'type'     : 'string',
-                 'nargs'    : 1,
-                 'metavar'  : 'PATH' }
+                 'help'     : desc }
+        return name, decl
+    def _flag_callback(name, desc, default):
+        decl = { 'env_key'  : env_key_transform(name),
+                 'var_key'  : var_key_transform(name),
+                 'default'  : default,
+                 'converter': CLVar,
+                 'help'     : desc }
         return name, decl
 
     if is_Sequence(name_filter):
         seq = name_filter
         name_filter = lambda x : x in seq
-    return GVarDeclsU(__map_var_triples(_callback, name_filter))
+    return GVarDeclsU( __map_prog_var_triples(_prog_callback, name_filter)
+                     + __map_flag_var_triples(_flag_callback, name_filter) )
 
 ##############################################################################
 def GVarNames(**kw):
@@ -167,4 +240,4 @@ def DeclareGVars(**kw):
 # # tab-width:4
 # # indent-tabs-mode:nil
 # # End:
-# vim: set syntax=scons expandtab tabstop=4 shiftwidth=4:
+# vim: set syntax=python expandtab tabstop=4 shiftwidth=4:
