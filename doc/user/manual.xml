@@ -1940,21 +1940,20 @@ man1ext:
 		</para>
 		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">print env.subst(&apos;prefix: $prefix&apos;)</programlisting>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			By default, environment variables and their Directory Variables have 
-			same names. This may be changed when declaring the Directory 
-			Variables. The
+			By default, environment variables associated with Directory 
+			Variables have 
+			<literal>&apos;GVAR_&apos;</literal>
+			 prefix. This may be changed when declaring the Directory Variables. 
+			The
 			<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			DeclareGVars</methodname>
 			function has an argument named
 			<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			env_key_transform</parameter>
 			which specifies how the GVar name should be converted to the name of 
-			associated environment variable. For example, to use original 
-			prefixed GVar name one has to provide the following expression as
-			<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			env_key_transform</parameter>
-			.
-			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">GDirVars.DeclareGVars(env_key_transform = lambda x : &apos;PFX_%s&apos; % x)</programlisting>
+			associated environment variable. For example, to use original GVar 
+			name one has to&quot;:
+			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">GDirVars.DeclareGVars(env_key_transform = lambda x : x)</programlisting>
 		</para>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 		The function has also parameters which control transformation of CLI 

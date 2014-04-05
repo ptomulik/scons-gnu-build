@@ -163,7 +163,7 @@ class Test_declare_gvars(unittest.TestCase):
     def check_decl(self, name, val):
         gdecl = GDirVars.declare_gvars()[name]
         self.assertEqual(gdecl.get_xxx_default(GVars.VAR), val)
-        self.assertEqual(gdecl.get_xxx_key(GVars.ENV), name)
+        self.assertEqual(gdecl.get_xxx_key(GVars.ENV), "GVAR_%s" % name)
         self.assertEqual(gdecl.get_xxx_key(GVars.VAR), name)
         self.assertEqual(gdecl.get_xxx_key(GVars.OPT), name)
     def test_prefix(self):
