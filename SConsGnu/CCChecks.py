@@ -84,6 +84,24 @@ def _check_cc_version(context, env, cc):
         context.Result('none')
     return ver
 
+def _add_flags_to_overrides(env, overrides, name, newflags):
+    newflags = CLVar(newflags)
+    flags = overrides.get(name, env.get(name,[]))[:]
+    flags =  CLVar(flags)
+    for nf in newflags:
+        if not nf in flags:
+            flags.append(nf)
+    overrides[name] = flags
+    
+def check_cc_flag(context, cc, flag, text, extension, **overrides):
+    flag = CLVar(flag)
+    context.Display('Checking whether %s supports %s... ' % (cc, str(flag)))
+    context.sconf.cached = 1
+    res = context.sconf.TryCompileWO(text, extension, **overrides)
+    context.Result(res)
+    return res
+
+
 def CheckCCVersion(context, **overrides):
     """Check the version of C compiler
     
@@ -204,13 +222,60 @@ def TryRunWO(context, text=None, extension='.c', **overrides):
         context.sconf.env = env
     return out
 
+def CheckCCFlag(context, flag, text=None, extension='.c', **overrides):
+    """Check whether C compiler supports given flag(s)
+
+    This test adds **flag** to current set of 'CFLAGS' and tries to compile a
+    program contained in **text**.
+
+    :Parameter:
+        context
+            SCons configure context
+        text
+            Source code of the C/C++ program to be compiled.
+        extension
+            Extension of the test source file to be generated.
+        overrides
+            Used to override construction variables in context.sconf.env.
+    :Return:
+        Compilation status. If success, it evaluates to True.
+    """
+    cc = overrides.get('CC') or context.env['CC']
+    _add_flags_to_overrides(context.env, overrides, 'CFLAGS', flag)
+    return check_cc_flag(context, cc, flag, text, extension, **overrides)
+    
+def CheckCXXFlag(context, flag, text=None,extension='.cpp', **overrides):
+    """Check whether C++ compiler supports given flag(s)
+
+    This test adds **flag** to current set of 'CFLAGS' and tries to compile a
+    program contained in **text**.
+
+    :Parameter:
+        context
+            SCons configure context
+        text
+            Source code of the C/C++ program to be compiled.
+        extension
+            Extension of the test source file to be generated.
+        overrides
+            Used to override construction variables in context.sconf.env.
+    :Return:
+        Compilation status. If success, it evaluates to True.
+    """
+    cc = overrides.get('CXX') or context.env['CXX']
+    _add_flags_to_overrides(context.env, overrides, 'CXXFLAGS', flag)
+    return check_cc_flag(context, cc, flag, text, extension, **overrides)
+
 def Tests():
     """Returns all the checks implemented in CCompilerChecks as a dictionary."""
     return { 'CheckCCVersion'  : CheckCCVersion
            , 'CheckCXXVersion' : CheckCXXVersion
            , 'TryCompileWO'    : TryCompileWO
            , 'TryLinkWO'       : TryLinkWO
-           , 'TryRunWO'        : TryRunWO }
+           , 'TryRunWO'        : TryRunWO
+           , 'CheckCCFlag'     : CheckCCFlag
+           , 'CheckCXXFlag'    : CheckCXXFlag
+           }
 
 # Local Variables:
 # # tab-width:4
