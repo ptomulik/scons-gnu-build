@@ -39,14 +39,14 @@ from SConsGnu import CCChecks
 env = Environment()
 cfg = Configure(env)
 cfg.AddTests(CCChecks.Tests())
-ver = cfg.CheckCXXVersion('g++')
+ver = cfg.CheckCXXVersion(CXX='dummycompiler')
 env = cfg.Finish()
 print "version: %r" % ver
 """)
 
 test.run()
 test.must_contain_all_lines(test.stdout(), [
-    'Checking for g++ version... ',
+    'Checking for dummycompiler version... ',
     'version: '
 ])
 

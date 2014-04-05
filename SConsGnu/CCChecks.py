@@ -36,16 +36,21 @@ import re
 from SConsGnu.CCVars import gvar_names, declare_gvars
 from SConsGnu.CCVars import GVarNames, DeclareGVars
 
+_empty_prog = """
+int main() { return 0; }
+
+"""
+
 def _get_cc_version(env, cc):
     ccname = os.path.basename(cc) # because cc may be (an absolute) path
     if re.match(r'^(?:[a-z0-9_-]+-)?(?:cc|gcc|c\+\+|g\+\+)$', ccname):
         cmd = CLVar([cc, '-dumpversion'])
-        ccfamily = 'gcc'
+        ccswitch = 'gcc'
     elif re.match(r'^(?:[a-z0-9_-]+-)?(?:clang|clang\+\+)$', ccname):
-        cmd = CLVar([cc, '-dumpversion'])
-        ccfamily = 'clang'
+        cmd = CLVar([cc, '--version'])
+        ccswitch = 'clang'
     else:
-        return 'unsupported compiler'
+        return 'failed (unsupported compiler)'
 
     try:
         proc = _subproc(env, cmd, 'raise', stdout = PIPE)
@@ -54,42 +59,79 @@ def _get_cc_version(env, cc):
     out, err = proc.communicate()
     stat = proc.wait()
     if stat:
-        return 'failed'
+        return 'failed (output status: %d)' % stat
 
     # this gives rise to eventual postprocessing if some compiler needs it
-    if ccfamily == 'gcc' or ccfamily == 'clang':
-        out = out.strip()
-        return out
+    if ccswitch == 'gcc':
+        ver = out.strip()
+    elif ccswitch == 'clang':
+        found = re.search(r'clang +version +([0-9]+(?:\.[0-9]+)+)', out)
+        if not found:
+            return 'failed (can not parse version string)'
+        ver = found.group(1)
     else:
-        out = out.strip()
-        return out
+        ver = 'failed (unsupported compiler)'
+    return ver
 
-def _check_cc_version(context, cc):
+def _check_cc_version(context, env, cc):
     context.Display('Checking for %s version... ' % cc)
-    ver = _get_cc_version(context.env, cc)
+    ver = _get_cc_version(env, cc)
     if ver:
         context.Result(str(ver))
-        if ver in ['unsupported compiler', 'failed']:
+        if ver.startswith('failed'):
             ver = None
     else:
         context.Result('none')
     return ver
 
-def CheckCCVersion(context, cc = None):
-    """TODO: write documentation"""
-    if cc is None:
-        cc = context.env['CC']
-    return _check_cc_version(context, cc)
+def CheckCCVersion(context, **overrides):
+    """Check the version of C compiler
+    
+    :Parameters:
+        context
+            SCons configure context
+        overrides
+            Used to override current construction variables (e.g. CC) in
+            context.env.
+    :Return:
+        String representing version of the current compiler or ``None``.
+    """
+    env = context.env.Override(overrides)
+    return _check_cc_version(context, env, env['CC'])
 
-def CheckCXXVersion(context, cxx = None):
-    """TODO: write documentation"""
-    if cxx is None:
-        cxx = context.env['CXX']
-    return _check_cc_version(context, cxx)
+def CheckCXXVersion(context, **overrides):
+    """Check the version of C++ compiler
+    
+    :Parameters:
+        context
+            SCons configure context
+        overrides
+            Used to override current construction variables (e.g. CXX) in
+            context.env.
+    :Return:
+        String representing version of the current compiler or ``None``.
+    """
+    env = context.env.Override(overrides)
+    return _check_cc_version(context, env, env['CXX'])
 
-_empty_prog = "int main() { return 0; }"
 def TryCompileWO(context, text=None, extension='.c', **overrides):
-    """TODO: write documentation"""
+    """Try compile a program in a modified environment.
+    
+    This test temporarily applies **overrides** to context.sconf.env and runs
+    ``context.sconf.TryCompile(text, extension)``.
+
+    :Parameter:
+        context
+            SCons configure context
+        text
+            Source code of the C/C++ program to be compiled.
+        extension
+            Extension of the test source file to be generated.
+        overrides
+            Used to override construction variables in context.sconf.env.
+    :Return:
+        Compilation status. If success, it evaluates to True.
+    """
     global _empty_prog
     context.did_show_result = 1
     env = context.sconf.env
@@ -103,7 +145,23 @@ def TryCompileWO(context, text=None, extension='.c', **overrides):
     return out
 
 def TryLinkWO(context, text=None, extension='.c', **overrides):
-    """TODO: write documentation"""
+    """Try compile and link a program in a modified environment.
+    
+    This test temporarily applies **overrides** to context.sconf.env and runs
+    ``context.sconf.TryLink(text, extension)``.
+
+    :Parameter:
+        context
+            SCons configure context
+        text
+            Source code of the C/C++ program to be compiled.
+        extension
+            Extension of the test source file to be generated.
+        overrides
+            Used to override construction variables in context.sconf.env.
+    :Return:
+        Compilation status. If success, it evaluates to True.
+    """
     global _empty_prog
     context.did_show_result = 1
     env = context.sconf.env
@@ -117,7 +175,23 @@ def TryLinkWO(context, text=None, extension='.c', **overrides):
     return out
 
 def TryRunWO(context, text=None, extension='.c', **overrides):
-    """TODO: write documentation"""
+    """Try to compile, link and run a program in a modified environment.
+    
+    This test temporarily applies **overrides** to context.sconf.env and runs
+    ``context.sconf.TryRun(text, extension)``.
+
+    :Parameter:
+        context
+            SCons configure context
+        text
+            Source code of the C/C++ program to be compiled.
+        extension
+            Extension of the test source file to be generated.
+        overrides
+            Used to override construction variables in context.sconf.env.
+    :Return:
+        Compilation status. If success, it evaluates to True.
+    """
     global _empty_prog
     context.did_show_result = 1
     env = context.sconf.env
