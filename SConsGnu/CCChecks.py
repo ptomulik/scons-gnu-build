@@ -1,4 +1,4 @@
-"""`SConsGnu.CCompilerChecks`
+"""`SConsGnu.CCChecks`
 
 Configure checks for several features of C compilers. They're not covered by
 autoconf.
@@ -27,61 +27,23 @@ autoconf.
 
 __docformat__ = "restructuredText"
 
-from SCons.Action import _subproc
-from subprocess import PIPE
-from SCons.Util import is_String, CLVar
-import os
-import re
-
+from SCons.Util import CLVar
 from SConsGnu.CCVars import gvar_names, declare_gvars
 from SConsGnu.CCVars import GVarNames, DeclareGVars
+from SConsGnu.CC import _query_cc_version
 
 _empty_prog = """
 int main() { return 0; }
 
 """
 
-def _get_cc_version(env, cc):
-    ccname = os.path.basename(cc) # because cc may be (an absolute) path
-    if re.match(r'^(?:[a-z0-9_-]+-)?(?:cc|gcc|c\+\+|g\+\+)$', ccname):
-        cmd = CLVar([cc, '-dumpversion'])
-        ccswitch = 'gcc'
-    elif re.match(r'^(?:[a-z0-9_-]+-)?(?:clang|clang\+\+)$', ccname):
-        cmd = CLVar([cc, '--version'])
-        ccswitch = 'clang'
-    else:
-        return 'failed (unsupported compiler)'
-
-    try:
-        proc = _subproc(env, cmd, 'raise', stdout = PIPE)
-    except EnvironmentError:
-        pass
-    out, err = proc.communicate()
-    stat = proc.wait()
-    if stat:
-        return 'failed (output status: %d)' % stat
-
-    # this gives rise to eventual postprocessing if some compiler needs it
-    if ccswitch == 'gcc':
-        ver = out.strip()
-    elif ccswitch == 'clang':
-        found = re.search(r'clang +version +([0-9]+(?:\.[0-9]+)+)', out)
-        if not found:
-            return 'failed (can not parse version string)'
-        ver = found.group(1)
-    else:
-        ver = 'failed (unsupported compiler)'
-    return ver
-
 def _check_cc_version(context, env, cc):
     context.Display('Checking for %s version... ' % cc)
-    ver = _get_cc_version(env, cc)
+    ver, err = _query_cc_version(env, cc)
     if ver:
-        context.Result(str(ver))
-        if ver.startswith('failed'):
-            ver = None
+        context.Result(ver)
     else:
-        context.Result('none')
+        context.Result("failed (%s)" % err)
     return ver
 
 def _add_flags_to_overrides(env, overrides, name, newflags):
@@ -138,7 +100,7 @@ def TryCompileWO(context, text=None, extension='.c', **overrides):
     This test temporarily applies **overrides** to context.sconf.env and runs
     ``context.sconf.TryCompile(text, extension)``.
 
-    :Parameter:
+    :Parameters:
         context
             SCons configure context
         text
@@ -168,7 +130,7 @@ def TryLinkWO(context, text=None, extension='.c', **overrides):
     This test temporarily applies **overrides** to context.sconf.env and runs
     ``context.sconf.TryLink(text, extension)``.
 
-    :Parameter:
+    :Parameters:
         context
             SCons configure context
         text
@@ -198,7 +160,7 @@ def TryRunWO(context, text=None, extension='.c', **overrides):
     This test temporarily applies **overrides** to context.sconf.env and runs
     ``context.sconf.TryRun(text, extension)``.
 
-    :Parameter:
+    :Parameters:
         context
             SCons configure context
         text
@@ -228,7 +190,7 @@ def CheckCCFlag(context, flag, text=None, extension='.c', **overrides):
     This test adds **flag** to current set of 'CFLAGS' and tries to compile a
     program contained in **text**.
 
-    :Parameter:
+    :Parameters:
         context
             SCons configure context
         text
@@ -250,7 +212,7 @@ def CheckCXXFlag(context, flag, text=None,extension='.cpp', **overrides):
     This test adds **flag** to current set of 'CFLAGS' and tries to compile a
     program contained in **text**.
 
-    :Parameter:
+    :Parameters:
         context
             SCons configure context
         text
@@ -267,7 +229,7 @@ def CheckCXXFlag(context, flag, text=None,extension='.cpp', **overrides):
     return check_cc_flag(context, cc, flag, text, extension, **overrides)
 
 def Tests():
-    """Returns all the checks implemented in CCompilerChecks as a dictionary."""
+    """Returns all the checks implemented in CCChecks as a dictionary."""
     return { 'CheckCCVersion'  : CheckCCVersion
            , 'CheckCXXVersion' : CheckCXXVersion
            , 'TryCompileWO'    : TryCompileWO
