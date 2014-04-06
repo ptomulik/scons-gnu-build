@@ -182,6 +182,28 @@ def gvar_names(name_filter = lambda x : True):
 def declare_gvars(defaults = {}, name_filter=lambda x : True,
                   env_key_transform=default_env_key_transform,
                   var_key_transform=default_var_key_transform):
+    """Return the variables representing particular programs as
+    ``GVar`` variable declarations `_GVarDecls` (see `SConsGnu.GVars`).
+
+    :Parameters:
+        defaults : dict
+            User-specified default values for the GVars being declared. You'll
+            usually put your SCons Environment object env here.
+        name_filter : callable
+            callable object (e.g. lambda) of type ``name_filter(name) ->
+            boolean`` used to filter-out unwanted variables; only these
+            variables are processed, for which name_filter returns ``True``
+        env_key_transform : callable
+            function or lambda used to transform canonical ``GVar`` names to
+            keys used for corresponding construction variables in a SCons
+            environment (default: `default_env_key_transform`)
+        var_key_transform : callable
+            function of lambda used to trasform canonical ``GVar`` names to
+            keys used for corresponding SCons command-line variables
+            ``variable=value`` (default: `default_var_key_transform`)
+    :Returns:
+        a dictionary-like object of type `SConsGnu.GVar._GVarDecls`
+    """
     from SCons.Variables.PathVariable import PathVariable
     from SConsGnu.GVars import GVarDeclsU
     def _prog_callback(name, desc, default):
@@ -232,6 +254,9 @@ def DeclareGVars(**kw):
     ``GVar`` variable declarations `_GVarDecls` (see `SConsGnu.GVars`).
 
     :Keywords:
+        defaults : dict
+            User-specified default values for the GVars being declared. You'll
+            usually put your SCons Environment object env here.
         name_filter : callable
             callable object (e.g. lambda) of type ``name_filter(name) ->
             boolean`` used to filter-out unwanted variables; only these

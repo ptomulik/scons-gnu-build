@@ -37,7 +37,7 @@ test.write('SConstruct',
 # SConstruct
 from SConsGnu import GVars, AcDirVars
 env = Environment()
-var = Variables('.scons_variables')
+var = Variables('.scons.variables')
 decls = AcDirVars.DeclareGVars()
 gv = decls.Commit(env, var, True)
 # Add help
@@ -48,7 +48,7 @@ if GetOption('help_variables'):
     Exit(0)
 
 gv.UpdateEnvironment(env, var, True)
-gv.SaveVariables(var, '.scons_variables', env)
+gv.SaveVariables(var, '.scons.variables', env)
 """)
 
 test.run(arguments = ['-Q', '--help'])
@@ -73,12 +73,12 @@ test.must_contain_all_lines(test.stdout(), [
 ])
 
 test.run(arguments = [])
-test.must_exist('.scons_variables')
-test.must_not_contain('.scons_variables', 'prefix')
+test.must_exist('.scons.variables')
+test.must_not_contain('.scons.variables', 'prefix')
 
 test.run(arguments = ['prefix=/', 'exec_prefix=/usr'])
-test.must_exist('.scons_variables')
-test.must_match('.scons_variables', "prefix = '/'\nexec_prefix = '/usr'\n")
+test.must_exist('.scons.variables')
+test.must_match('.scons.variables', "prefix = '/'\nexec_prefix = '/usr'\n")
 
 test.pass_test()
 

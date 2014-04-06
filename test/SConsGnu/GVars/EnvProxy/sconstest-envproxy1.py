@@ -40,12 +40,12 @@ from SConsGnu.GVars import GVarDeclsU
 env = Environment()
 var = Variables()
 
-gds = GVarDeclsU( foo = { 'env_key' : 'env_foo', 'var_key' : 'foo' } )
-gvs = gds.Commit(env, var)
-gvs.UpdateEnvironment(env, var)
+decls = GVarDeclsU( foo = { 'env_key' : 'env_foo', 'var_key' : 'foo' } )
+gvars = decls.Commit(env, var)
+gvars.Postprocess(env, var)
 
 # Create proxy object
-proxy = gvs.EnvProxy(env)
+proxy = gvars.EnvProxy(env)
 # Access variable via proxy
 print "foo: %s" % proxy['foo']
 """)

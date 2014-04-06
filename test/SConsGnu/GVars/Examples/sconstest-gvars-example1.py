@@ -49,17 +49,17 @@ decls = GVars.GVarDeclsU(
 )
 env = Environment()
 var = Variables()
-gv = decls.Commit(env, var, True)
-gv.UpdateEnvironment(env, var, True)
+gvars = decls.Commit(env, var, True)
+gvars.Postprocess(env, var, True)
 
 AddOption( '--help-variables', dest='help_variables', action='store_true',
            help='print help for CLI variables' )
 if GetOption('help_variables'):
-    print gv.GenerateVariablesHelpText(var, env)
+    print gvars.GenerateVariablesHelpText(var, env)
     Exit(0)
 
 # Create proxy to access GVars using their original names
-proxy = gv.EnvProxy(env)
+proxy = gvars.EnvProxy(env)
 
 # Print values.
 print proxy.subst('prefix: $prefix')

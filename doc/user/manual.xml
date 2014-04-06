@@ -87,6 +87,9 @@
 				</listitem>
 			</itemizedlist>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+			In addition values from the operating system environment may be 
+			easily incorporated into GVars.</para>
+			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				With GVars we maintain abstract variables whose values are settable 
 				via scons command line and are passed to scons environment 
 				automagically. Command line variables or options act as inputs for 
@@ -139,8 +142,8 @@
 				</listitem>
 				<listitem xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-					Update SCons environment with variable values, 
-					<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-updating-env-with-gvars"/>
+					Postprocess GVars to update SCons environment, see 
+					<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-postprocessing-gvars"/>
 					 .</para>
 				</listitem>
 			</orderedlist>
@@ -1341,19 +1344,20 @@ env[&apos;ENV_BAR&apos;] == &apos;BAR&apos;        # True</programlisting>
 vars = GVars._GVars(decls)</programlisting>
 		</section>
 		<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
-           xml:id="sec-updating-env-with-gvars">
+           xml:id="sec-postprocessing-gvars">
 			<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			Updating scons environment</title>
+			Postprocessing GVars</title>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				The final step of the three-step procedure outlined at the end of 
 				<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars-basics"/>
-				 is to update scons environment with GVar values. This is achieved 
+				 is to postprocess GVars to incorporate values from CLI variables, 
+				options and OS environment into SCons environment. This is achieved 
 				with the
 				<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				_GVars.UpdateEnvironment</code>
+				_GVars.Postprocess</code>
 				method. Let
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				gv</varname>
+				gvars</varname>
 				be an instance of
 				<classname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				_GVars</classname>
@@ -1375,14 +1379,14 @@ vars = GVars._GVars(decls)</programlisting>
 				env</varname>
 				as follows
 			</para>
-			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">gv.UpdateEnvironment(env, variables, True)</programlisting>
+			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">gvars.Postprocess(env, variables, True)</programlisting>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				The prototype of
 				<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				UpdateEnvironment</methodname>
-				is following
+				Postprocess</methodname>
+				is the following
 			</para>
-			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">UpdateEnvironment(self, env, variables=None, options=False, args=None)</programlisting>
+			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">Postprocess(self, env, variables=None, options=False, ose={}, args=None, filename=None)</programlisting>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			The parameters are summarized in the following table</para>
 			<informaltable xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1438,6 +1442,18 @@ vars = GVars._GVars(decls)</programlisting>
 					<tr xmlns="http://docbook.org/ns/docbook">
 						<td xmlns="http://docbook.org/ns/docbook">
 							<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							ose</parameter>
+						</td>
+						<td xmlns="http://docbook.org/ns/docbook">
+							Third source of data, usually taken from
+							<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							os.environ</code>
+							.
+						</td>
+					</tr>
+					<tr xmlns="http://docbook.org/ns/docbook">
+						<td xmlns="http://docbook.org/ns/docbook">
+							<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 							args</parameter>
 						</td>
 						<td xmlns="http://docbook.org/ns/docbook">
@@ -1446,6 +1462,16 @@ vars = GVars._GVars(decls)</programlisting>
 							update_env_from_vars()</code>
 							. See API documentation for details.
 						</td>
+					</tr>
+					<tr xmlns="http://docbook.org/ns/docbook">
+						<td xmlns="http://docbook.org/ns/docbook">
+							<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+							filename</parameter>
+						</td>
+						<td xmlns="http://docbook.org/ns/docbook">Name of the file to 
+						save current values of variables. By default (
+						<literal xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">None</literal>) 
+						variables are not saved.</td>
 					</tr>
 				</tbody>
 			</informaltable>
@@ -1460,15 +1486,15 @@ vars = GVars._GVars(decls)</programlisting>
 				foo</varname>
 				may be stored in a construction variable
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				xyz</varname>
+				env_foo</varname>
 				. The name of the associatted construction variable (
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				xyz</varname>
+				env_foo</varname>
 				) may be other than the name of its GVar and the mapping from GVars 
-				to SCon environment does not have to be obvious. If we have a 
-				number of such variables and we keep track of GVar names only, then 
-				accessing their values directly in SCons environment may be 
-				cumbersome.
+				to SCon environment does not have to be obvious or regular. If we 
+				have a number of such variables and we keep track of GVar names 
+				only, then accessing their values directly in SCons environment may 
+				be cumbersome.
 			</para>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				We may use 
@@ -1483,7 +1509,7 @@ vars = GVars._GVars(decls)</programlisting>
 				foo</varname>
 				and it would return the value of construction variable
 				<varname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-				xyz</varname>
+				env_foo</varname>
 				.
 			</para>
 			<example xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1511,11 +1537,11 @@ env = Environment()
 var = Variables()
 
 decls = GVarDeclsU( foo = { &apos;env_key&apos; : &apos;env_foo&apos;, &apos;var_key&apos; : &apos;foo&apos; } )
-gv = decls.Commit(env, var)
-gv.UpdateEnvironment(env, var)
+gvars = decls.Commit(env, var)
+gvars.Postprocess(env, var)
 
 # create proxy object
-proxy = gv.EnvProxy(env)
+proxy = gvars.EnvProxy(env)
 # access variable via proxy
 print &quot;foo: %s&quot; % proxy[&apos;foo&apos;]
 </programlisting>
@@ -1640,13 +1666,13 @@ scons: `.&apos; is up to date.</screen>
             xml:id="example-gvars-complete">
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Complete example involving GVars</title>
-				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
-from SConsGnu import GVars
-decls = GVars.GVarDeclsU(
-  prefix      = { &apos;env_key&apos; : &apos;GNU_PREFIX&apos;, &apos;var_key&apos; : &apos;PREFIX&apos;, &apos;opt_key&apos; : &apos;opt_prefix&apos;,
-                  &apos;option&apos; : &apos;--prefix&apos;, &apos;default&apos; : &apos;/usr/local&apos;, &apos;type&apos; : &apos;string&apos;,
-                  &apos;help&apos; : &apos;installation prefix&apos; },
-  exec_prefix = { &apos;env_key&apos; : &apos;GNU_EXEC_PREFIX&apos;, &apos;var_key&apos; : &apos;EXEC_PREFIX&apos;, &apos;opt_key&apos; : &apos;opt_exec_prefix&apos;,
+				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct                                                                                         
+from SConsGnu import GVars                                                                           
+decls = GVars.GVarDeclsU(                                                                            
+  prefix      = { &apos;env_key&apos; : &apos;GNU_PREFIX&apos;, &apos;var_key&apos; : &apos;PREFIX&apos;, &apos;opt_key&apos; : &apos;opt_prefix&apos;,          
+                  &apos;option&apos; : &apos;--prefix&apos;, &apos;default&apos; : &apos;/usr/local&apos;, &apos;type&apos; : &apos;string&apos;,                
+                  &apos;help&apos; : &apos;installation prefix&apos; },                                                  
+  exec_prefix = { &apos;env_key&apos; : &apos;GNU_EXEC_PREFIX&apos;, &apos;var_key&apos; : &apos;EXEC_PREFIX&apos;, &apos;opt_key&apos; : &apos;opt_exec_prefix&apos;,                                                                                                
                   &apos;option&apos; : &apos;--exec-prefix&apos;, &apos;default&apos; : &apos;$prefix&apos;, &apos;type&apos; : &apos;string&apos;,
                   &apos;help&apos; : &apos;installation prefix for executable files&apos; },
   bindir      = { &apos;env_key&apos; : &apos;GNU_BINDIR&apos;, &apos;var_key&apos; : &apos;BINDIR&apos;, &apos;opt_key&apos; : &apos;opt_bindir&apos;,
@@ -1655,11 +1681,17 @@ decls = GVars.GVarDeclsU(
 )
 env = Environment()
 var = Variables()
-gv = decls.Commit(env, var, True)
-gv.UpdateEnvironment(env, var, True)
+gvars = decls.Commit(env, var, True)
+gvars.Postprocess(env, var, True)
+
+AddOption( &apos;--help-variables&apos;, dest=&apos;help_variables&apos;, action=&apos;store_true&apos;,
+           help=&apos;print help for CLI variables&apos; )
+if GetOption(&apos;help_variables&apos;):
+    print gvars.GenerateVariablesHelpText(var, env)
+    Exit(0)
 
 # Create proxy to access GVars using their original names
-proxy = gv.EnvProxy(env)
+proxy = gvars.EnvProxy(env)
 
 # Print values.
 print proxy.subst(&apos;prefix: $prefix&apos;)
@@ -1668,7 +1700,7 @@ print proxy.subst(&apos;bindir: $bindir&apos;)
 </programlisting>
 			</example>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			Let&apos;s play for a while with the 
+			Let&apos;s play a while with the 
 			<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="example-gvars-complete"/>
 			 . First we&apos;ll check the default values</para>
 			<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">-Q</option>
@@ -1742,7 +1774,7 @@ Local Options:
 					_GVars</classname>
 					variables:
 				</para>
-				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">Help( gv.GenerageVariablesHelpText(var, env) )</programlisting>
+				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">Help( gvars.GenerageVariablesHelpText(var, env) )</programlisting>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Note, that the above declaration shadows local options (our 
 				<option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1756,7 +1788,7 @@ Local Options:
 					<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">AddOption( &apos;--help-variables&apos;, dest=&apos;help_variables&apos;, action=&apos;store_true&apos;,
            help=&apos;print help for CLI variables&apos; )
 if GetOption(&apos;help_variables&apos;):
-    print gv.GenerateVariablesHelpText(var, env)
+    print gvars.GenerateVariablesHelpText(var, env)
     Exit(0)</programlisting>
 				</example>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -1785,6 +1817,21 @@ BINDIR: directory for installing executable programs that users can run
 			<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				<title xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Saving command line variables to a file</title>
+				<para>
+					Easies way to save GVars is to pass 
+					<parameter>filename</parameter>
+					 parameter to the 
+					<methodname>Postprocess()</methodname>
+					 method.
+				</para>
+				<programlisting>gvars.Postprocess(env, var, True, os.environ, filename=&apos;.scons.variables&apos;)</programlisting>
+				<para>
+					If you need, however, to save also the changes taken from 
+					os.environ, you must save the variables after postprocessing. You 
+					may use 
+					<methodname>SaveVariables</methodname>
+					 method to accomplish that.
+				</para>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 					Command line variables associatted with our GVars may be saved to 
 					a file with
@@ -1792,7 +1839,7 @@ BINDIR: directory for installing executable programs that users can run
 					SaveVariables</methodname>
 					method.
 				</para>
-				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">gv.SaveVariables(var, &quot;.scons_variables&quot;, env)</programlisting>
+				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">gvars.SaveVariables(var, &quot;.scons.variables&quot;, env)</programlisting>
 				<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 				Note, that this saves only values changed via command line 
 				(defaults are not saved). This takes into account input from a 
@@ -1807,11 +1854,12 @@ BINDIR: directory for installing executable programs that users can run
 						file from 
 						<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="example-gvars-complete"/>
 						 ,
-						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">gv.SaveVariables(var, &apos;.scons_variables&apos;, env)</programlisting>
+						<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">gvars.SaveVariables(var, &apos;.scons.variables&apos;, env)</programlisting>
 						then we have the following behavior
 					</para>
 					<screen xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"><prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">scons</command> <option xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">--prefix</option>=/opt EXEC_PREFIX=&apos;${PREFIX}/exec&apos;
-<prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">cat</command> .scons_variables
+
+<prompt xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">ptomulik@tea:$</prompt> <command xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">cat</command> .scons.variables
 EXEC_PREFIX = &apos;${PREFIX}/exec&apos;
 PREFIX = &apos;/opt&apos;
 </screen>
@@ -1829,7 +1877,7 @@ PREFIX = &apos;/opt&apos;
 					file</parameter>
 					parameter when creating command line variables
 				</para>
-				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">var = Variables(&apos;.scons_variables&apos;)</programlisting>
+				<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">var = Variables(&apos;.scons.variables&apos;)</programlisting>
 			</section>
 		</section>
 	</section>
@@ -1848,7 +1896,7 @@ PREFIX = &apos;/opt&apos;
 			 section of the official documentation. The
 			<package xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			scons-gnu-build</package>
-			has a predefined set of GVar variables (see 
+			package provides a predefined set of GVar variables (see 
 			<xref xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" linkend="sec-gvars"/>
 			 ) with similar purpose.
 		</para>
@@ -1890,16 +1938,16 @@ from SConsGnu import GVars, AcDirVars
 env = Environment()
 var = Variables(&apos;.scons_variables&apos;)
 decls = AcDirVars.DeclareGVars()
-gv = decls.Commit(env, var, True)
+gvars = decls.Commit(env, var, True)
 # Add help
 AddOption( &apos;--help-variables&apos;, dest=&apos;help_variables&apos;, action=&apos;store_true&apos;,
            help=&apos;print help for CLI variables&apos; )
 if GetOption(&apos;help_variables&apos;):
-    print gv.GenerateVariablesHelpText(var, env)
+    print gvars.GenerateVariablesHelpText(var, env)
     Exit(0)
 
-gv.UpdateEnvironment(env, var, True)
-gv.SaveVariables(var, &apos;.scons_variables&apos;, env)</programlisting>
+gvars.UpdateEnvironment(env, var, True)
+gvars.SaveVariables(var, &apos;.scons_variables&apos;, env)</programlisting>
 			<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Let&apos;s print a help message to see new options generated by our 
 			Directory Variables</para>
@@ -1941,19 +1989,18 @@ man1ext:
 		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">print env.subst(&apos;prefix: $prefix&apos;)</programlisting>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			By default, environment variables associated with Directory 
-			Variables have 
-			<literal>&apos;GVAR_&apos;</literal>
-			 prefix. This may be changed when declaring the Directory Variables. 
-			The
+			Variables have same names as GVars. This may be changed when 
+			declaring the Directory Variables. The
 			<methodname xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			DeclareGVars</methodname>
 			function has an argument named
 			<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			env_key_transform</parameter>
 			which specifies how the GVar name should be converted to the name of 
-			associated environment variable. For example, to use original GVar 
-			name one has to&quot;:
-			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">AcDirVars.DeclareGVars(env_key_transform = lambda x : x)</programlisting>
+			associated environment variable. For example, to add 
+			<literal>&apos;GVAR_&apos;</literal>
+			 prefix:
+			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">AcDirVars.DeclareGVars(env_key_transform = lambda name : &quot;GVAR_%s&quot; % name)</programlisting>
 		</para>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 		The function has also parameters which control transformation of CLI 
@@ -1968,6 +2015,16 @@ man1ext:
 				</tr>
 			</thead>
 			<tbody xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<tr>
+					<td>defaults</td>
+					<td>
+						Dictionary containing user-specified default values for the GVars 
+						being declared. You&apos;ll usually put your SCons Environment 
+						object 
+						<varname>env</varname>
+						 here.
+					</td>
+				</tr>
 				<tr xmlns="http://docbook.org/ns/docbook">
 					<td xmlns="http://docbook.org/ns/docbook">
 						<parameter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -2107,9 +2164,9 @@ cfg.AddTests(AcProgChecks.Tests()) # add tests for alternative programs
 # Define GVars that will be used in conjuction with our test(s) later.
 decls = AcProgChecks.DeclareGVars(name_filter = [&apos;AWK&apos;])
 var = Variables()
-gvs = decls.Commit(env, var, True)
-gvs.UpdateEnvironment(env, var, True)
-proxy = gvs.EnvProxy(env)
+gvars = decls.Commit(env, var, True)
+gvars.UpdateEnvironment(env, var, True)
+proxy = gvars.EnvProxy(env)
 
 # Now we can perform tests implemented by AcProgChecks module, for example:
 proxy[&apos;AWK&apos;] = cfg.AcProgAwk(proxy[&apos;AWK&apos;])

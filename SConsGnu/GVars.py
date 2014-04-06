@@ -795,7 +795,7 @@ class _GVars(object):
 
     def GenerateVariablesHelpText(self, variables, env, *args, **kw):
         #--------------------------------------------------------------------
-        """Save help text for `variables` using
+        """Generate help text for `variables` using
         ``variables.GenerateHelpText()``.
 
         Note:
@@ -1103,9 +1103,9 @@ class _GVars(object):
 
         :Note:
             Often you will have to preprocess ``os.environ`` before passing it
-            as an **ose** argument, especially if your GVar variables have to
-            use ``converter`` - you have to pass values from ``os.environ``
-            through a similar converter.
+            as **ose**. This is necessary especially when your GVar use
+            ``converter``. In that case you have to pass values from
+            ``os.environ`` through a similar converter too.
 
         .. _SCons.Variables.Variables: http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments

@@ -290,6 +290,35 @@ def declare_gvars(defaults={}, name_filter=lambda x : True,
                   var_key_transform=default_var_key_transform,
                   opt_key_transform=default_opt_key_transform,
                   opt_name_transform=default_opt_name_transform):
+    """Return the standard GNU directory variables as
+    ``GVar`` variable declarations `_GVarDecls` (see `SConsGnu.GVars`).
+
+    :Parameters:
+        defaults : dict
+            User-specified default values for the GVars being declared. You'll
+            usually put your SCons Environment object env here.
+        name_filter : callable
+            callable object (e.g. lambda) of type ``name_filter(name) ->
+            boolean`` used to filter-out unwanted variables; only these
+            variables are processed, for which name_filter returns ``True``
+        env_key_transform : callable
+            function or lambda used to transform canonical ``GVar`` names to
+            keys used for corresponding construction variables in a SCons
+            environment (default: `default_env_key_transform`)
+        var_key_transform : callable
+            function or lambda used to transform canonical ``GVar`` names to
+            keys used for corresponding SCons command-line variables
+            ``variable=value`` (default: `default_var_key_transform`)
+        opt_key_transform : callable
+            function or lambda used to transform canonical ``GVar`` names to
+            keys used for corresponding SCons command-line options
+            ``--option=value`` (default: `default_opt_key_transform`)
+        opt_name_transform : callable
+            function or lambda used to transform canonical ``GVar`` names to
+            option names (default: `default_opt_name_transform`)
+    :Returns:
+        a dictionary-like object of type `SConsGnu.GVar._GVarDecls`
+    """
     from SCons.Variables.PathVariable import PathVariable
     from SConsGnu.GVars import GVarDeclsU
     def _callback(name, desc, default):
@@ -330,6 +359,9 @@ def DeclareGVars(**kw):
     ``GVar`` variable declarations `_GVarDecls` (see `SConsGnu.GVars`).
 
     :Keywords:
+        defaults : dict
+            User-specified default values for the GVars being declared. You'll
+            usually put your SCons Environment object env here.
         name_filter : callable
             callable object (e.g. lambda) of type ``name_filter(name) ->
             boolean`` used to filter-out unwanted variables; only these
