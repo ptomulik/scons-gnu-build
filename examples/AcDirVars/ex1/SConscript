@@ -21,7 +21,7 @@
 
 Import('env')
 
-from SConsGnu.GDirVars import GVarNames
+from SConsGnu.AcDirVars import GVarNames
 from pprint import PrettyPrinter
 
 pp = PrettyPrinter(indent = 4)

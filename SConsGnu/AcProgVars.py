@@ -194,12 +194,16 @@ def gvar_names(name_filter = lambda x : False):
     return filter(name_filter, zip(*__std_var_triples)[0])
 
 #############################################################################
-def declare_gvars(name_filter=lambda x : False,
+def declare_gvars(defaults={}, name_filter=lambda x : False,
                   env_key_transform=default_env_key_transform,
                   var_key_transform=default_var_key_transform):
     from SCons.Variables.PathVariable import PathVariable
     from SConsGnu.GVars import GVarDeclsU
     def _callback(name, desc, default):
+        try:
+            default = defaults[name]
+        except KeyError:
+            pass
         decl = { 'env_key'  : env_key_transform(name),
                  'var_key'  : var_key_transform(name),
                  'default'  : default,
@@ -246,6 +250,6 @@ def DeclareGVars(**kw):
     :Returns:
         a dictionary-like object of type `SConsGnu.GVar._GVarDecls`
     """
-    args = ['name_filter', 'env_key_transform', 'var_key_transform']
+    args = ['defaults', 'name_filter', 'env_key_transform', 'var_key_transform']
     kw2 = { key : kw[key] for key in args if key in kw }
     return declare_gvars(**kw2)

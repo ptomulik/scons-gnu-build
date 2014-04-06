@@ -791,9 +791,9 @@ class Test__GVars(unittest.TestCase):
         gv = GVars._GVars(self._gdecls_mock_5())
         env = { 'env_k' : 'K', 'env_e' : 'E', 'env_x' : 'X' }
         current = gv.GetCurrentValues(env)
-        self.assertIs(current['k'], env['env_k'])
-        self.assertIs(current['e'], env['env_e'])
-        self.assertEqual(current, {'k' : 'K', 'e' : 'E'})
+        self.assertIs(current['env_k'], env['env_k'])
+        self.assertIs(current['env_e'], env['env_e'])
+        self.assertEqual(current, {'env_k' : 'K', 'env_e' : 'E'})
 
 
 #############################################################################

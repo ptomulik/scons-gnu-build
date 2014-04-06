@@ -35,10 +35,10 @@ test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')
 test.write('SConstruct',
 """
 # SConstruct
-from SConsGnu import GVars, GDirVars
+from SConsGnu import GVars, AcDirVars
 env = Environment()
 var = Variables('.scons_variables')
-decls = GDirVars.DeclareGVars()
+decls = AcDirVars.DeclareGVars()
 gv = decls.Commit(env, var, True)
 # Add help
 AddOption( '--help-variables', dest='help_variables', action='store_true',

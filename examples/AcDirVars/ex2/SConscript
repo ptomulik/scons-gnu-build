@@ -22,10 +22,10 @@
 
 Import('env')
 
-from SConsGnu import GDirVars
+from SConsGnu import AcDirVars
 
 only = ('prefix','exec_prefix','bindir')
-gdecls = GDirVars.DeclareGVars(name_filter = lambda x : x in only)
+gdecls = AcDirVars.DeclareGVars(name_filter = lambda x : x in only)
 cli_vars = Variables()
 gvars = gdecls.Commit(env, cli_vars, True)
 gvars.UpdateEnvironment(env, cli_vars, True, ARGUMENTS)

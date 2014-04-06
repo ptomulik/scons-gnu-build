@@ -78,16 +78,16 @@ __flag_var_triples = [
     # Program flags
     ( 'CFLAGS',
       'Flags for C compiler',
-      None ),
+      CLVar() ),
     ( 'CXXFLAGS',
       'Flags for C++ compiler',
-      None ),
+      CLVar() ),
     ( 'CCFLAGS',
       'Flags for both C and C++ compilers',
-      None ),
+      CLVar() ),
     ( 'LINKFLAGS',
       'Flags for linker',
-      None ),
+      CLVar() ),
 ]
 
 default_env_key_prefix      = Defaults.gvar_env_key_prefix
@@ -103,6 +103,13 @@ def __init_module_vars():
     # TODO: anything to be done here?
     pass
 __init_module_vars()
+
+#############################################################################
+def _flag_converter(val, env=None):
+    if isinstance(val, CLVar):
+        return val
+    else:
+        return CLVar(val)
 
 #############################################################################
 def __map_prog_var_triples(callback, name_filter = lambda x : True):
@@ -172,22 +179,30 @@ def gvar_names(name_filter = lambda x : True):
     return filter(name_filter, zip(*[__prog_var_triples + _flag_var_triples])[0])
 
 #############################################################################
-def declare_gvars(name_filter=lambda x : True,
+def declare_gvars(defaults = {}, name_filter=lambda x : True,
                   env_key_transform=default_env_key_transform,
                   var_key_transform=default_var_key_transform):
     from SCons.Variables.PathVariable import PathVariable
     from SConsGnu.GVars import GVarDeclsU
     def _prog_callback(name, desc, default):
+        try:
+            default = defaults[name]
+        except KeyError:
+            pass
         decl = { 'env_key'  : env_key_transform(name),
                  'var_key'  : var_key_transform(name),
                  'default'  : default,
                  'help'     : desc }
         return name, decl
     def _flag_callback(name, desc, default):
+        try:
+            default = defaults[name]
+        except KeyError:
+            pass
         decl = { 'env_key'  : env_key_transform(name),
                  'var_key'  : var_key_transform(name),
                  'default'  : default,
-                 'converter': CLVar,
+                 'converter': _flag_converter,
                  'help'     : desc }
         return name, decl
 
@@ -232,7 +247,7 @@ def DeclareGVars(**kw):
     :Returns:
         a dictionary-like object of type `SConsGnu.GVar._GVarDecls`
     """
-    args = ['name_filter', 'env_key_transform', 'var_key_transform']
+    args = ['defaults', 'name_filter', 'env_key_transform', 'var_key_transform']
     kw2 = { key : kw[key] for key in args if key in kw }
     return declare_gvars(**kw2)
 

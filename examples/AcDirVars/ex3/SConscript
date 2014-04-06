@@ -22,9 +22,9 @@
 
 Import('env')
 
-from SConsGnu import GDirVars
-from SConsGnu.GDirVars import default_var_key_transform
-from SConsGnu.GDirVars import default_opt_key_transform
+from SConsGnu import AcDirVars
+from SConsGnu.AcDirVars import default_var_key_transform
+from SConsGnu.AcDirVars import default_opt_key_transform
 
 options = [ '--prefix', '--exec-prefix' ]
 
@@ -32,7 +32,7 @@ kw = { 'var_key_transform' : lambda x : \
           default_var_key_transform(x) if x not in options else None,
        'opt_key_transform' : lambda x : \
           default_opt_key_transform(x) if x in options else None  }
-gdecls = GDirVars.DeclareGVars(**kw)
+gdecls = AcDirVars.DeclareGVars(**kw)
 
 cli_vars = Variables()
 gvars = gdecls.Commit(env, cli_vars, True)

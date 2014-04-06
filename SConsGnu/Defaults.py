@@ -27,7 +27,7 @@ Defaults for several other modules.
 __docformat__ = "restructuredText"
 
 
-gvar_env_key_prefix     = 'GVAR_'
+gvar_env_key_prefix     = ''
 gvar_env_key_suffix     = ''
 gvar_env_key_transform  = lambda x : gvar_env_key_prefix \
                         + x \

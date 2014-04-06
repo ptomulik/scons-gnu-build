@@ -32,11 +32,11 @@ from SConsGnu import Defaults
 
 class Test_gvar_env_key(unittest.TestCase):
     def test_gvar_env_key_prefix(self):
-        self.assertEqual(Defaults.gvar_env_key_prefix, 'GVAR_')
+        self.assertEqual(Defaults.gvar_env_key_prefix, '')
     def test_gvar_env_key_suffix(self):
         self.assertEqual(Defaults.gvar_env_key_suffix, '')
     def test_gvar_env_key_transform(self):
-        self.assertEqual(Defaults.gvar_env_key_transform('Key'), 'GVAR_Key')
+        self.assertEqual(Defaults.gvar_env_key_transform('Key'), 'Key')
 
 class Test_gvar_var_key(unittest.TestCase):
     def test_gvar_var_key_prefix(self):

@@ -1,4 +1,4 @@
-"""`SConsGnu.GDirVars`
+"""`SConsGnu.AcDirVars`
 
 Provides GNU directory variables.
 
@@ -285,7 +285,7 @@ def gvar_names(name_filter = lambda x : True):
     return filter(name_filter, zip(*__std_var_triples)[0])
 
 #############################################################################
-def declare_gvars(name_filter=lambda x : True,
+def declare_gvars(defaults={}, name_filter=lambda x : True,
                   env_key_transform=default_env_key_transform,
                   var_key_transform=default_var_key_transform,
                   opt_key_transform=default_opt_key_transform,
@@ -293,6 +293,10 @@ def declare_gvars(name_filter=lambda x : True,
     from SCons.Variables.PathVariable import PathVariable
     from SConsGnu.GVars import GVarDeclsU
     def _callback(name, desc, default):
+        try:
+            default = defaults[name]
+        except KeyError:
+            pass
         decl = { 'env_key'  : env_key_transform(name),
                  'var_key'  : var_key_transform(name),
                  'opt_key'  : opt_key_transform(name),
@@ -348,7 +352,7 @@ def DeclareGVars(**kw):
     :Returns:
         a dictionary-like object of type `SConsGnu.GVar._GVarDecls`
     """
-    args = ['name_filter', 'env_key_transform', 'var_key_transform',
+    args = ['defaults', 'name_filter', 'env_key_transform', 'var_key_transform',
             'opt_key_transform', 'opt_name_transform']
     kw2 = { key : kw[key] for key in args if key in kw }
     return declare_gvars(**kw2)

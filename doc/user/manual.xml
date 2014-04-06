@@ -1855,18 +1855,18 @@ PREFIX = &apos;/opt&apos;
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 			Standard Installation Directory Variables are implemented in
 			<code xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
-			GDirVars</code>
+			AcDirVars</code>
 			submodule:
 		</para>
-		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu import GDirVars</programlisting>
+		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu import AcDirVars</programlisting>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 		In order to have Installation Directory Variables activated you need 
 		to append predefined directory variable declarations to your current 
 		set of GVars declarations:</para>
-		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu import GDirVars
+		<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">from SConsGnu import AcDirVars
 # ...
 # Assume, decls is an instance of _GVarDecls
-decls.update(GDirVars.DeclareGVars())
+decls.update(AcDirVars.DeclareGVars())
 # ...</programlisting>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 		The remaining steps are identical to those described in 
@@ -1886,10 +1886,10 @@ decls.update(GDirVars.DeclareGVars())
 				option to display help for all the defined command line variables.
 			</para>
 			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"># SConstruct
-from SConsGnu import GVars, GDirVars
+from SConsGnu import GVars, AcDirVars
 env = Environment()
 var = Variables(&apos;.scons_variables&apos;)
-decls = GDirVars.DeclareGVars()
+decls = AcDirVars.DeclareGVars()
 gv = decls.Commit(env, var, True)
 # Add help
 AddOption( &apos;--help-variables&apos;, dest=&apos;help_variables&apos;, action=&apos;store_true&apos;,
@@ -1953,7 +1953,7 @@ man1ext:
 			which specifies how the GVar name should be converted to the name of 
 			associated environment variable. For example, to use original GVar 
 			name one has to&quot;:
-			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">GDirVars.DeclareGVars(env_key_transform = lambda x : x)</programlisting>
+			<programlisting xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">AcDirVars.DeclareGVars(env_key_transform = lambda x : x)</programlisting>
 		</para>
 		<para xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink">
 		The function has also parameters which control transformation of CLI 

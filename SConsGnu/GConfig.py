@@ -52,7 +52,7 @@ class _GConfig(object):
             May be ``True`` (default) or ``False`` to determine whether we want
             to have the "GNU directory variables" (``prefix``, ``exec_prefix``,
             ``bindir`` and so on); it may be a dict with default values of
-            keyword arguments to `SConsGnu.GDirVars.DeclareGVars()`
+            keyword arguments to `SConsGnu.AcDirVars.DeclareGVars()`
 
     .. _SCons.Variables.Variables: http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html
     """
@@ -125,10 +125,10 @@ class _GConfig(object):
 
     def DeclareGVars(self, **kw):
         """Declare ``GVar`` variables provided by all relevant modules"""
-        from SConsGnu import GDirVars
-        # 1. GDirVars
+        from SConsGnu import AcDirVars
+        # 1. AcDirVars
         kw2 = _GConfig._mix_kwargs(self.dir_var_options, **kw)
-        self.gvar_decls.update(GDirVars.DeclareGVars(**kw2))
+        self.gvar_decls.update(AcDirVars.DeclareGVars(**kw2))
         # Append other declarations if necessary
         return self.gvar_decls
 

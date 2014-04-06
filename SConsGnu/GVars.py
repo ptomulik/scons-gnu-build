@@ -849,7 +849,7 @@ class _GVars(object):
     def _is_unaltered(cur, org, v):
         #--------------------------------------------------------------------
         """Whether variable ``cur[v]`` has changed its value w.r.t. ``org[v]``.
-        
+
         :Parameters:
             cur
                 GVar proxy to `SCons Environment`_ or simply to a dictionary
@@ -881,7 +881,7 @@ class _GVars(object):
                 # cur[v] has been created in the meantime
                 pass
             else:
-                if curval is orgval:
+                if curval == orgval:
                     result = True
         return result
 
@@ -943,7 +943,7 @@ class _GVars(object):
         #--------------------------------------------------------------------
         """Replace values of unaltered GVars in **env** with corresponding
         values from **new**.
-        
+
         For every GVar stored in **env**, if its value is same as corresponding
         value in **org** the value in **env** gets replaced with corresponding
         value in **new**.
@@ -966,7 +966,7 @@ class _GVars(object):
         for k in self.__keys:
             if _GVars._is_unaltered(envp, orgp, k):
                 try:
-                    envp[k] = new[k] 
+                    envp[k] = new[k]
                 except KeyError:
                     pass
 
@@ -978,7 +978,7 @@ class _GVars(object):
         :Parameters:
             env
                 `SCons environment`_ object or simply a dict which holds
-                current values of GVars. 
+                current values of GVars.
             org
                 Dict containing orginal (default) values of variables
             new
@@ -998,36 +998,114 @@ class _GVars(object):
         for k in self.__keys:
             if _GVars._is_unaltered(envp, orgp, k):
                 try:
-                    resp[k] = new[k] 
+                    resp[k] = new[k]
                 except KeyError:
                     resp[k] = envp[k]
             else:
                 resp[k] = envp[k]
         return res
 
-    def PostprocessInplace(self, env, variables=None, options=False, ose={}, args=None):
+    def Postprocess(self, env, variables=None, options=False, ose={},
+                    args=None, filename=None):
         #--------------------------------------------------------------------
-        """Gather values from **variables**, **options** and additional source
-        **ose** (usually ``os.environ``) and transfer them to **env**.
+        """Postprocess **variables** and **options** updating variables in
+        **env** and optionally saving them to file.
+
+        This method gathers values from **variables**, **options** and
+        writes them to **env**. After that it optionally saves the variables
+        to file (if **filename** is given) and updates variables with values
+        from **ose** (only those that were not changed by **variables** nor the
+        **options**).
+
+        The effect of this method is the following:
+
+        - command line **variables** are handled,
+        - command line **options** are handled,
+        - command line **variables** are saved to filename if requested,
+        - additional source **ose** (usually ``os.environ``) handled,
+
+        The values from **ose** are not written to file. Also, they influence
+        only variables that were not set by **variables** nor the **options**.
+        The intent is to not let the variables from OS environment to overwrite
+        these provided by commandline (or retrieved from file).
+
+        **Example**::
+
+            # SConstruct
+            import os
+            from SConsGnu.GVars import GVarDeclsU
+
+            env = Environment()
+            var = Variables('.scons.variables')
+            gds = GVarDeclsU( foo = { 'env_key' : 'foo', 'var_key' : 'foo' } )
+            gvs = gds.Commit(env, var, False)
+            gvs.Postprocess(env, var, False, os.environ, filename = '.scons.variables')
+
+            print "env['foo']: %r" % env['foo']
+
+        Sample session (the sequence order of the following commands is
+        important)::
+
+            ptomulik@tea:$ rm -f .scons.variables
+
+            ptomulik@tea:$ scons -Q
+            env['foo']: None
+            scons: `.' is up to date.
+
+            ptomulik@tea:$ foo=ose scons -Q
+            env['foo']: 'ose'
+            scons: `.' is up to date.
+
+            ptomulik@tea:$ scons -Q
+            env['foo']: None
+            scons: `.' is up to date.
+
+            ptomulik@tea:$ foo=ose scons -Q foo=var
+            env['foo']: 'var'
+            scons: `.' is up to date.
+
+            ptomulik@tea:$ cat .scons.variables
+            foo = 'var'
+
+            ptomulik@tea:$ scons -Q
+            env['foo']: 'var'
+            scons: `.' is up to date.
+
+            ptomulik@tea:$ foo=ose scons -Q
+            env['foo']: 'var'
+            scons: `.' is up to date.
+
+            ptomulik@tea:$ rm -f .scons.variables
+            ptomulik@tea:$ foo=ose scons -Q
+            env['foo']: 'ose'
+            scons: `.' is up to date.
 
         :Parameters:
             env
-                `SCons environment`_ object or simply a dict which holds
-                current values of GVars. 
+                `SCons environment`_ object which holds current values of GVars.
             variables : ``SCons.Variables.Variables`` | None
                 if not ``None``, it should be a `SCons.Variables.Variables`_
                 object with `SCons variables`_ to retrieve values from,
             options : boolean
                 if ``True``, `command-line options`_ are taken into account
                 when updating `env`.
-            ose
-                third source of data, usually ``os.environ``
+            ose : dict
+                third source of data, usually taken from ``os.environ``
             args
                 passed as **args** to `UpdateEnvironment()`.
+            filename : str|None
+                Name of the file to save current values of **variables**.
+                By default (``None``) variables are not saved.
 
         :Return:
             New dictionary with only entries updated by either of the data
             sources (variables, options or ose).
+
+        :Note:
+            Often you will have to preprocess ``os.environ`` before passing it
+            as an **ose** argument, especially if your GVar variables have to
+            use ``converter`` - you have to pass values from ``os.environ``
+            through a similar converter.
 
         .. _SCons.Variables.Variables: http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
@@ -1037,53 +1115,55 @@ class _GVars(object):
         #--------------------------------------------------------------------
         org = self.GetCurrentValues(env)
         self.UpdateEnvironment(env, variables, options, args)
+        if filename:
+            self.SaveVariables(variables, filename, env)
         self.ReplaceUnaltered(env, org, ose)
-
-    def GetPostprocessed(self, env, variables=None, options=False, ose={}, args=None):
-        #--------------------------------------------------------------------
-        """Return only those values, which changed due to **variables**,
-        **options** (CLI options) or **ose** (other source with lower
-        priority, usually ``os.environ``).
-
-        :Parameters:
-            env
-                `SCons environment`_ object or simply a dict which holds
-                current values of GVars. 
-            variables : ``SCons.Variables.Variables`` | None
-                if not ``None``, it should be a `SCons.Variables.Variables`_
-                object with `SCons variables`_ to retrieve values from,
-            options : boolean
-                if ``True``, `command-line options`_ are taken into account
-                when updating `env`.
-            ose
-                third source of data, usually ``os.environ``
-            args
-                passed as **args** to `UpdateEnvironment()`.
-
-        :Return:
-            New dictionary with only entries updated by either of the data
-            sources (variables, options or ose).
-
-        .. _SCons.Variables.Variables: http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html
-        .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
-        .. _SCons variables: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-variables
-        .. _command-line options: http://www.scons.org/doc/HTML/scons-user.html#sect-command-line-options
-        """
-        #--------------------------------------------------------------------
-        org = self.GetCurrentValues(env)
-        self.UpdateEnvironment(env, variables, options, args)
-        wur = self.WithUnalteredReplaced(env, org, ose)
-        return self.GetAltered(wur, org)
 
     def Unmangle(self, env):
         #--------------------------------------------------------------------
-        """Unmangle dictionary **env** that holds GVar values. The resultant
-        dictionary has GVar keys (untransformed from ENV namespace).
+        """Return dictionary containing variable values with original names.
+
+        It is possible, that names of GVars variables are not same as names of
+        their associated construction variables in **env**. This function
+        returns a new dictionary having original GVar names as keys.
+
+        **Example**::
+
+            # SConstruct
+            from SConsGnu.GVars import GVarDeclsU
+
+            env = Environment()
+            gds = GVarDeclsU( foo = { 'env_key' : 'env_foo' } )
+            gvs = gds.Commit(env)
+            var = gvs.Unmangle(env)
+
+            try:
+                print "env['foo']: %r" % env['foo']
+            except KeyError:
+                print "env['foo'] is missing"
+
+            try:
+                print "env['env_foo']: %r" % env['env_foo']
+            except KeyError:
+                print "env['foo'] is missing"
+
+            try:
+                print "var['foo']: %r" % var['foo']
+            except KeyError:
+                print "var['foo'] is missing"
+
+        The result of running the above SCons script is::
+
+            ptomulik@tea:$ scons -Q
+            env['foo'] is missing
+            env['env_foo']: None
+            var['foo']: None
+            scons: `.' is up to date.
 
         :Parameters:
             env
                 `SCons environment`_ object or simply a dict which holds
-                current values of GVars. 
+                current values of GVars.
 
         :Return:
             New dictionary with keys transformed back to GVar namespace.
