@@ -49,7 +49,7 @@ def _canon_cc(ccpath):
             return cc
     return ccname
 
-def _get_cc_version_cmd(env, cc, ccpath=None):
+def _cc_version_cmd(env, cc, ccpath):
     if cc in ('gcc', 'g++'):
         return CLVar([ccpath, '-dumpversion'])
     elif cc in ('clang', 'clang++'):
@@ -78,7 +78,33 @@ def _parse_cc_version(env, cc, text):
     else:
         return (version, None)
 
-def _run_cc_version_cmd(env, cmd):
+def _cc_target_cmd(env, cc, ccpath):
+    if cc in ('gcc', 'g++'):
+        return CLVar([ccpath, '-dumpmachine'])
+    elif cc in ('clang', 'clang++'):
+        return CLVar([ccpath, '-dumpmachine'])
+    else:
+        return None
+
+def _parse_gcc_target(text):
+    return text.strip()
+
+def _parse_clang_target(text):
+    return text.strip()
+
+def _parse_cc_target(env, cc, text):
+    if cc in ('gcc', 'g++'):
+        target = _parse_gcc_target(text)
+    elif cc in ('clang', 'clang++'):
+        target = _parse_clang_target(text)
+    else:
+        target = None
+    if not target:
+        return (None, 'unsupported compiler %s' % cc)
+    else:
+        return (target, None)
+
+def _run_cc_cmd(env, cmd):
     try:
         proc = _subproc(env, cmd, 'raise', stdout = PIPE)
     except EnvironmentError as e:
@@ -91,21 +117,27 @@ def _run_cc_version_cmd(env, cmd):
         if stat or not out:
             if not stat:
                 stat = 1
-            err = err.strip()
+            if err:
+                err = err.strip()
             if not err:
                 err = 'command %r returned status: %d' % (cmd, stat)
     return stat, out, err
 
-def _query_cc_version(env, ccpath):
+def _query_cc_info(env, ccpath, cmd_fun, parse_fun):
     cc = _canon_cc(ccpath)
-    cmd = _get_cc_version_cmd(env, cc, ccpath)
+    cmd = cmd_fun(env, cc, ccpath)
     if not cmd:
         return (None, 'unsupported compiler %s' % cc)
-    stat, out, err = _run_cc_version_cmd(env, cmd)
+    stat, out, err = _run_cc_cmd(env, cmd)
     if stat:
         return (None, err)
-    return _parse_cc_version(env, cc, out)
+    return parse_fun(env, cc, out)
 
+def _query_cc_version(env, ccpath):
+    return _query_cc_info(env, ccpath, _cc_version_cmd, _parse_cc_version)
+
+def _query_cc_target(env, ccpath):
+    return _query_cc_info(env, ccpath, _cc_target_cmd, _parse_cc_target)
 
 def CanonCC(env, **overrides):
     """Return "canonical name" of the C compiler used.
@@ -192,6 +224,46 @@ def QueryCXXVersion(env, **overrides):
     ver, err = _query_cc_version(env, env['CXX'])
     # TODO: handle error here?
     return ver
+
+def QueryCCTarget(env, **overrides):
+    """Retrieve target architectore of the C compiler.
+
+    **Supported compilers**:
+        - ``gcc``, ``g++``
+        - ``clang``, ``clang++``
+
+    :Parameters:
+        env
+            SCons environment object.
+        overrides
+            Used to override construction variables in **env**.
+    :Return:
+        Target string or ``None``.
+    """
+    env = env.Override(overrides)
+    tgt, err = _query_cc_target(env, env['CC'])
+    # TODO: handle error here?
+    return tgt
+
+def QueryCXXTarget(env, **overrides):
+    """Retrieve target architecture of the C++ compiler
+
+    **Supported compilers**:
+        - ``gcc``, ``g++``
+        - ``clang``, ``clang++``
+
+    :Parameters:
+        env
+            SCons environment object.
+        overrides
+            Used to override construction variables in **env**.
+    :Return:
+        Target string or ``None``.
+    """
+    env = env.Override(overrides)
+    tgt, err = _query_cc_target(env, env['CXX'])
+    # TODO: handle error here?
+    return tgt
 
 # Local Variables:
 # # tab-width:4
