@@ -15,6 +15,12 @@ Programs:
         A C++ compiler to use
     LINK
         A linker to use
+    SHCC
+        A C compiler used when compiling shared libraries.
+    SHCXX
+        A C++ compiler used when compiling shared libraries.
+    SHLINK
+        A linker to use when creating shared libraries
 
 Flags for programs:
 
@@ -26,6 +32,14 @@ Flags for programs:
         Flags for both C and C++ compilers
     LINKFLAGS
         Flags for linker
+    SHCFLAGS
+        Flags for C compiler used when compiling shared libraries
+    SHCXXFLAGS
+        Flags for C++ compiler used when compiling shared libraries
+    SHCCFLAGS',
+        Flags for both C and C++ compilers used when compiling shared libraries
+    SHLINKFLAGS',
+        Flags for linker used when creating shared libraries
 """
 
 #
@@ -69,22 +83,43 @@ __prog_var_triples = [
     ( 'LINK',
       'A linker to use',
       None ),
+    ( 'SHCC',
+      'A C compiler used when compiling shared libraries',
+      None ),
+    ( 'SHCXX',
+      'A C++ compiler used when compiling shared libraries',
+      None ),
+    ( 'SHLINK',
+      'A linker to use when creating shared libraries',
+      None ),
 ]
 
 __flag_var_triples = [
     # Program flags
     ( 'CFLAGS',
       'Flags for C compiler',
-      CLVar() ),
+      None ),
     ( 'CXXFLAGS',
       'Flags for C++ compiler',
-      CLVar() ),
+      None ),
     ( 'CCFLAGS',
       'Flags for both C and C++ compilers',
-      CLVar() ),
+      None ),
     ( 'LINKFLAGS',
       'Flags for linker',
-      CLVar() ),
+      None ),
+    ( 'SHCFLAGS',
+      'Flags for C compiler used when compiling shared libraries',
+      None ),
+    ( 'SHCXXFLAGS',
+      'Flags for C++ compiler used when compiling shared libraries',
+      None ),
+    ( 'SHCCFLAGS',
+      'Flags for both C and C++ compilers used when compiling shared libraries',
+      None ),
+    ( 'SHLINKFLAGS',
+      'Flags for linker used when creating shared libraries',
+      None ),
 ]
 
 default_env_key_prefix      = Defaults.gvar_env_key_prefix

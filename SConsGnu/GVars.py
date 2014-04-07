@@ -566,6 +566,84 @@ class _GVarsEnvProxy(object):
         env_string = _resubst(string, self.__resubst)
         return self.env.subst(env_string, *args)
 
+#############################################################################
+class _VariablesWrapper(object):
+
+    #========================================================================
+    def __init__(self, variables):
+        self.variables = variables
+
+    #========================================================================
+    def __getattr__(self, attr):
+        return getattr(self.variables, attr)
+
+    #========================================================================
+    def Update(self, env, args):
+        # The only reason why it's reimplemented here is to get rid of
+        # env.subst(...) substitutions. And yes, it's important!!!
+        import os
+        import sys
+
+        variables = self.variables
+        values = {}
+
+        # first set the defaults:
+        for option in variables.options:
+            if not option.default is None:
+                values[option.key] = option.default
+
+        # next set the value specified in the options file
+        for filename in variables.files:
+            if os.path.exists(filename):
+                dir = os.path.split(os.path.abspath(filename))[0]
+                if dir:
+                    sys.path.insert(0, dir)
+                try:
+                    values['__name__'] = filename
+                    exec open(filename, 'rU').read() in {}, values
+                finally:
+                    if dir:
+                        del sys.path[0]
+                    del values['__name__']
+
+        # set the values specified on the command line
+        if args is None:
+            args = variables.args
+
+        for arg, value in args.items():
+            added = False
+            for option in variables.options:
+                if arg in list(option.aliases) + [ option.key ]:
+                    values[option.key] = value
+                    added = True
+            if not added:
+                variables.unknown[arg] = value
+
+        # put the variables in the environment:
+        # (don't copy over variables that are not declared as options)
+        for option in variables.options:
+            try:
+                env[option.key] = values[option.key]
+            except KeyError:
+                pass
+
+        # Call the convert functions:
+        for option in variables.options:
+            if option.converter and option.key in values:
+                value = env.get(option.key)
+                try:
+                    try:
+                        env[option.key] = option.converter(value)
+                    except TypeError:
+                        env[option.key] = option.converter(value, env)
+                except ValueError, x:
+                    raise SCons.Errors.UserError('Error converting option: %s\n%s'%(option.key, x))
+
+
+        # Finally validate the values:
+        for option in variables.options:
+            if option.validator and option.key in values:
+                option.validator(option.key, env.get(option.key), env)
 
 #############################################################################
 class _GVars(object):
@@ -714,8 +792,10 @@ class _GVars(object):
         .. _variables.Update(proxy[,args]): http://www.scons.org/doc/latest/HTML/scons-api/SCons.Variables.Variables-class.html#Update
         """
         #--------------------------------------------------------------------
+
         proxy = self.VarEnvProxy(env)
-        variables.Update(proxy, args)
+        _VariablesWrapper(variables).Update(proxy,args)
+
 
     #========================================================================
     def update_env_from_opts(self, env):
@@ -791,7 +871,7 @@ class _GVars(object):
         """
         #--------------------------------------------------------------------
         proxy = self.VarEnvProxy(env)
-        variables.Save(filename, proxy)
+        _VariablesWrapper(variables).Save(filename, proxy)
 
     def GenerateVariablesHelpText(self, variables, env, *args, **kw):
         #--------------------------------------------------------------------
@@ -817,7 +897,7 @@ class _GVars(object):
         """
         #--------------------------------------------------------------------
         proxy = self.VarEnvProxy(env)
-        return variables.GenerateHelpText(proxy, *args, **kw)
+        return _VariablesWrapper(variables).GenerateHelpText(proxy, *args, **kw)
 
     def GetCurrentValues(self, env):
         #--------------------------------------------------------------------
@@ -958,17 +1038,25 @@ class _GVars(object):
             new
                 Dict with new values to be used to update entries in **env**.
 
+        :Return:
+            A dictionary containing only the values from **new** that were
+            assigned to **env**.
+
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
         """
         #--------------------------------------------------------------------
+        chg = {}
         envp = self.EnvProxy(env, strict = True)
         orgp = self.EnvProxy(org, strict = True)
+        chgp = self.EnvProxy(chg, strict = True)
         for k in self.__keys:
             if _GVars._is_unaltered(envp, orgp, k):
                 try:
                     envp[k] = new[k]
+                    chgp[k] = new[k] # Backup the values we've changed.
                 except KeyError:
                     pass
+        return chg
 
     def WithUnalteredReplaced(self, env, org, new):
         #--------------------------------------------------------------------
@@ -1115,9 +1203,12 @@ class _GVars(object):
         #--------------------------------------------------------------------
         org = self.GetCurrentValues(env)
         self.UpdateEnvironment(env, variables, options, args)
+        alt = self.GetAltered(env, org)
         if filename:
             self.SaveVariables(variables, filename, env)
-        self.ReplaceUnaltered(env, org, ose)
+        chg = self.ReplaceUnaltered(env, org, ose)
+        alt.update(chg)
+        return alt
 
     def Unmangle(self, env):
         #--------------------------------------------------------------------
