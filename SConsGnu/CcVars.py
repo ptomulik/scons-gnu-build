@@ -55,9 +55,6 @@ from SConsGnu import Defaults
 from SCons.Util import is_Sequence, CLVar
 
 #############################################################################
-class _auto(object): pass
-
-#############################################################################
 # NOTE: variable substitutions must be in curly brackets, so use ${prefix}
 #       and not $prefix. This is required for proper prefixing/suffixing and
 #       transforming in certain parts of library
@@ -65,13 +62,13 @@ __prog_var_triples = [
     # Programs
     ( 'CC',
       'A C compiler to use',
-      _auto ),
+      None ),
     ( 'CXX',
       'A C++ compiler to use',
-      _auto ),
+      None ),
     ( 'LINK',
       'A linker to use',
-      _auto ),
+      None ),
 ]
 
 __flag_var_triples = [
@@ -158,25 +155,37 @@ def __map_flag_var_triples(callback, name_filter = lambda x : True):
     return map(lambda x : callback(*x), triples)
 
 #############################################################################
-def gvar_names(name_filter = lambda x : True):
-    """Return list of standard GNU directory variable names
-
-    By default this function returns empty list, you should provide custom
-    **name_filter** to get any results. To retrieve all defined variables,
-    use ``name_filter = lambda x : True``.
+def gvar_names(name_filter = lambda x : True, categories = None):
+    """Return list of GVar names
 
     :Parameters:
         name_filter : callable
             callable object (e.g. lambda) of type ``name_filter(name) ->
             boolean`` used to filter-out unwanted variables; only these
             variables are processed, for which name_filter returns ``True``
+        categories : string
+            return only variable names for given categories, it may be
+            ``'programs'`` for variables representing programs (``CC``, ``CXX``
+            and such), ``'flags'`` for variables representing program flags
+            (``CFLAGS``, ``CCFLAGS`` etc.) or ``None`` (default) to not filter
+            by categories.
     :Returns:
         the list of standard GNU directory variable names
     """
     if is_Sequence(name_filter):
         seq = name_filter
         name_filter = lambda x : x in seq
-    return filter(name_filter, zip(*[__prog_var_triples + _flag_var_triples])[0])
+    if categories and not is_Sequence(categories):
+        categories = [ categories ]
+    if categories:
+        lst = []
+        if 'programs' in categories:
+            lst.extend(__prog_var_triples)
+        if 'flags' in categories:
+            lst.extend(__flag_var_triples)
+    else:
+        lst = __prog_var_triples + __flag_var_triples
+    return filter(name_filter, zip(*lst)[0])
 
 #############################################################################
 def declare_gvars(defaults = {}, name_filter=lambda x : True,
@@ -244,7 +253,7 @@ def GVarNames(**kw):
             boolean`` used to filter-out unwanted variables; only these
             variables are processed, for which name_filter returns ``True``
     """
-    args = ['name_filter']
+    args = ['name_filter', 'categories']
     kw2 = { key : kw[key] for key in args if key in kw }
     return gvar_names(**kw2)
 

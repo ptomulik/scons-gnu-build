@@ -107,52 +107,52 @@ class Test_declare_gvars(unittest.TestCase):
         self.assertEqual(gdecl.get_xxx_key(GVars.VAR), name)
     def test_AWK(self):
         """test AcProgVars.declare_gvars(lambda x : True)['AWK']"""
-        self.check_decl('AWK', AcProgVars._auto)
+        self.check_decl('AWK', None)
     def test_EGREP(self):
         """test AcProgVars.declare_gvars(lambda x : True)['EGREP']"""
-        self.check_decl('EGREP', AcProgVars._auto)
+        self.check_decl('EGREP', None)
     def test_FGREP(self):
         """test AcProgVars.declare_gvars(lambda x : True)['FGREP']"""
-        self.check_decl('FGREP', AcProgVars._auto)
+        self.check_decl('FGREP', None)
     def test_GREP(self):
         """test AcProgVars.declare_gvars(lambda x : True)['GREP']"""
-        self.check_decl('GREP', AcProgVars._auto)
+        self.check_decl('GREP', None)
     def test_INSTALL(self):
         """test AcProgVars.declare_gvars(lambda x : True)['INSTALL']"""
-        self.check_decl('INSTALL', AcProgVars._auto)
+        self.check_decl('INSTALL', None)
     def test_INSTALL_DATA(self):
         """test AcProgVars.declare_gvars(lambda x : True)['INSTALL_DATA']"""
-        self.check_decl('INSTALL_DATA', AcProgVars._auto)
+        self.check_decl('INSTALL_DATA', None)
     def test_INSTALL_PROGRAM(self):
         """test AcProgVars.declare_gvars(lambda x : True)['INSTALL_PROGRAM']"""
-        self.check_decl('INSTALL_PROGRAM', AcProgVars._auto)
+        self.check_decl('INSTALL_PROGRAM', None)
     def test_INSTALL_SCRIPT(self):
         """test AcProgVars.declare_gvars(lambda x : True)['INSTALL_SCRIPT']"""
-        self.check_decl('INSTALL_SCRIPT', AcProgVars._auto)
+        self.check_decl('INSTALL_SCRIPT', None)
     def test_LEX(self):
         """test AcProgVars.declare_gvars(lambda x : True)['LEX']"""
-        self.check_decl('LEX', AcProgVars._auto)
+        self.check_decl('LEX', None)
     def test_LEX_OUTPUT_ROOT(self):
         """test AcProgVars.declare_gvars(lambda x : True)['LEX_OUTPUT_ROOT']"""
-        self.check_decl('LEX_OUTPUT_ROOT', AcProgVars._auto)
+        self.check_decl('LEX_OUTPUT_ROOT', None)
     def test_LEXLIB(self):
         """test AcProgVars.declare_gvars(lambda x : True)['LEXLIB']"""
-        self.check_decl('LEXLIB', AcProgVars._auto)
+        self.check_decl('LEXLIB', None)
     def test_LN_S(self):
         """test AcProgVars.declare_gvars(lambda x : True)['LN_S']"""
-        self.check_decl('LN_S', AcProgVars._auto)
+        self.check_decl('LN_S', None)
     def test_MKDIR_P(self):
         """test AcProgVars.declare_gvars(lambda x : True)['MKDIR_P']"""
-        self.check_decl('MKDIR_P', AcProgVars._auto)
+        self.check_decl('MKDIR_P', None)
     def test_RANLIB(self):
         """test AcProgVars.declare_gvars(lambda x : True)['RANLIB']"""
-        self.check_decl('RANLIB', AcProgVars._auto)
+        self.check_decl('RANLIB', None)
     def test_SED(self):
         """test AcProgVars.declare_gvars(lambda x : True)['SED']"""
-        self.check_decl('SED', AcProgVars._auto)
+        self.check_decl('SED', None)
     def test_YACC(self):
         """test AcProgVars.declare_gvars(lambda x : True)['YACC']"""
-        self.check_decl('YACC', AcProgVars._auto)
+        self.check_decl('YACC', None)
 
 class Test_GVarNames(unittest.TestCase):
     def test_GVarNames_1(self):

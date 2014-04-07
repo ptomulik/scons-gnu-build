@@ -48,7 +48,7 @@ from SCons.Util import CLVar, AppendPath, PrependPath, is_Sequence, is_String
 from subprocess import PIPE
 import re, os, fnmatch
 
-from SConsGnu.AcProgVars import _auto, gvar_names, declare_gvars
+from SConsGnu.AcProgVars import gvar_names, declare_gvars
 from SConsGnu.AcProgVars import GVarNames, DeclareGVars
 
 try:
@@ -759,13 +759,13 @@ class _ActionWrapper(object):
             with open(env.subst("$SOURCE", source = source), 'r')  as sf:
                 args = pickle.loads(sf.read())
                 try:
-                    selection = args.get('selection', _auto)
+                    selection = args.get('selection')
                 except AttributeError:
-                    selection = _auto
+                    selection = None
         except IOError:
-            selection = _auto
+            selection = None
 
-        if selection is _auto:
+        if not selection:
             return self.check(target, source, env)
         else:
             with open(env.subst("$TARGET", target = target), 'w') as tf:
@@ -848,7 +848,7 @@ def _feature_check_length(env, cmd, match_string = None):
     return score
 
 ###############################################################################
-def AcCheckProg(context, program, selection=_auto, value_if_found=None,
+def AcCheckProg(context, program, selection=None, value_if_found=None,
               value_if_not_found=None, path=None, pathext=None, reject=[],
               prog_str=None):
     """Corresponds to AC_CHECK_PROG_ autoconf macro.
@@ -863,7 +863,7 @@ def AcCheckProg(context, program, selection=_auto, value_if_found=None,
         program
             Program name of the program to be checked.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
         value_if_found
             Value to be returned, when the program is found.
@@ -888,7 +888,7 @@ def AcCheckProg(context, program, selection=_auto, value_if_found=None,
         prog_str = progname
 
     context.Display("Checking for %s... " % prog_str)
-    if selection is _auto:
+    if not selection:
 
         if value_if_found is None:
             value_if_found = program
@@ -907,7 +907,7 @@ def AcCheckProg(context, program, selection=_auto, value_if_found=None,
         return selection
 
 ###############################################################################
-def AcCheckProgs(context, programs, selection=_auto, value_if_not_found=None,
+def AcCheckProgs(context, programs, selection=None, value_if_not_found=None,
                path=None, pathext=None, reject=[]):
     """Corresponds to AC_CHECK_PROGS_ autoconf macro.
 
@@ -922,7 +922,7 @@ def AcCheckProgs(context, programs, selection=_auto, value_if_not_found=None,
         programs
             Program names of the programs to be checked.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
         value_if_not_found
             Value to be returned, when the program is not found.
@@ -936,16 +936,18 @@ def AcCheckProgs(context, programs, selection=_auto, value_if_not_found=None,
     .. _AC_CHECK_PROGS: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fCHECK_005fPROGS-307
     """
 
-    context.did_show_result = 1
     result = None
-    if selection is _auto:
+    if not selection:
+        context.did_show_result = 1
         sconf = context.sconf
         for program in programs:
-            result = sconf.AcCheckProg(program, _auto, None, None, path, pathext, reject)
+            result = sconf.AcCheckProg(program, None, None, None, path, pathext, reject)
             if result:
                 return result
         return value_if_not_found
     else:
+        context.Display('Checking for %s... ' % selection)
+        context.Result(str(selection))
         return selection
 
 ###############################################################################
@@ -989,7 +991,7 @@ def AcCheckTools(context, programs, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def AcPathProg(context, program, selection=_auto, value_if_not_found=None,
+def AcPathProg(context, program, selection=None, value_if_not_found=None,
                   path=None, pathext=None, reject=[], prog_str=None):
     """Corresponds to AC_PATH_PROG_ autoconf macro.
 
@@ -999,7 +1001,7 @@ def AcPathProg(context, program, selection=_auto, value_if_not_found=None,
         program
             Name of the program to be checked.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
         value_if_not_found
             Value to be returned, when the program is not found.
@@ -1019,7 +1021,7 @@ def AcPathProg(context, program, selection=_auto, value_if_not_found=None,
 
     context.Display("Checking for %s... " % prog_str)
 
-    if selection is _auto:
+    if not selection:
         progpath = context.env.WhereIs(program, path, pathext, reject)
         if progpath:
             context.Result(progpath)
@@ -1035,7 +1037,7 @@ def AcPathProg(context, program, selection=_auto, value_if_not_found=None,
         return selection
 
 ###############################################################################
-def AcPathProgs(context, programs, selection=_auto, value_if_not_found=None,
+def AcPathProgs(context, programs, selection=None, value_if_not_found=None,
                    path=None, pathext=None, reject=[]):
     """Corresponds to AC_PATH_PROGS_ autoconf macro.
 
@@ -1045,7 +1047,7 @@ def AcPathProgs(context, programs, selection=_auto, value_if_not_found=None,
         programs
             List of program names to be checked.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
         value_if_not_found
             Value to be returned, when the program is not found.
@@ -1060,10 +1062,10 @@ def AcPathProgs(context, programs, selection=_auto, value_if_not_found=None,
     """
     context.did_show_result = 1
     result = None
-    if selection is _auto:
+    if not selection:
         sconf = context.sconf
         for program in programs:
-            result = sconf.AcPathProg(program, _auto, None, path, pathext, reject)
+            result = sconf.AcPathProg(program, None, None, path, pathext, reject)
             if result:
                 return result
         return value_if_not_found
@@ -1081,7 +1083,7 @@ def AcPathTargetTool(context, program, value_if_not_found=None,
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def AcPathTool(context, program, selection=_auto, value_if_not_found=None,
+def AcPathTool(context, program, selection=None, value_if_not_found=None,
                    path=None, pathext=None, reject=[]):
     """Corresponds to AC_PATH_TOOL_ autoconf macro.
 
@@ -1089,7 +1091,7 @@ def AcPathTool(context, program, selection=_auto, value_if_not_found=None,
         context
             SCons configuration context.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
 
     .. _AC_PATH_TOOL: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPATH_005fTOOL-331
@@ -1099,14 +1101,14 @@ def AcPathTool(context, program, selection=_auto, value_if_not_found=None,
 
 
 ###############################################################################
-def AcProgAwk(context, selection=_auto, programs=None):
+def AcProgAwk(context, selection=None, programs=None):
     """Corresponds to AC_PROG_AWK_ autoconf macro
 
     :Parameters:
         context
             SCons configuration context.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_AWK: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fAWK-254
@@ -1120,7 +1122,7 @@ def AcProgAwk(context, selection=_auto, programs=None):
 
 
 ###############################################################################
-def AcProgEgrep(context, grep, selection=_auto):
+def AcProgEgrep(context, grep, selection=None):
     """Corresponds to AC_PROG_EGREP_ autoconf macro
 
     :Parameters:
@@ -1129,7 +1131,7 @@ def AcProgEgrep(context, grep, selection=_auto):
         grep
             Path to ``grep`` program as found by `AcProgGrep`.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_EGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fEGREP-262
@@ -1149,7 +1151,7 @@ def AcProgEgrep(context, grep, selection=_auto):
         return None
 
 ###############################################################################
-def AcProgFgrep(context, grep, selection=_auto):
+def AcProgFgrep(context, grep, selection=None):
     """Corresponds to AC_PROG_FGREP_ autoconf macro
 
     :Parameters:
@@ -1158,7 +1160,7 @@ def AcProgFgrep(context, grep, selection=_auto):
         grep
             Path to ``grep`` program as found by `AcProgGrep`.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_FGREP: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fFGREP-266
@@ -1178,14 +1180,14 @@ def AcProgFgrep(context, grep, selection=_auto):
         return None
 
 ###############################################################################
-def AcProgGrep(context, selection=_auto, programs = None):
+def AcProgGrep(context, selection=None, programs = None):
     """Corresponds to AC_PROG_GREP_ autoconf macro
 
     :Parameters:
         context
             SCons configuration context.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
         programs
             List of program names to look for. If ``None`` (default), the
@@ -1215,7 +1217,7 @@ def AcProgGrep(context, selection=_auto, programs = None):
 
 
 ###############################################################################
-def AcProgInstall(context, selection=_auto, programs=None, reject_paths=None):
+def AcProgInstall(context, selection=None, programs=None, reject_paths=None):
     """Corresponds to AC_PROG_INSTALL_ autoconf macro
 
     Find a good install program. We prefer a C program (faster), so one script
@@ -1237,7 +1239,7 @@ def AcProgInstall(context, selection=_auto, programs=None, reject_paths=None):
         context
             SCons configuration context.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
         programs
             List of program names to look for. If ``None`` (default), the
@@ -1265,7 +1267,7 @@ def AcProgInstall(context, selection=_auto, programs=None, reject_paths=None):
         return None
 
 ###############################################################################
-def AcProgMkdirP(context, selection=_auto, programs=None):
+def AcProgMkdirP(context, selection=None, programs=None):
     """Corresponds to AC_PROG_MKDIR_P_ autoconf macro
 
     Check whether ``mkdir -p`` is known to be thread-safe, and fall back to
@@ -1290,7 +1292,7 @@ def AcProgMkdirP(context, selection=_auto, programs=None):
         context
             SCons configuration context.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
         programs
             List of program names to look for. If ``None`` (default), the
@@ -1312,7 +1314,7 @@ def AcProgMkdirP(context, selection=_auto, programs=None):
         return None
 
 ###############################################################################
-def AcLexExe(context, selection=_auto, programs=None):
+def AcLexExe(context, selection=None, programs=None):
     """Check for lex executable
 
     :Parameters:
@@ -1336,7 +1338,7 @@ def AcLexExe(context, selection=_auto, programs=None):
     return out
 
 ###############################################################################
-def AcLexFileRoot(context, lex, selection=_auto, lexroots=None, script=None):
+def AcLexFileRoot(context, lex, selection=None, lexroots=None, script=None):
     """Determine the root of the file name produced by lex by default.
 
     :Parameters:
@@ -1384,7 +1386,7 @@ def AcLexOutput(context, lex, lexroot, script=None, silent=True):
     return out
 
 #################################################################################
-def AcLexLibs(context, text, selection=_auto, lexlibs=None):
+def AcLexLibs(context, text, selection=None, lexlibs=None):
     """Determine libraries required do link C programs generated by lex.
 
     TODO: write documentation
@@ -1436,7 +1438,7 @@ def AcLexLibs(context, text, selection=_auto, lexlibs=None):
     return out
 
 ###############################################################################
-def AcLexYytextPtr(context, text, lexlibs, selection=_auto):
+def AcLexYytextPtr(context, text, lexlibs, selection=None):
     """TODO: write documentation"""
     from SCons.Conftest import _YesNoResult
     context.Display('Checking whether yytext is a pointer... ')
@@ -1458,14 +1460,14 @@ def AcLexYytextPtr(context, text, lexlibs, selection=_auto):
     return (not ret)
 
 ###############################################################################
-def AcProgLex(context, selection=_auto, programs=None, lexroots=None, lexlibs=None, script=None):
+def AcProgLex(context, selection=None, programs=None, lexroots=None, lexlibs=None, script=None):
     """Corresponds to AC_PROG_LEX_ autoconf macro
 
     :Parameters:
         context
             SCons configuration context.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
         programs
             List of program names to look for (in order). If None (default),
@@ -1504,22 +1506,22 @@ def AcProgLex(context, selection=_auto, programs=None, lexroots=None, lexlibs=No
     context.did_show_result = 1
     sconf = context.sconf
     lex = sconf.AcLexExe(selection, programs)
-    lexroot = sconf.AcLexFileRoot(lex, _auto, lexroots, script)
+    lexroot = sconf.AcLexFileRoot(lex, None, lexroots, script)
     text = sconf.AcLexOutput(lex, lexroot, script)
-    lexlibs = sconf.AcLexLibs(text, _auto, lexlibs)
+    lexlibs = sconf.AcLexLibs(text, None, lexlibs)
     yytextptr = sconf.AcLexYytextPtr(text, lexlibs)
     return lex, lexroot, lexlibs, yytextptr
 
 
 ###############################################################################
-def AcProgLnS(context, selection=_auto):
+def AcProgLnS(context, selection=None):
     """Corresponds to AC_PROG_LN_S_ autoconf macro
 
     :Parameters:
         context
             SCons configuration context.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_LN_S: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fLN_005fS-288
@@ -1540,14 +1542,14 @@ def AcProgLnS(context, selection=_auto):
     return out
 
 ###############################################################################
-def AcProgRanlib(context, selection=_auto):
+def AcProgRanlib(context, selection=None):
     """Corresponds to AC_PROG_RANLIB_ autoconf macro
 
     :Parameters:
         context
             SCons configuration context.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
 
     .. _AC_PROG_RANLIB: http://www.gnu.org/software/autoconf/manual/autoconf.html#index-AC_005fPROG_005fRANLIB-291
@@ -1555,14 +1557,14 @@ def AcProgRanlib(context, selection=_auto):
     raise NotImplementedError("not implemented")
 
 ###############################################################################
-def AcProgSed(context, selection=_auto, programs=None):
+def AcProgSed(context, selection=None, programs=None):
     """Corresponds to AC_PROG_SED_ autoconf macro
 
     :Parameters:
         context
             SCons configuration context.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
         programs
             List of program names to look for. If ``None`` (default), the
@@ -1584,14 +1586,14 @@ def AcProgSed(context, selection=_auto, programs=None):
         return None
 
 ###############################################################################
-def AcProgYacc(context, selection=_auto, programs=None, value_if_not_found='yacc'):
+def AcProgYacc(context, selection=None, programs=None, value_if_not_found='yacc'):
     """Corresponds to AC_PROG_YACC_ autoconf macro
 
     :Parameters:
         context
             SCons configuration context.
         selection
-            If `_auto` (default), the program will be found automatically,
+            If ``None`` (default), the program will be found automatically,
             otherwise the method will return the value of **selection**.
         programs
             List of program names to look for (in order). If None (default),
