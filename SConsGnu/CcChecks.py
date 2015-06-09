@@ -57,10 +57,12 @@ def _add_flags_to_overrides(env, overrides, name, newflags):
     
 def check_cc_flag(context, cc, flag, text, extension, **overrides):
     flag = CLVar(flag)
-    context.Display('Checking whether %s supports %s... ' % (cc, str(flag)))
+    if not context.did_show_result:
+        context.Display('Checking whether %s supports %s... ' % (cc, str(flag)))
     context.sconf.cached = 1
     res = context.sconf.TryCompileWO(text, extension, **overrides)
-    context.Result(res)
+    if not context.did_show_result:
+        context.Result(res)
     return res
 
 
