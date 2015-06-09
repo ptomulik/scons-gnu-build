@@ -46,7 +46,7 @@ print "result: %r" % result
 
 test.run()
 test.must_contain_all_lines(test.stdout(), [
-    'Checking whether dummycompiler supports -foobar... ',
+    'Checking whether dummycompiler supports -foobar... no',
     'result: '
 ])
 

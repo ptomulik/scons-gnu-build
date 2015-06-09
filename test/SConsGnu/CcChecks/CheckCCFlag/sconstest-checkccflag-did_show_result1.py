@@ -53,6 +53,8 @@ env = cfg.Finish()
 test.run()
 test.must_not_contain_any_line(test.stdout(), [
     'Checking',
+    'yes',
+    'no'
 ])
 
 test.pass_test()
