@@ -59,8 +59,7 @@ def check_cc_flag(context, cc, flag, text, extension, **overrides):
     flag = CLVar(flag)
     if not context.did_show_result:
         context.Display('Checking whether %s supports %s... ' % (cc, str(flag)))
-    context.sconf.cached = 1
-    res = context.sconf.TryCompileWO(text, extension, **overrides)
+    res = TryCompileWO(context, text, extension, **overrides)
     if not context.did_show_result:
         context.Result(res)
     return res
@@ -115,6 +114,7 @@ def TryCompileWO(context, text=None, extension='.c', **overrides):
         Compilation status. If success, it evaluates to True.
     """
     global _empty_prog
+    did_show_result = context.did_show_result
     context.did_show_result = 1
     env = context.sconf.env
     context.sconf.env = env.Clone(**overrides)
@@ -123,6 +123,7 @@ def TryCompileWO(context, text=None, extension='.c', **overrides):
     try:
         out = context.sconf.TryCompile(text, extension)
     finally:
+        context.did_show_result = did_show_result
         context.sconf.env = env
     return out
 
@@ -145,6 +146,7 @@ def TryLinkWO(context, text=None, extension='.c', **overrides):
         Compilation status. If success, it evaluates to True.
     """
     global _empty_prog
+    did_show_result = context.did_show_result
     context.did_show_result = 1
     env = context.sconf.env
     context.sconf.env = env.Clone(**overrides)
@@ -153,6 +155,7 @@ def TryLinkWO(context, text=None, extension='.c', **overrides):
     try:
         out = context.sconf.TryLink(text, extension)
     finally:
+        context.did_show_result = did_show_result
         context.sconf.env = env
     return out
 
@@ -175,6 +178,7 @@ def TryRunWO(context, text=None, extension='.c', **overrides):
         Compilation status. If success, it evaluates to True.
     """
     global _empty_prog
+    did_show_result = context.did_show_result
     context.did_show_result = 1
     env = context.sconf.env
     context.sconf.env = env.Clone(**overrides)
@@ -183,6 +187,7 @@ def TryRunWO(context, text=None, extension='.c', **overrides):
     try:
         out = context.sconf.TryRun(text, extension)
     finally:
+        context.did_show_result = did_show_result
         context.sconf.env = env
     return out
 
