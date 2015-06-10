@@ -54,6 +54,15 @@ def _add_flags_to_overrides(env, overrides, name, newflags):
         if not nf in flags:
             flags.append(nf)
     overrides[name] = flags
+
+def _remove_flags_from_overrides(env, overrides, name, delflags):
+    delflags = CLVar(delflags)
+    flags = overrides.get(name, env.get(name, []))[:]
+    flags = CLVar(flags)
+    for df in delflags:
+        if df in flags:
+            flags.remove(df)
+    overrides[name] = flags
     
 def check_cc_flag(context, cc, flag, text, extension, **overrides):
     flag = CLVar(flag)
@@ -191,6 +200,85 @@ def TryRunWO(context, text=None, extension='.c', **overrides):
         context.sconf.env = env
     return out
 
+def TryCompileWithFlags(context, flags, text=None, extension='.c', **overrides):
+    """Try to compile a C/C++ program with given flags appended
+    :Parameters:
+        context
+            SCons configure context.
+        flags
+            A hash of flags to be appended to existing ones. For example
+            ``{ 'CFLAGS' : '-g -O2', 'CXXFLAGS' : '-std=c++11' }`` will
+            append ``-g -O2`` to ``CFLAGS`` and ``-std=c++11`` to ``CXXFLAGS``.
+            If the key starts with '-', the given flags get removed from set,
+            for example ``{ '-CFLAGS' : '-g' }`` ensures that ``-g`` is not
+            present in commandline.
+        text
+            Source code of the C/C++ program to be compiled.
+        extension
+            Extension of the test source file to be generated.
+        overrides
+            Used to override construction variables in context.sconf.env.
+    """
+    for name, flag in flags.items():
+        if name.startswith('-'):
+            _remove_flags_from_overrides(context.sconf.env, overrides, name[1:], flag)
+        else:
+            _add_flags_to_overrides(context.sconf.env, overrides, name, flag)
+    return TryCompileWO(context, text, extension, **overrides)
+
+def TryLinkWithFlags(context, flags, text=None, extension='.c', **overrides):
+    """Try to link a C/C++ program with given flags appended
+    :Parameters:
+        context
+            SCons configure context.
+        flags
+            A hash of flags to be appended to existing ones. For example
+            ``{ 'CFLAGS' : '-g -O2', 'LINKFLAGS' : '-Wl,-rpath-link' }`` will
+            append ``-g -O2`` to ``CFLAGS`` and ``-Wl,-rpath-link`` to
+            ``LINKFLAGS``. If the key starts with '-', the given flags get
+            removed from set, for example ``{ '-CFLAGS' : '-g' }`` ensures that
+            ``-g`` is not present in commandline.
+        text
+            Source code of the C/C++ program to be compiled.
+        extension
+            Extension of the test source file to be generated.
+        overrides
+            Used to override construction variables in context.sconf.env.
+    """
+    for name, flag in flags.items():
+        if name.startswith('-'):
+            _remove_flags_from_overrides(context.sconf.env, overrides, name[1:], flag)
+        else:
+            _add_flags_to_overrides(context.sconf.env, overrides, name, flag)
+    return TryLinkWO(context, text, extension, **overrides)
+
+def TryRunWithFlags(context, flags, text=None, extension='.c', **overrides):
+    """Try to build a C/C++ program with given flags appended and then run it
+    :Parameters:
+        context
+            SCons configure context.
+        flags
+            A hash of flags to be appended to existing ones. For example
+            ``{ 'CFLAGS' : '-g -O2', 'CXXFLAGS' : '-std=c++11' }`` will
+            append ``-g -O2`` to ``CFLAGS`` and ``-std=c++11`` to ``CXXFLAGS``.
+            If the key starts with '-', the given flags get
+            removed from set, for example ``{ '-CFLAGS' : '-g' }`` ensures that
+            ``-g`` is not present in commandline.
+
+        text
+            Source code of the C/C++ program to be compiled.
+        extension
+            Extension of the test source file to be generated.
+        overrides
+            Used to override construction variables in context.sconf.env.
+    """
+    for name, flag in flags.items():
+        if name.startswith('-'):
+            _remove_flags_from_overrides(context.sconf.env, overrides, name[1:], flag)
+        else:
+            _add_flags_to_overrides(context.sconf.env, overrides, name, flag)
+    return TryRunWO(context, text, extension, **overrides)
+
 def CheckCCFlag(context, flag, text=None, extension='.c', **overrides):
     """Check whether C compiler supports given flag(s)
 
@@ -237,13 +325,16 @@ def CheckCXXFlag(context, flag, text=None,extension='.cpp', **overrides):
 
 def Tests():
     """Returns all the checks implemented in CcChecks as a dictionary."""
-    return { 'CheckCCVersion'  : CheckCCVersion
-           , 'CheckCXXVersion' : CheckCXXVersion
-           , 'TryCompileWO'    : TryCompileWO
-           , 'TryLinkWO'       : TryLinkWO
-           , 'TryRunWO'        : TryRunWO
-           , 'CheckCCFlag'     : CheckCCFlag
-           , 'CheckCXXFlag'    : CheckCXXFlag
+    return { 'CheckCCVersion'           : CheckCCVersion
+           , 'CheckCXXVersion'          : CheckCXXVersion
+           , 'CheckCCFlag'              : CheckCCFlag
+           , 'CheckCXXFlag'             : CheckCXXFlag
+           , 'TryCompileWO'             : TryCompileWO
+           , 'TryCompileWithFlags'      : TryCompileWithFlags
+           , 'TryLinkWO'                : TryLinkWO
+           , 'TryLinkWithFlags'         : TryLinkWithFlags
+           , 'TryRunWO'                 : TryRunWO
+           , 'TryRunWithFlags'          : TryRunWithFlags
            }
 
 # Local Variables:
