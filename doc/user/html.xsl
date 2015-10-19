@@ -33,6 +33,7 @@
 	version="1.0">
 
 <xsl:import href="http://docbook.sourceforge.net/release/xsl-ns/current/xhtml5/docbook.xsl"/>
+<xsl:output method="html" encoding="utf-8"/>
 <xsl:param name="l10n.gentext.default.language" select="'en'"/>
 <xsl:param name="section.autolabel" select="1"/>
 <xsl:param name="make.clean.html" select="1"/>
