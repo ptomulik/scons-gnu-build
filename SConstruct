@@ -19,8 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE
 
+import os
 from SConsGnu.GVars import GVarDecls
-env = Environment()
+env = Environment( ENV = os.environ.copy() )
 Export(['env'])
 VariantDir('build/doc', 'doc', duplicate = 0)
 SConscript('build/doc/SConscript')

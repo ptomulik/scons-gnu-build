@@ -1,17 +1,25 @@
 language: python
+sudo: false
 python:
-  #  - "2.4"
-  #  - "2.6"
   - "2.7"
-    #  - "3.2"
-    #  - "3.3"
+before_install:
+  - which "python"
+  - python -c "import sys; print sys.path"
+addons:
+  apt:
+    packages:
+      - scons
+      - docbook-xml
+      - xsltproc
+      - imagemagick
 install:
-  - "./bin/download-deps.sh"
-  - "sudo apt-get install scons"
-  - "sudo apt-get --no-install-recommends -y install python-epydoc python-docutils python-pygments"
-  - "sudo apt-get --no-install-recommends -y install docbook5-xml xsltproc imagemagick"
+  - ./bin/download-deps.sh
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
+before_script:
+  - scons --version
 script:
-  - "scons user-doc"
-  - "scons api-doc"
-  - "scons unit-test"
-  - "SCONS_EXTERNAL_TEST=1 python runtest.py -a"
+  - scons user-doc
+  - scons api-doc || true # unfortunatelly epydoc needs patching to get working
+  - scons unit-test
+  - SCONS_EXTERNAL_TEST=1 python runtest.py -a

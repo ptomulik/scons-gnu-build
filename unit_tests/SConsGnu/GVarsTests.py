@@ -50,9 +50,9 @@ class Test_module_constants(unittest.TestCase):
     def test__missing(self):
         "GVars._missing should be a class"
         self.assertTrue(isinstance(GVars._missing,type))
-    def test__dont_create(self):
-        "GVars._dont_create should be a class"
-        self.assertTrue(isinstance(GVars._dont_create,type))
+    def test__undef(self):
+        "GVars._undef should be a class"
+        self.assertTrue(isinstance(GVars._undef,type))
     def test__notfound(self):
         "GVars._notfound should be a class"
         self.assertTrue(isinstance(GVars._notfound,type))
@@ -715,8 +715,8 @@ class Test__GVars(unittest.TestCase):
         gv = self._gvars_mock_4_UpdateEnvironment()
         gv.UpdateEnvironment('env')
         try:
-            gv.update_env_from_vars.assert_never_called()
-            gv.update_env_from_opts.assert_never_called()
+            gv.update_env_from_vars.assert_not_called()
+            gv.update_env_from_opts.assert_not_called()
         except AssertionError as e:
             self.fail(str(e))
 
@@ -726,7 +726,7 @@ class Test__GVars(unittest.TestCase):
         gv.UpdateEnvironment('env', 'variables1')
         try:
             gv.update_env_from_vars.assert_called_once_with('env', 'variables1', None)
-            gv.update_env_from_opts.assert_never_called()
+            gv.update_env_from_opts.assert_not_called()
         except AssertionError as e:
             self.fail(str(e))
 
@@ -735,7 +735,7 @@ class Test__GVars(unittest.TestCase):
         gv = self._gvars_mock_4_UpdateEnvironment()
         gv.UpdateEnvironment('env', None, True)
         try:
-            gv.update_env_from_vars.assert_never_called()
+            gv.update_env_from_vars.assert_not_called()
             gv.update_env_from_opts.assert_called_once_with('env')
         except AssertionError as e:
             self.fail(str(e))

@@ -19,18 +19,41 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE
 
-Import('env')
-epydoc = env.Detect(['epydoc'])
-if epydoc:
-    import sys
-    path = ':'.join(sys.path)
-    epydocflags = '-v --html --css grayscale --inheritance listed --debug'
-    epydoccom = 'PYTHONPATH=%s %s -o $TARGET.dir %s %s' \
-            % (path,epydoc,epydocflags, 'SConsGnu')
-    source =  [ env.Glob('#SConsGnu/*.py'),
-                env.Glob('#SConsGnu/*/*.py'),
-                env.Glob('#SConsGnu/*/*/*.py') ]
-    target = ['index.html']
-    api_doc = env.Command(target, source, epydoccom)
-    env.AlwaysBuild(env.Alias('api-doc', api_doc))
-    env.Ignore('.', target)
+__docformat__ = "restructuredText"
+
+"""
+Example involving SConsGnu.CcVars
+"""
+
+import TestSCons
+
+##############################################################################
+#
+##############################################################################
+test = TestSCons.TestSCons()
+test.dir_fixture('../../../SConsGnu', 'site_scons/SConsGnu')
+test.write('SConstruct',
+"""
+# SConstruct
+from SConsGnu import CcVars
+decls = CcVars.DeclareGVars()
+env = Environment(tools = [])
+var = Variables()
+gvars = decls.Commit(env, var, True)
+gvars.Postprocess(env, var, True)
+for key in CcVars.GVarNames():
+    try: print "env: %s: %r" % (key, env[key])
+    except KeyError: pass
+""")
+
+
+test.run('.')
+test.must_not_contain_any_line(test.stdout(), ['env:' ])
+
+test.pass_test()
+
+# Local Variables:
+# # tab-width:4
+# # indent-tabs-mode:nil
+# # End:
+# vim: set syntax=python expandtab tabstop=4 shiftwidth=4:

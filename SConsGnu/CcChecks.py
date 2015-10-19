@@ -202,6 +202,7 @@ def TryRunWO(context, text=None, extension='.c', **overrides):
 
 def TryCompileWithFlags(context, flags, text=None, extension='.c', **overrides):
     """Try to compile a C/C++ program with given flags appended
+
     :Parameters:
         context
             SCons configure context.
@@ -228,6 +229,7 @@ def TryCompileWithFlags(context, flags, text=None, extension='.c', **overrides):
 
 def TryLinkWithFlags(context, flags, text=None, extension='.c', **overrides):
     """Try to link a C/C++ program with given flags appended
+
     :Parameters:
         context
             SCons configure context.
@@ -254,6 +256,7 @@ def TryLinkWithFlags(context, flags, text=None, extension='.c', **overrides):
 
 def TryRunWithFlags(context, flags, text=None, extension='.c', **overrides):
     """Try to build a C/C++ program with given flags appended and then run it
+
     :Parameters:
         context
             SCons configure context.

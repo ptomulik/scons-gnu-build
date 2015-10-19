@@ -1,0 +1,6 @@
+scons
+unittest2
+discover
+epydoc
+docutils
+pygments

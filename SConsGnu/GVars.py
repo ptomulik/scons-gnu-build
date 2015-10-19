@@ -273,9 +273,15 @@ class _missing(object):
     pass
 
 #############################################################################
-class _dont_create(object):
-    "Represents the fact, that a variable shouldn't be created."
-    pass
+class _undef_meta(type):
+    """Meta-class for the _undef class"""
+    def __repr__(cls):
+        return 'UNDEFINED'
+
+#############################################################################
+class _undef(object):
+    "Represents undefined/inexistent variable. This is not the same as None"
+    __metaclass__ = _undef_meta
 
 #############################################################################
 class _notfound(object):
@@ -579,8 +585,12 @@ class _VariablesWrapper(object):
 
     #========================================================================
     def Update(self, env, args):
-        # The only reason why it's reimplemented here is to get rid of
-        # env.subst(...) substitutions. And yes, it's important!!!
+        # One reason why it's reimplemented here is to get rid of env.subst(...)
+        # substitutions that are present in the original SCons implementation
+        # of Variables.Update(). The other is handling of the special _undef
+        # value. If a variable's value is _undef, the corresponding construction
+        # variable will not be created (env[varname] will raise keyerror,
+        # unless it was created by someone else).
         import os
         import sys
 
@@ -623,13 +633,14 @@ class _VariablesWrapper(object):
         # (don't copy over variables that are not declared as options)
         for option in variables.options:
             try:
-                env[option.key] = values[option.key]
+                if values[option.key] is not _undef:
+                    env[option.key] = values[option.key]
             except KeyError:
                 pass
 
         # Call the convert functions:
         for option in variables.options:
-            if option.converter and option.key in values:
+            if option.converter and option.key in values and values[option.key] is not _undef:
                 value = env.get(option.key)
                 try:
                     try:
@@ -1350,11 +1361,11 @@ class _GVarDecl(object):
         variable in `SCons environment`_.
 
         :Parameters:
-            decl : tuple | dict
-                may be a tuple in form ``(name, default)``, or one-entry
-                dictionary ``{name: default}``; later, when requested,
-                this data is used to create construction variable for
-                user provided `SCons environment`_ ``env`` with
+            decl : tuple | dict | str
+                may be a tuple in form ``("name", default)``, one-entry
+                dictionary ``{"name": default}`` or just a string ``"name"``;
+                later, when requested, this data is used to create construction
+                variable for user provided `SCons environment`_ ``env`` with
                 ``env.SetDefault(name = default)``
 
         .. _SCons environment:  http://www.scons.org/doc/HTML/scons-user.html#chap-environments
@@ -1372,7 +1383,7 @@ class _GVarDecl(object):
                 raise ValueError("dictionary 'decl' must have 1 item but " \
                                  "has %d" % len(decl))
         elif is_String(decl):
-            decl = { decl : _dont_create }
+            decl = { decl : _undef }
         else:
             raise TypeError("'decl' must be tuple, dictionary or string, %r " \
                             "is not allowed" % type(decl).__name__)
@@ -1656,7 +1667,7 @@ class _GVarDecl(object):
         #--------------------------------------------------------------------
         from SCons.Script.Main import AddOption
         if xxx == ENV:
-            if self.__xxx_args[ENV].values()[0] is not _dont_create:
+            if self.__xxx_args[ENV].values()[0] is not _undef:
                 env = args[0]
                 env.SetDefault(**self.__xxx_args[ENV])
         elif xxx == VAR:
@@ -1709,7 +1720,7 @@ def GVarDecl(*args, **kw):
         return _GVarDecl(*args, **kw)
 
 #############################################################################
-def GVarDeclU(env_key=None, var_key=None, opt_key=None, default=None,
+def GVarDeclU(env_key=None, var_key=None, opt_key=None, default=_undef,
               help=None, validator=None, converter=None, option=None,
               type=None, opt_default=None, metavar=None, nargs=None,
               choices=None, action=None, const=None, callback=None,
@@ -2047,7 +2058,6 @@ class _GVarDecls(dict):
 
     #========================================================================
     def copy(self):
-        print "Kalabanka!"
         return _GVarDecls(self)
 
     #========================================================================

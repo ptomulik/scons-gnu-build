@@ -22,39 +22,46 @@
 __docformat__ = "restructuredText"
 
 """
-Tests SConsGnu.GVars.EnvProxy
+Tests GVars default values handling
 """
 
 import TestSCons
 
 ##############################################################################
-# EnvProxy(): Test 1
+# GVarDeclsU(): Test 1 - declare empty dict
 ##############################################################################
 test = TestSCons.TestSCons()
-test.dir_fixture('../../../../SConsGnu', 'site_scons/SConsGnu')
+test.dir_fixture('../../../SConsGnu', 'site_scons/SConsGnu')
 test.write('SConstruct',
 """
 # SConstruct
-from SConsGnu.GVars import GVarDeclsU
-
-env = Environment()
+from SConsGnu.GVars import GVarDeclsU, _undef
+env = Environment(tools = [])
 var = Variables()
-
-decls = GVarDeclsU( foo = { 'env_key' : 'env_foo', 'var_key' : 'foo', 'default' : None } )
-gvars = decls.Commit(env, var)
-gvars.Postprocess(env, var)
-
-# Create proxy object
-proxy = gvars.EnvProxy(env)
-# Access variable via proxy
-print "foo: %s" % proxy['foo']
+decls = GVarDeclsU(
+    foo = {'env_key' : 'FOO', 'var_key' : 'FOO', 'opt_key' : 'foo', 'option' : '--foo'},
+    bar = {'env_key' : 'BAR', 'var_key' : 'BAR', 'opt_key' : 'bar', 'option' : '--bar', 'default' : None},
+    gez = {'env_key' : 'GEZ', 'var_key' : 'GEZ', 'opt_key' : 'gez', 'option' : '--gez', 'default' : _undef }
+)
+gvars = decls.Commit(env, var, True)
+gvars.Postprocess(env, var, True)
+for key in ['FOO', 'BAR', 'GEZ']:
+    try: print "env['%s']: %s" % (key, env[key])
+    except KeyError: pass
 """)
 
+# Default values
 test.run()
-test.must_contain_all_lines(test.stdout(), ["foo: "])
+test.must_contain_all_lines(test.stdout(), ["env['BAR']: None"])
+test.must_not_contain_any_line(test.stdout(), ["env['FOO']:", "env['GEZ']:"])
 
-test.run(arguments = ["foo=that-is-foo"])
-test.must_contain_all_lines(test.stdout(), ["foo: that-is-foo"])
+# Variables
+test.run(arguments = ['FOO=1', 'BAR=2', 'GEZ=3'])
+test.must_contain_all_lines(test.stdout(), ["env['FOO']: 1", "env['BAR']: 2", "env['GEZ']: 3"])
+
+# Options
+test.run(arguments = ['--foo=a', '--bar=b', '--gez=c'])
+test.must_contain_all_lines(test.stdout(), ["env['FOO']: a", "env['BAR']: b", "env['GEZ']: c"])
 
 test.pass_test()
 

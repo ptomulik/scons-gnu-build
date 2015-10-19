@@ -72,54 +72,26 @@ from SCons.Util import is_Sequence, CLVar
 # NOTE: variable substitutions must be in curly brackets, so use ${prefix}
 #       and not $prefix. This is required for proper prefixing/suffixing and
 #       transforming in certain parts of library
-__prog_var_triples = [
+__prog_var_tuples = [
     # Programs
-    ( 'CC',
-      'A C compiler to use',
-      None ),
-    ( 'CXX',
-      'A C++ compiler to use',
-      None ),
-    ( 'LINK',
-      'A linker to use',
-      None ),
-    ( 'SHCC',
-      'A C compiler used when compiling shared libraries',
-      None ),
-    ( 'SHCXX',
-      'A C++ compiler used when compiling shared libraries',
-      None ),
-    ( 'SHLINK',
-      'A linker to use when creating shared libraries',
-      None ),
+    ( 'CC',     'A C compiler to use'),
+    ( 'CXX',    'A C++ compiler to use'),
+    ( 'LINK',   'A linker to use'),
+    ( 'SHCC',   'A C compiler used when compiling shared libraries'),
+    ( 'SHCXX',  'A C++ compiler used when compiling shared libraries'),
+    ( 'SHLINK', 'A linker to use when creating shared libraries'),
 ]
 
-__flag_var_triples = [
+__flag_var_tuples = [
     # Program flags
-    ( 'CFLAGS',
-      'Flags for C compiler',
-      None ),
-    ( 'CXXFLAGS',
-      'Flags for C++ compiler',
-      None ),
-    ( 'CCFLAGS',
-      'Flags for both C and C++ compilers',
-      None ),
-    ( 'LINKFLAGS',
-      'Flags for linker',
-      None ),
-    ( 'SHCFLAGS',
-      'Flags for C compiler used when compiling shared libraries',
-      None ),
-    ( 'SHCXXFLAGS',
-      'Flags for C++ compiler used when compiling shared libraries',
-      None ),
-    ( 'SHCCFLAGS',
-      'Flags for both C and C++ compilers used when compiling shared libraries',
-      None ),
-    ( 'SHLINKFLAGS',
-      'Flags for linker used when creating shared libraries',
-      None ),
+    ( 'CFLAGS',     'Flags for C compiler'),
+    ( 'CXXFLAGS',   'Flags for C++ compiler'),
+    ( 'CCFLAGS',    'Flags for both C and C++ compilers'),
+    ( 'LINKFLAGS',  'Flags for linker'),
+    ( 'SHCFLAGS',   'Flags for C compiler used when compiling shared libraries'),
+    ( 'SHCXXFLAGS', 'Flags for C++ compiler used when compiling shared libraries'),
+    ( 'SHCCFLAGS',  'Flags for both C and C++ compilers used when compiling shared libraries'),
+    ( 'SHLINKFLAGS','Flags for linker used when creating shared libraries'),
 ]
 
 default_env_key_prefix      = Defaults.gvar_env_key_prefix
@@ -144,8 +116,8 @@ def _flag_converter(val, env=None):
         return CLVar(val)
 
 #############################################################################
-def __map_prog_var_triples(callback, name_filter = lambda x : True):
-    """Map all predefined GNU variable triples (name, desc, default) via
+def __map_prog_var_tuples(callback, name_filter = lambda x : True):
+    """Map all predefined GNU variable tuples (name, desc, default) via
     `callback`.
 
     :Parameters:
@@ -163,12 +135,12 @@ def __map_prog_var_triples(callback, name_filter = lambda x : True):
     :Returns:
         returns result of mapping through `callback`
     """
-    triples = filter(lambda t : name_filter(t[0]), __prog_var_triples)
-    return map(lambda x : callback(*x), triples)
+    tuples = filter(lambda t : name_filter(t[0]), __prog_var_tuples)
+    return map(lambda x : callback(*x), tuples)
 
 #############################################################################
-def __map_flag_var_triples(callback, name_filter = lambda x : True):
-    """Map all predefined GNU variable triples (name, desc, default) via
+def __map_flag_var_tuples(callback, name_filter = lambda x : True):
+    """Map all predefined GNU variable tuples (name, desc, default) via
     `callback`.
 
     :Parameters:
@@ -186,8 +158,8 @@ def __map_flag_var_triples(callback, name_filter = lambda x : True):
     :Returns:
         returns result of mapping through `callback`
     """
-    triples = filter(lambda t : name_filter(t[0]), __flag_var_triples)
-    return map(lambda x : callback(*x), triples)
+    tuples = filter(lambda t : name_filter(t[0]), __flag_var_tuples)
+    return map(lambda x : callback(*x), tuples)
 
 #############################################################################
 def gvar_names(name_filter = lambda x : True, categories = None):
@@ -215,11 +187,11 @@ def gvar_names(name_filter = lambda x : True, categories = None):
     if categories:
         lst = []
         if 'programs' in categories:
-            lst.extend(__prog_var_triples)
+            lst.extend(__prog_var_tuples)
         if 'flags' in categories:
-            lst.extend(__flag_var_triples)
+            lst.extend(__flag_var_tuples)
     else:
-        lst = __prog_var_triples + __flag_var_triples
+        lst = __prog_var_tuples + __flag_var_tuples
     return filter(name_filter, zip(*lst)[0])
 
 #############################################################################
@@ -249,8 +221,8 @@ def declare_gvars(defaults = {}, name_filter=lambda x : True,
         a dictionary-like object of type `SConsGnu.GVar._GVarDecls`
     """
     from SCons.Variables.PathVariable import PathVariable
-    from SConsGnu.GVars import GVarDeclsU
-    def _prog_callback(name, desc, default):
+    from SConsGnu.GVars import GVarDeclsU, _undef
+    def _prog_callback(name, desc, default = _undef):
         try:
             default = defaults[name]
         except KeyError:
@@ -260,7 +232,7 @@ def declare_gvars(defaults = {}, name_filter=lambda x : True,
                  'default'  : default,
                  'help'     : desc }
         return name, decl
-    def _flag_callback(name, desc, default):
+    def _flag_callback(name, desc, default = _undef):
         try:
             default = defaults[name]
         except KeyError:
@@ -275,8 +247,8 @@ def declare_gvars(defaults = {}, name_filter=lambda x : True,
     if is_Sequence(name_filter):
         seq = name_filter
         name_filter = lambda x : x in seq
-    return GVarDeclsU( __map_prog_var_triples(_prog_callback, name_filter)
-                     + __map_flag_var_triples(_flag_callback, name_filter) )
+    return GVarDeclsU( __map_prog_var_tuples(_prog_callback, name_filter)
+                     + __map_flag_var_tuples(_flag_callback, name_filter) )
 
 ##############################################################################
 def GVarNames(**kw):
