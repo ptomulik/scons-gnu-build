@@ -35,8 +35,9 @@ import re
 _cc_re_dict = {
     'gcc'     : r'^(?:.+-)?(?:cc|gcc)(?:(?:-[0-9]+(?:\.[0-9]+)*)+)?$',
     'g++'     : r'^(?:.+-)?(?:c\+\+|g\+\+)(?:(?:-[0-9]+(?:\.[0-9]+)*)+)?$',
-    'clang'   : r'^(?:.+-)?:clang(?:(?:-[0-9]+(?:\.[0-9]+)*)+)?$',
-    'clang++' : r'^(?:.+-)?:clang\+\+(?:(?:-[0-9]+(?:\.[0-9]+)*)+)?$'
+    'clang'   : r'^(?:.+-)?clang(?:(?:-[0-9]+(?:\.[0-9]+)*)+)?$',
+    'clang++' : r'^(?:.+-)?clang\+\+(?:(?:-[0-9]+(?:\.[0-9]+)*)+)?$',
+    'cl'      : r'^(?:cl)(\.exe)?$'
 }
 
 for key, expr in _cc_re_dict.items():
@@ -54,6 +55,8 @@ def _cc_version_cmd(env, cc, ccpath):
         return CLVar([ccpath, '-dumpversion'])
     elif cc in ('clang', 'clang++'):
         return CLVar([ccpath, '--version'])
+    elif cc in ('cl'):
+        return CLVar([ccpath, '/?'])
     else:
         return None
 
@@ -66,11 +69,19 @@ def _parse_clang_version(text):
         return None
     return found.group(1)
 
-def _parse_cc_version(env, cc, text):
+def _parse_cl_version(text):
+    found = re.search(r'Microsoft +\(R\) +C/C\+\+ +Optimizing +Compiler +Version +([0-9]+(?:\.[0-9]+)+)', text)
+    if not found:
+        return None
+    return found.group(1)
+
+def _parse_cc_version(env, cc, out, err):
     if cc in ('gcc', 'g++'):
-        version = _parse_gcc_version(text)
+        version = _parse_gcc_version(out)
     elif cc in ('clang', 'clang++'):
-        version = _parse_clang_version(text)
+        version = _parse_clang_version(out)
+    elif cc in ('cl'):
+        version = _parse_cl_version(err)
     else:
         version = None
     if not version:
@@ -92,11 +103,19 @@ def _parse_gcc_target(text):
 def _parse_clang_target(text):
     return text.strip()
 
-def _parse_cc_target(env, cc, text):
+def _parse_cl_target(text):
+    found = re.search(r'Microsoft +\(R\) +C/C\+\+ +Optimizing +Compiler +Version +(?:[0-9]+(?:\.[0-9]+)+) +for +(\S\+)', text)
+    if not found:
+        return None
+    return found.group(1)
+
+def _parse_cc_target(env, cc, out, err):
     if cc in ('gcc', 'g++'):
-        target = _parse_gcc_target(text)
+        target = _parse_gcc_target(out)
     elif cc in ('clang', 'clang++'):
-        target = _parse_clang_target(text)
+        target = _parse_clang_target(out)
+    elif cc in ('cl'):
+        target = _parse_cl_target(err)
     else:
         target = None
     if not target:
@@ -131,7 +150,7 @@ def _query_cc_info(env, ccpath, cmd_fun, parse_fun):
     stat, out, err = _run_cc_cmd(env, cmd)
     if stat:
         return (None, err)
-    return parse_fun(env, cc, out)
+    return parse_fun(env, cc, out, err)
 
 def _query_cc_version(env, ccpath):
     return _query_cc_info(env, ccpath, _cc_version_cmd, _parse_cc_version)
@@ -160,7 +179,7 @@ def CanonCC(env, **overrides):
         compilers** list . Otherwise, returns the basename of the original
         compiler (e.g. ``xyz-foo` for ``/opt/bin/xyz-foo``).
     """
-    return _canon_cc(overrides.get('CC', env['CC']))
+    return _canon_cc(env.subst(overrides.get('CC', env['CC'])))
 
 def CanonCXX(env, **overrides):
     """Return "canonical name" of the C++ compiler used.
@@ -183,7 +202,7 @@ def CanonCXX(env, **overrides):
         compilers** list . Otherwise, returns the basename of the original
         compiler (e.g. ``xyz-foo++` for ``/opt/bin/xyz-foo++``).
     """
-    return _canon_cc(overrides.get('CXX', env['CXX']))
+    return _canon_cc(env.subst(overrides.get('CXX', env['CXX'])))
 
 def QueryCCVersion(env, **overrides):
     """Retrieve version of C compiler.
