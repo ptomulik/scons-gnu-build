@@ -94,6 +94,8 @@ def _cc_target_cmd(env, cc, ccpath):
         return CLVar([ccpath, '-dumpmachine'])
     elif cc in ('clang', 'clang++'):
         return CLVar([ccpath, '-dumpmachine'])
+    elif cc in ('cl'):
+        return CLVar([ccpath, '/?'])
     else:
         return None
 
@@ -124,8 +126,14 @@ def _parse_cc_target(env, cc, out, err):
         return (target, None)
 
 def _run_cc_cmd(env, cmd):
+    kw = {'shell' : True}
     try:
-        proc = _subproc(env, cmd, 'raise', stdout = PIPE)
+        kw['executable'] = env['SHELL']
+    except KeyError:
+        raise SCons.Errors.UserError('Missing SHELL construction variable')
+
+    try:
+        proc = _subproc(env, cmd, 'raise', stdout = PIPE, stderr = PIPE, **kw)
     except EnvironmentError as e:
         stat = 1
         out = ''
