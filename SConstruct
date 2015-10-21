@@ -20,6 +20,9 @@
 # SOFTWARE
 
 import os
+import sys
+import platform
+
 from SConsGnu.GVars import GVarDecls
 env = Environment( ENV = os.environ.copy() )
 Export(['env'])
@@ -43,12 +46,15 @@ for tgt in examples.keys():
 env.AlwaysBuild(env.Alias('unit-test'))
 if 'unit-test' in COMMAND_LINE_TARGETS:
     import sys
-    python = env.Detect('python')
+    python = sys.executable
     if python:
-        path = ':'.join(sys.path)
+	env['ENV']['PYTHONPATH'] = os.pathsep.join(sys.path)
         #unittestflags = "-v"
         unittestflags = ""
-        discoverflags = "-p '*Tests.py'"
-        testcom = 'PYTHONPATH=%s %s -m unittest discover %s %s' \
-                % (path, python, unittestflags, discoverflags)
+	if platform.system() == 'Windows':
+            discoverflags = "-p *Tests.py"
+	else:
+            discoverflags = "-p '*Tests.py'"
+        testcom = '%s -m unittest discover %s %s' \
+                % (python, unittestflags, discoverflags)
         env.Execute(testcom, "Running unit tests")
